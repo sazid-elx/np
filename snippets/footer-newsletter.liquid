@@ -1,0 +1,369 @@
+<div class="footer__item-padding" id="custom-footer-newsletter">  
+  {%- if block.settings.show_footer_title -%}
+    <p class="footer__title small--hide newsletter-title-show">{{ block.settings.title }}</p>   
+  {%- endif -%}
+  
+  <div {% if block.settings.show_footer_title %} id="Footer-{{ block.id }}" class="collapsible-content collapsible-content--small is-open" {% endif %}>    
+    <div class="collapsible-content__inner">     
+      <div class="footer__collapsible{% unless block.settings.show_footer_title %} footer_collapsible--disabled{% endunless %}">        
+      {%- if block.settings.text -%}
+          {{ block.settings.text }}
+        {%- endif -%}
+        
+        {%- form 'customer', id: 'newsletter-footer' -%}
+        
+          
+         <div class="email-validate-error" style="display: none;">Please enter valid email address</div>         
+         <div class="footer__newsletter">           
+          <div class="input-container">
+            
+                <input type="email" value="{% if customer %}{{ customer.email }}{% endif %}"
+                     name="contact[email]" id="Email-{{ block.id }}"
+                     class="footer__newsletter-input {%- if form.posted_successfully? -%} -hide{%- endif -%}"
+                     autocorrect="off" required autocapitalize="off">
+              <label for="email" class="email{%- if form.posted_successfully? -%} -hide{%- endif -%}">Email</label>
+
+            {%- if form.posted_successfully? -%}
+            <p class="email-placeholder">Email</p>
+            <div class="note note--success">Thank you for subscribing.</div>   
+           {%- endif -%}          
+            {%- if form.context == 'footer' -%}
+              {%- if form.errors -%}
+              <div class="after-page-refreshed"></div>  
+              {%- endif -%}
+            {%- endif -%}
+            </div>
+              <div id="errorMessage-for-footer" class="note note--error" style="display: none; border: 0px; margin: 0px; padding: 0px;">
+                  <!-- <p class="email-placeholder">Email</p> -->
+                  <p class="error-message">It looks like that email address is already signed up.</p>
+              </div>
+                      <button type="submit" id="newsletter-submit-{{ block.id }}" class="footer__newsletter-btn np-h7" name="commit">              
+                                     
+                  <span class="footer__newsletter-btn-label">  
+                     <div id="arrow-icon" class="arrow-icon">
+                 <svg xmlns="http://www.w3.org/2000/svg" id="Layer_1" viewBox="0 0 38 38"><defs><style>.cls-1{fill:none;stroke:#1d1d1b;stroke-miterlimit:10;}</style></defs><polyline class="cls-1" points="21.44 23.5 25.95 19 21.44 14.5"/><line class="cls-1" x1="12.05" y1="19" x2="25.42" y2="19"/></svg>
+               </div>
+                 {%- comment -%}
+                {{ 'general.newsletter_form.submit' | t }}
+                {%- endcomment -%}
+              
+              </span>            
+                </button>
+        </div>  
+                   
+        <div class="accept-terms-div {%- if form.posted_successfully? -%} hide{% endif %}">
+          <form id="newsletter-form">
+            <label class="container">I accept the Terms & Conditions and Privacy Policy
+              <input type="checkbox" id="accept-checkbox">
+              <span class="checkmark"></span>
+            </label>
+          </form>
+        </div>
+       
+        
+          {%- endform -%}
+        {%- comment -%}
+        {% render 'social-icons', additional_classes: 'footer__social' %}
+        {%- endcomment -%}
+      </div>
+    </div>  
+  </div>
+</div>
+                  
+<style> 
+/* .input-container {
+  position: relative;
+} */
+  .email-validate-error{
+    color: #FF3023;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px; 
+    letter-spacing: 0.25px;
+    text-align: left;
+  }
+  #errorMessage-for-footer p.error-message{
+    color: #FF3023;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px; 
+    letter-spacing: 0.25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #2B2725;
+  }
+  #errorMessage-for-footer p.email-placeholder{
+    color: rgba(43, 39, 37, 0.50);
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.25px;
+    padding-bottom: 0px;
+  }
+  .footer__newsletter-input-hide,
+  .email-hide{
+    display: none;
+  }
+  .footer__newsletter .input-container .email-placeholder{
+    color: rgba(43, 39, 37, 0.50);
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px; 
+    letter-spacing: 0.25px;
+    padding-bottom: 0px;
+    margin: 0px;
+  }
+  .note.note--success{
+    border-bottom: 1px solid #2B2725;
+    padding: 5px 0px 15px 0px;
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.25px;
+  }
+.footer__newsletter .input-container label{
+    position: absolute;
+    color: rgba(43, 39, 37, 0.50);
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.25px;
+    pointer-events: none;
+    left: 0px;
+    top: 27px;
+    transition: .2s all;
+    text-transform: capitalize;
+}
+  .input-container input:focus ~ label
+  {
+    top: 0px;
+    left: 0px;
+  }
+  .input-container input:valid ~ label
+  {
+    top: 0px;
+    left: 0px;
+  }
+
+  .accept-terms-divhide{
+    display: none;
+  }
+.accept-terms-div .container {
+  display: block;
+  position: relative;
+  padding-left: 27px;
+  margin-top: 18px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  color: #2B2725;
+  font-family: Intervogue;
+  font-size: 10px !important;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 15px !important;; 
+  letter-spacing: 0.4px !important;
+  text-align: left;
+
+}
+
+/* Hide the browser's default checkbox */
+.accept-terms-div .container input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
+
+/* Create a custom checkbox */
+.accept-terms-div .checkmark {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 12px;
+  width: 12px;
+  border: 1px solid #1D1D1B;
+}
+/* When the checkbox is checked, add a blue background */
+.accept-terms-div .container input:checked ~ .checkmark {
+  background-color: #1D1D1B;
+}
+
+/* Create the checkmark/indicator (hidden when not checked) */
+.accept-terms-div .checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+}
+
+/* Show the checkmark when checked */
+.accept-terms-div .container input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Style the checkmark/indicator */
+.accept-terms-div .container .checkmark:after {
+  left: 3px;
+  top: 0px;
+  width: 4px;
+  height: 8px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+}   
+#accept-checkbox:checked + span.checkmark.invalid-checkbox{
+    border: 0;
+  }
+  .checkmark.invalid-checkbox{
+    border: 1px solid #E10613;
+  }
+  .footer__title{
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.25px;
+    text-align: left;
+  }
+
+  .footer__title.small--hide.newsletter-title-show{
+    display:block !important;
+    margin-bottom:20px;
+  }
+  
+  .sign-up-newsletter-title {
+    pointer-events: none;
+    letter-spacing: 0.1em;
+  }
+  .footer__newsletter-input::placeholder {
+    color: rgba(0, 0, 0, 0.5);
+  }
+  .footer__item-padding{
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+  .footer__newsletter-input{
+    outline: none;
+    font-family: Intervogue;
+    font-style: normal;
+  }
+.footer__newsletter #arrow-icon{
+  width: 50px;
+  height: 50px;
+  opacity: 0;
+}
+
+</style>
+
+<script>
+const form = document.querySelector('#newsletter-footer');
+form.addEventListener('submit', function(event) {
+  const emailInput = event.target.querySelector('input[type="email"]');
+  const emailValue = emailInput.value;
+  if (!isValidEmail(emailValue)) {
+    event.preventDefault(); 
+    document.querySelector('.email-validate-error').style.display = "block";
+  }
+});
+
+function isValidEmail(email) {
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailPattern.test(email);
+}
+
+  if (window.location.search === "?customer_posted=true") {
+    var prevLoc = window.location.href;
+    if (!prevLoc.includes("#newsletter-footer")) {
+      window.location.href = `${prevLoc}#custom-footer-newsletter`;
+    }
+  }
+  const inputField = document.querySelector(".footer__newsletter input.footer__newsletter-input");
+  const arrowIcon = document.querySelector('.footer__newsletter #arrow-icon');
+  if (inputField) {
+    inputField.addEventListener('input', () => {
+      if (inputField.value.trim() !== '') {
+        arrowIcon.style.opacity = '1';
+      } else {
+        arrowIcon.style.opacity = '0';
+      }
+    });
+  }
+  
+const acceptCheckbox = document.getElementById('accept-checkbox');
+const checkMark =document.querySelector('.accept-terms-div .container .checkmark');
+  if (inputField){
+    inputField.addEventListener('keypress', (event) => {
+  if (event.key === "Enter") {
+    if (!acceptCheckbox.checked) {
+    event.preventDefault();
+    checkMark.classList.add('invalid-checkbox');
+  } else {
+    checkMark.classList.remove('invalid-checkbox');
+  }
+  }
+});
+  }
+if (arrowIcon){
+  arrowIcon.addEventListener('click', (event) => {
+    if (!acceptCheckbox.checked) {
+    event.preventDefault();
+    checkMark.classList.add('invalid-checkbox');
+  } else {
+    checkMark.classList.remove('invalid-checkbox');
+  }
+});
+}
+
+
+
+// checked if the email is used or not
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, '\\$&');
+    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+const locatn = window.location.href; 
+const test = new URL(locatn);
+if (test.searchParams.get('form_type') === 'customer') {
+    var errorMessage123 = document.getElementById('errorMessage-for-footer');
+    errorMessage123.style.display = 'block';
+    document.querySelector('.site-footer.new-site-footer .footer__newsletter-input').style.border = '0px';
+    test.searchParams.delete('form_type');
+    history.replaceState({}, '', test.href); 
+    var prevLoc = window.location.href;
+    if(!prevLoc.includes("#newsletter-footer")){
+      window.location.href = `${prevLoc}#custom-footer-newsletter`;
+    }
+
+} 
+
+  window.addEventListener('beforeunload', function() {
+    var errorMessage1234 = document.getElementById('errorMessage-for-footer');
+    errorMessage1234.style.display = 'none';
+});
+  
+
+</script>

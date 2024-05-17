@@ -1,0 +1,264 @@
+
+
+
+{%- liquid
+  assign grid_item_width = 'small--one-half medium-up--one-fifth'
+  assign row_of = 5
+
+  case section.settings.recent_count
+    when 2
+      assign grid_item_width = 'medium-up--one-half'
+      assign row_of = 2
+    when 3
+      assign grid_item_width = 'small--one-half medium-up--one-third'
+      assign row_of = 3
+    when 4
+      assign grid_item_width = 'small--one-half medium-up--one-quarter'
+      assign row_of = 4
+    when 6
+      assign grid_item_width = 'small--one-half medium-up--one-sixth'
+      assign row_of = 6
+    when 8
+      assign grid_item_width = 'small--one-half medium-up--one-quarter'
+      assign row_of = 4
+  endcase
+-%}
+
+<div
+  data-subsection
+  data-section-id="{{ section.id }}"
+  data-section-type="recently-viewed"
+  data-product-handle="{{ product.handle }}"
+  data-recent-count="{{ section.settings.recent_count }}"
+  data-grid-item-class="{{ grid_item_width }}"
+  data-row-of="{{ row_of }}"
+  class="recently-viewed-container"
+  >
+  <div class="index-section index-section--small">
+    <div class="page-width">
+      <header class="section-header">
+        <h3 class="section-header__title np-h8">{{ 'products.general.recent_products' | t }}</h3>
+      </header>
+    </div>
+
+    <div class="page-width page-width--flush-small">
+      <div>
+        <div class="grid-overflow-wrapper swiper mySwiper">
+          <div id="RecentlyViewed-{{ section.id }}" class="swiper-wrapper grid grid--uniform recently-viewed-grid" data-aos="overflow__animation"></div>
+          <div class="swiper-pagination"></div>
+          
+        </div>
+    </div>
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.recently-viewed.name",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "t:sections.recently-viewed.settings.content"
+    },
+    {
+      "type": "range",
+      "id": "recent_count",
+      "label": "t:sections.recently-viewed.settings.recent_count.label",
+      "default": 5,
+      "min": 2,
+      "max": 10,
+      "step": 1
+    }
+  ]
+}
+{% endschema %}
+<style>
+   .recently-viewed-grid .grid-product__image-mask .grid-product__image.lazyautosizes.lazyloaded{
+     position: unset;
+     aspect-ratio: 472/600;
+   }
+  .recently-viewed-grid .grid-product__content .grid-product__meta .color-number{
+    color: rgba(43, 39, 37, 0.50);
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px; 
+    letter-spacing: 0.25px;
+  }
+  .recently-viewed-container .shop-all-button.for-desktop{
+    margin-top: 32px;
+  }
+  .recently-viewed-container .page-width{
+    padding: 0px 4px;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .recently-viewed-container .section-header{
+    margin-bottom: 38px;
+  }
+  .recently-viewed-container .page-width .grid__item{
+    padding: 0px;
+  }
+  .recently-viewed-container .page-width .section-header__title.np-h8{
+    color: #2B2725;
+    text-align: center;
+    font-family: Intervogue;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 17px; 
+    letter-spacing: 0.52px;
+    text-transform: uppercase;
+  }
+  .recently-viewed-container .page-width .swiper-pagination .swiper-pagination-bullet{
+    width: 9px;
+    height: 12px;
+    border-radius: 0%;
+    border: 1px solid #2B2725;
+    background: transparent;
+    cursor: pointer;
+    opacity: 1;
+    margin: 0 3px;
+  }
+  .recently-viewed-container .page-width .swiper-pagination .swiper-pagination-bullet.swiper-pagination-bullet-active{
+    width: 9px;
+    height: 12px;
+    border-radius: 0%;
+    background: #2B2725;
+    cursor: pointer;
+    opacity: 1;
+  }
+   .recently-viewed-container .page-width .swiper-pagination {
+     position: relative;
+    margin-top: 48px;
+  }
+  .recently-viewed-grid .custom-title {
+    max-width: 230px;
+  }
+  @media (max-width: 1000px) {
+    .recently-viewed-grid .custom-title {
+      max-width: 100%;
+    }
+    .recently-viewed-grid .grid-product__meta{
+      flex-direction: column;
+    }
+    .grid-product__price {
+      text-align: left;
+    }
+  }
+  .recently-viewed-grid .pdp-recently-viewed-price {
+    margin-top: 0px;
+  }
+  @media (max-width: 1024px){
+    .recently-viewed-container .page-width .section-header__title.np-h8{
+      color: #2B2725;
+      text-align: center;
+      font-family: Intervogue;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 18px;
+      letter-spacing: 0.56px;
+      text-transform: uppercase;
+    }
+    .recently-viewed-container .section-header{
+      margin-bottom: 24px;
+    }
+  }
+  @media (max-width: 768px) {
+    
+    .recently-viewed-container .page-width .section-header{
+      margin-bottom: 19px;
+    }
+    .recently-viewed-grid .custom-title {
+      max-width: 180px;
+    }
+  }
+  .recently-viewed-grid .slick-track{
+    display: flex;
+  }
+  .recently-viewed-grid .grid-product__meta .grid-product__title{
+    padding-right: 0px;
+  }
+  .recently-viewed-grid .grid-product__meta{
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding-top: 8px;
+      padding-bottom: 0px;
+      padding-left: 8px;
+      padding-right: 8px;
+      text-align: left;
+    }
+  .recently-viewed-grid .grid-product__meta .grid-product__title{
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 17px;
+    letter-spacing: 0.52px;
+    text-transform: uppercase;
+  }
+  .recently-viewed-grid .grid-product__meta .grid-product__price{
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.25px;
+    margin: 0px;
+  }
+  @media only screen and (max-width: 768px){
+    .recently-viewed-grid .slick-track{
+      display: block;
+    }
+     .recently-viewed-grid .grid-product__content:nth-child(1){
+      margin-right: 4px;
+    }
+    .material-tag-pdp{
+      display: none;
+    }
+    .recently-viewed-grid .grid-product__meta{
+      display: flex;
+      justify-content: space-between;
+      padding-top: 6px;
+      padding-bottom: 0px;
+      padding-left: 10px;
+      padding-right: 10px;
+      flex-direction: column;
+      padding-left: 4px;
+    }
+    .recently-viewed-grid .grid-product__meta .grid-product__title{
+      padding-right: 0px;
+      padding-bottom: 4px;
+    }
+    .recently-viewed-grid .grid-product__meta .grid-product__title{
+      color: #2B2725 !important;;
+      font-family: Intervogue !important;;
+      font-size: 14px !important;;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 18px; /* 128.571% */
+      letter-spacing: 0.56px;
+      text-transform: uppercase;
+    }
+    .recently-viewed-grid .grid-product__meta .grid-product__price{
+      color: #2B2725;
+      font-family: Intervogue;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; /* 171.429% */
+      letter-spacing: 0.28px;
+    }
+
+  }
+</style>
+
+<script>
+
+  </script>

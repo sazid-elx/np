@@ -1,0 +1,290 @@
+{% layout 'gift_card' %}
+<!-- src="{{ gift_card.product.featured_image | img_url: master }}" -->
+{%- assign formatted_initial_value = gift_card.initial_value | money_without_trailing_zeros: gift_card.currency -%}
+<!-- <a href="https://imgbb.com/"><img src="https://i.ibb.co/fM5S65N/DAR-221109-NINETY-PERCENT-LOOKBOOK-SHOT-14-019-1.png" alt="DAR-221109-NINETY-PERCENT-LOOKBOOK-SHOT-14-019-1" border="0" /></a> -->
+<div class="giftcard__border{% if gift_card.expired or gift_card.enabled != true %} disabled{% endif %}">
+  <div class="giftcard__content">
+    <div class="giftcard_product_image_container">
+      {% if gift_card.product.featured_image %}
+        {% comment %} <img class="giftcard_product_image" src="{{ gift_card.product.featured_image | img_url: 'master' }}" > {% endcomment %}
+        {% liquid assign image = gift_card.product.featured_image %}
+        {% liquid assign img_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+        <img class="giftcard_product_image lazyload"
+          data-src="{{ img_url }}"
+          data-widths="[400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2160, 2600, 3000, 3400, 3800, 4100]"
+          data-aspectratio="{{ image.aspect_ratio }}"
+          data-sizes="auto"
+          alt="{{ image.alt }}"
+        >
+      {% else %}
+        {% comment %} <img class="giftcard_product_image" src="https://cdn.shopify.com/s/files/1/0283/1338/7053/files/NP_GIFT_CARD_VOUCHER.jpg?v=1682415583" > {% endcomment %}
+        {% liquid assign image = "https://cdn.shopify.com/s/files/1/0283/1338/7053/files/NP_GIFT_CARD_VOUCHER.jpg?v=1682415583" %}
+        {% liquid assign img_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+        <img class="giftcard_product_image lazyload"
+          data-src="{{ img_url }}"
+          data-widths="[400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2160, 2600, 3000, 3400, 3800, 4100]"
+          data-aspectratio="{{ image.aspect_ratio }}"
+          data-sizes="auto"
+          alt="{{ image.alt }}"
+        >
+      {% endif %}
+    </div>
+
+    <div class="giftcard__header">
+      <h2 class="h4 giftcard__title custom-giftcard__title">
+<!--         {{ 'gift_cards.issued.subtext' | t }} -->
+              Your Ninety Percent Gift Card
+      </h2>
+      {% unless gift_card.enabled %}
+        <span class="giftcard__tag">{{ 'gift_cards.issued.disabled' | t }}</span>
+      {% endunless %}
+      {%- assign gift_card_expiry_date = gift_card.expires_on | date: "%d/%m/%y" -%}
+      {% if gift_card.expired and gift_card.enabled %}
+         <span class="giftcard__tag">{{ 'gift_cards.issued.expired' | t: expiry: gift_card_expiry_date }}</span>
+      {% endif %}
+      {% if gift_card.expired != true and gift_card.expires_on and gift_card.enabled %}
+        <span class="giftcard__tag giftcard__tag--active">{{ 'gift_cards.issued.active' | t: expiry: gift_card_expiry_date }}</span>
+      {% endif %}
+    </div>
+
+    <div class="gift_card_value_container">
+      <div class="gift_card_value">Gift card value: {{ gift_card.initial_value | money}}</div>
+    </div>
+
+    <div class="gift_card_redeem_text_container">
+      <div class="gift_card_redeem_text">Use this code at checkout to redeem your gift card:</div>
+    </div>
+
+    <div class="gift_card_redeem_code_container">
+      <div class="gift_card_redeem_code">{{ gift_card.code }}</div>
+    </div>
+
+    <div class="gift_card_qr_container">
+      <div id="QrCode"></div>
+    </div>
+
+    <div class="gift_card_actions_wrapper">
+      <div class="gift_card_actions_container">
+        <button type="button" class="gift_card_copy_btn gift_card_action_btn">Copy</button>
+        <a href="#" class="gift_card_action_link__print gift_card_action_btn" onclick="window.print();">
+          {{ 'gift_cards.issued.print' | t }}
+        </a>
+      </div>
+    </div>
+
+    <div class="gift_card_start_shopping_container">
+      <a href="{{ shop.url }}" class="gift_card_start_shop_btn" target="_blank">{{ 'gift_cards.issued.shop_link' | t }}</a>
+    </div>
+
+    <div class="gift_card_footer_logo"_container>
+      <a href="{{ routes.root_url }}" itemprop="url">
+        <img
+          class="gift_card_footer_logo"
+          src="https://cdn.shopify.com/s/files/1/0283/1338/7053/files/NP_newsletter_logos-02.png?v=1681548329"
+          alt="gift-card-footer-logo"
+          itemprop="logo">
+      </a>
+    </div>
+
+<!--     <div class="giftcard__wrap">
+      <img src="{{ 'gift-card/card.jpg' | shopify_asset_url }}" alt="Gift card illustration">
+
+      {%- assign initial_value_size = formatted_initial_value | size -%}
+      <div class="h1 giftcard__amount{% if initial_value_size > 6 %} giftcard__amount--medium{% endif %}">
+        {% if gift_card.balance != gift_card.initial_value %}
+          <span class="tooltip">
+            <span class="tooltip__label">{{ gift_card.balance | money }} <small>left</small></span>
+          </span>
+        {% endif %}
+        <strong>{{ formatted_initial_value }}</strong>
+      </div>
+
+      {%- assign code_size = gift_card.code | format_code | size -%}
+      <div class="giftcard__code{% if code_size <= 25 %} giftcard__code--large{% elsif code_size > 25 and code_size <= 30 %} giftcard__code--medium{% else %} giftcard__code--small{% endif %}" onclick="selectText('GiftCardDigits');">
+        <div class="giftcard__code__inner">
+          <strong class="giftcard__code__text" id="GiftCardDigits">{{ gift_card.code | format_code }}</strong>
+        </div>
+      </div>
+    </div> -->
+
+<!--     <p class="giftcard__instructions">
+      {{ 'gift_cards.issued.redeem' | t }}
+    </p> -->
+
+<!--     <div id="QrCode"></div> -->
+    <script>
+      new QRCode(document.getElementById('QrCode'), {
+        text: "{{ gift_card.qr_identifier }}",
+        width: 120,
+        height: 120
+      });
+    </script>
+
+<!--     <div class="giftcard__actions">
+      <a href="{{ shop.url }}" class="btn" target="_blank">{{ 'gift_cards.issued.shop_link' | t }}</a>
+      <a href="#" class="action-link" onclick="window.print();">
+        <i class="action-link__print"></i>{{ 'gift_cards.issued.print' | t }}
+      </a>
+    </div> -->
+
+  </div>
+</div>
+
+<style>
+  .template-giftcard .page-width {
+    max-width: 700px;
+  }
+  .giftcard_product_image_container {
+    margin: 0 50px;
+    margin-bottom: 69px;
+  }
+  .giftcard_product_image {
+    width: 100%;
+    max-width: 600px;
+    max-height: 799px;
+  }
+  .custom-giftcard__title {
+    font-family: 'Helvetica Neue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    letter-spacing: 1px; 
+    color: #2B2725;
+  }
+  .giftcard__header {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 35px;
+  }
+  .gift_card_value_container {
+    font-family: 'Helvetica Neue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 22px;
+    text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #2B2725;
+    margin-bottom: 22px;
+  }
+  .gift_card_redeem_text_container {
+    font-family: 'Helvetica Neue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 22px;
+    text-align: center;
+    letter-spacing: 1px;
+    color: #2B2725;
+    margin-bottom: 22px;
+  }
+  .gift_card_redeem_code_container {
+    font-family: 'Helvetica Neue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 22px;
+    text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #2B2725;
+    margin-bottom: 59px;
+  }
+  .gift_card_actions_wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 67px;
+  }
+  .gift_card_actions_container {
+    width: 130px;
+    display: flex;
+    justify-content: space-between;
+  }
+  .gift_card_action_btn {
+    font-family: 'Helvetica Neue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 22px;
+    text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #2B2725;
+    border-bottom: 1px solid #000000;
+    padding-bottom: 7px;
+  }
+  .gift_card_start_shopping_container {
+    margin-top: 60px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 67px;
+  }
+  .gift_card_start_shop_btn {
+    border: 1px solid #000000;
+    padding: 6px 154px;
+    font-family: 'Helvetica Neue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 19px;
+    text-align: center;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #2B2725;
+  }
+  .giftcard__border {
+    box-shadow: unset;
+    padding: unset;
+  }
+  .gift_card_qr_container {
+    display: flex;
+    justify-content: center;
+  }
+  .gift_card_qr_container #QrCode {
+    width: 186px;
+  }
+  #QrCode img {
+    padding: unset;
+    border: none;
+    border-radius: 0;
+  }
+  .giftcard__content {
+    background-color: #fdfef9;
+  }
+</style>
+
+<script type="text/javascript">
+  /*============================================================================
+    Auto-select gift card code on click, based on ID passed to the function
+      - Use a different method depending on IE or others
+  ==============================================================================*/
+  function selectText(element) {
+    var doc = document,
+        text = doc.getElementById(element);
+
+    if (doc.body.createTextRange) { // ms
+      var range = doc.body.createTextRange();
+      range.moveToElementText(text);
+      range.select();
+    } else if (window.getSelection) { // moz, opera, webkit
+      var selection = window.getSelection(),
+          range = doc.createRange();
+      range.selectNodeContents(text);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+  }
+  function myCopyFunction() {
+  // Get the text element
+  document.querySelector(".gift_card_copy_btn.gift_card_action_btn").addEventListener('click', ()=>{
+    var copyText = document.querySelector(".gift_card_redeem_code").innerText;
+    // Copy the text inside the text field
+    navigator.clipboard.writeText(copyText);
+    alert("Copied the code: " + copyText);
+  })
+}
+  myCopyFunction()
+</script>
+</html>

@@ -1,0 +1,221 @@
+<div class="page-width page-content">
+
+  <header class="section-header text-center{% if cart.item_count == 0 %} section-header--404{% endif %}">
+    <h1 class="section-header__title">{{ 'cart.general.title' | t }}
+        <sup class="-drawer-cart-item-count{% if cart.item_count > 0 %} visible{% endif %}">{{ cart.item_count }}</sup>
+    </h1>
+
+  </header>
+
+  {%- if cart.item_count > 0 -%}
+    <form action="{{ routes.cart_url }}" method="post" novalidate data-location="page" id="CartPageForm">
+      <div class="cart__page">
+        <div data-products class="cart__page-col">
+          {% for item in cart.items %}
+            {%- render 'cart-item', product: item -%}
+          {%- endfor -%}
+        </div>
+        <div class="cart__page-col">
+          {% if settings.cart_notes_enable %}
+            <div>
+              <label for="CartNote">{{ 'cart.general.note' | t }}</label>
+              <textarea name="note" class="input-full cart-notes" id="CartNote">{{ cart.note }}</textarea>
+            </div>
+          {% endif %}
+
+          <div data-discounts>
+            {% if cart.cart_level_discount_applications != blank %}
+              <div class="cart__discounts cart__item-sub cart__item-row">
+                <div>{{ 'cart.general.discounts' | t }}</div>
+                <div class="text-right">
+                  {% for cart_discount in cart.cart_level_discount_applications %}
+                    <div class="cart__discount">
+                      {{ cart_discount.title }} (-{{ cart_discount.total_allocated_amount | money }})
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="cart__item-sub cart__item-row">
+            <div>{{ 'cart.general.subtotal' | t }}</div>
+            <div data-subtotal class="subtotal-price">{{ cart.total_price | money }}</div>
+          </div>
+
+          {% if settings.cart_terms_conditions_enable %}
+            <div class="cart__item-row cart__terms">
+              <input type="checkbox" id="CartTerms" class="cart__terms-checkbox">
+              <label for="CartTerms">
+                {% if settings.cart_terms_conditions_page != blank %}
+                  {{ 'cart.general.terms_html' | t: url: settings.cart_terms_conditions_page.url }}
+                {% else %}
+                  {{ 'cart.general.terms' | t }}
+                {% endif %}
+              </label>
+            </div>
+          {% endif %}
+
+          <div class="cart__item-row cart__checkout-wrapper">
+            <button type="submit" name="checkout" data-terms-required="{{ settings.cart_terms_conditions_enable }}" class="btn cart__checkout">
+              {{ 'cart.general.checkout' | t }}
+            </button>
+
+            {% if additional_checkout_buttons and settings.cart_additional_buttons %}
+              <div class="additional-checkout-buttons">{{ content_for_additional_checkout_buttons }}</div>
+            {% endif %}
+          </div>
+
+             <div class="drawer-clearpay-klarna np-h6 ">
+               
+              <div class="klarna klarna-clearpay-msg">Or 3 interest-free installments of <span class="klarna-clearpay-price klarna">{{cart.total_price | divided_by: 3 | money}}</span> with <img class="klarnap lazy" src="https://cdn.shopify.com/s/files/1/0283/1338/7053/files/Klarna_Logo_black.png?v=1685012094" loading="lazy"></div>
+              <div class="clearpay klarna-clearpay-msg">Or 4 interest-free installments of <span class="klarna-clearpay-price clearpay">{{cart.total_price | divided_by: 4 | money}}</span> with <img class="clearpay lazy" src="https://cdn.shopify.com/s/files/1/0283/1338/7053/files/clearpay_logo.png?v=1685012093" loading="lazy"></div>
+              {% if  localization.country.iso_code == "GB"%}
+                <div class="delivery">Complimentary UK delivery and returns</div>
+              {% endif %}
+             </div>
+
+              <div class="rte text-spacing">
+                {%- if cart.item_count == 0 -%}
+                  <p>{{ 'cart.general.empty' | t }}</p>
+                {%- endif -%}
+                <p>{{ 'cart.general.continue_browsing_html' | t: url: routes.all_products_collection_url }}</p>
+              </div>
+          
+          {% comment %}<div class="cart__item-row text-center">
+            <small>
+              {{ 'cart.general.shipping_at_checkout' | t }}<br />
+            </small>
+          </div>{% endcomment %}
+        </div>
+      </div>
+    </form>
+  {%- endif -%}
+</div>
+
+<style>
+  @media (max-width: 768px){
+      .cart__page .cart__image img {
+        width: 99px;
+        display: block;
+        height: 137px;
+       }
+        .cart__page .cart__image{
+           margin-left: 15px;
+        }
+      .cart__page .cart-item-name a.cart__item-name,
+      .cart__page .cart-item-name .price-wrapper-np .cart__item-price-col {
+        color: #2B2725;
+        font-family: Intervogue;
+        font-size: 12px !important;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 18px; 
+        letter-spacing: 0.56px !important;
+        text-transform: uppercase;
+      }
+     .cart__page .js-qty__num{
+       padding: 2px 20px;
+     }
+    .template-cart .page-width{
+      padding: 0px;
+    }
+    .cart__page .cart__item-details{
+      padding-right: 14px;
+    }
+    .cart__page .cart__item-sub.cart__item-row{
+      padding: 17px 18px 0px 18px;
+    } 
+    .cart__page .cart__item-row.cart__checkout-wrapper,
+    .cart__page .rte.text-spacing{
+      padding: 0px 18px 0px 18px;
+    }
+    .cart__page .drawer-clearpay-klarna.np-h6{
+       padding: 0px 18px 40px 18px;
+    }
+    .cart__page .rte.text-spacing p{
+      color: #2B2725;
+      font-family: Intervogue;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; 
+      letter-spacing: 0.28px;
+    }
+    .cart__page .rte.text-spacing p a{
+      border-bottom: 1px solid #2B2725 !important;
+    }
+    .cart__page .cart__item-sub.cart__item-row{
+      color: #2B2725;
+      font-family: Intervogue;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; 
+      letter-spacing: 0.28px;
+      justify-content: flex-start;
+      align-items: baseline;
+    }
+    .cart__page .cart__item-sub.cart__item-row .subtotal-price{
+      color: #2B2725;
+      font-family: Intervogue;
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 27px; 
+      letter-spacing: 0.9px;
+      text-transform: uppercase;
+    }
+    .cart__page .btn.cart__checkout{
+      width: 100%;
+      text-transform: capitalize;
+      color: #FFF;
+      font-family: Intervogue;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; 
+      letter-spacing: 0.8px;
+      text-align: left;
+      background: #2B2725;
+    }
+    .cart__page .drawer-clearpay-klarna{
+      display: block;
+    }
+  }
+
+  
+</style>
+{% schema %}
+{
+  "name": "t:sections.main-cart.name"
+}
+{% endschema %}
+
+<script>
+    !(function mutationObserverPollingFn() {
+
+      var targetcart = document.querySelector("#CartPageForm div:nth-child(2) div.cart__item-sub.cart__item-row  div.subtotal-price");
+
+      if (targetcart) {
+        var symbl = '{{ cart.currency.symbol }}';
+        var options = { childList: true, subtree: true, attributes: true };
+        var observerFn2 = function (mutations) {
+              for (var mutation of mutations) {
+                      if (mutation.type === 'childList') {
+                        var newKlarnaTotal = symbl+''+(targetcart.innerHTML.substring(1)/3).toFixed(2);
+                        var newClearPayTotal = symbl+''+(targetcart.innerHTML.substring(1)/4).toFixed(2);
+                        $('.drawer-clearpay-klarna .klarna-clearpay-price.klarna').text(newKlarnaTotal);
+                        $('.drawer-clearpay-klarna .klarna-clearpay-price.clearpay').text(newClearPayTotal);
+                      }
+              }
+        };
+        new MutationObserver(observerFn2).observe(targetcart, options);
+
+      } else {
+        setTimeout(mutationObserverPollingFn, 25);
+
+      }
+
+    })();
+</script>

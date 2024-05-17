@@ -1,0 +1,22 @@
+#insta-feed{
+   max-width: 830px !important;
+   width: 100% !important; 
+   margin: 167px auto 87px !important;
+}
+
+#insta-feed a .instafeed-container .js-lazy-image.js-lazy-image--handled{
+    max-width: 266px !important;
+}
+#insta-feed a .instafeed-container .instafeed-overlay {
+    width: 97% !important;
+    height: 97% !important;
+    margin : 0px !important;
+}
+
+
+@media only screen and ( max-width:768px ){
+    #insta-feed{
+        padding: 0px 0px !important;
+        margin: 67px auto 22px !important;
+    }
+}

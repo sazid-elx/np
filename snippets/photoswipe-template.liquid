@@ -1,0 +1,124 @@
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="pswp__bg"></div>
+  <div class="pswp__scroll-wrap">
+    <div class="pswp__container">
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+      <div class="pswp__item"></div>
+    </div>
+
+    <div class="pswp__ui pswp__ui--hidden">
+      <div class="pswp__counter"></div>
+      <button class="btn btn--body btn--circle pswp__button pswp__button--arrow--left" title="{{ 'general.pagination.previous' | t }}">
+      <svg xmlns="http://www.w3.org/2000/svg" width="39" height="76" viewBox="0 0 39 76" fill="none">
+      <path d="M38 75L1.00016 38.0002L38 1.00002" stroke="#2B2725" stroke-width="1.25"/>
+      </svg>
+      </button>
+
+      <button class="btn btn--body btn--circle btn--large pswp__button pswp__button--close" title="{{ 'general.accessibility.close_modal' | t }}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="70" height="70" viewBox="0 0 70 70" fill="none">
+        <g clip-path="url(#clip0_7709_2899)">
+        <path d="M35 0C15.67 0 0 15.67 0 35C0 54.33 15.67 70 35 70C54.33 70 70 54.33 70 35C70 15.67 54.33 0 35 0ZM50.53 49.47L49.47 50.53L35 36.06L20.53 50.53L19.47 49.47L33.94 35L19.47 20.53L20.53 19.47L35 33.94L49.47 19.47L50.53 20.53L36.06 35L50.53 49.47Z" fill="#2B2725"/>
+        </g>
+        <defs>
+        <clipPath id="clip0_7709_2899">
+        <rect width="70" height="70" fill="white"/>
+        </clipPath>
+        </defs>
+        </svg>
+      </button>
+
+      <button class="btn btn--body btn--circle pswp__button pswp__button--arrow--right" title="{{ 'general.pagination.next' | t }}">
+           <svg xmlns="http://www.w3.org/2000/svg" width="39" height="76" viewBox="0 0 39 76" fill="none">
+      <path d="M0.5 1L37.4998 37.9998L0.499976 75" stroke="#2B2725" stroke-width="1.25"/>
+      </svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<style>
+ .btn--circle.pswp__button.pswp__button--arrow--left,
+  .btn--circle.pswp__button.pswp__button--arrow--right
+  {
+   width: 52px;
+   height: 52px;
+   background: transparent !important;
+   border: 0;
+ }
+  .btn--large.pswp__button.pswp__button--close{
+  background: transparent !important;
+   border: 0;
+    width: 90px;
+  }
+    .btn--large.pswp__button.pswp__button--close > svg{
+   width: 70px;
+   height: 70px;
+    }
+.btn--circle.pswp__button.pswp__button--arrow--left > svg,
+  .btn--circle.pswp__button.pswp__button--arrow--right > svg{
+  width: 52px;
+   height: 52px;
+}
+  .pswp__ui .btn.pswp__button--arrow--left{
+    margin-left: 0px;
+  }
+  .pswp__ui{
+    transition: unset;
+  }
+  
+  .pswp__scroll-wrap .pswp__ui{
+    justify-content: space-between;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 100%;
+  }
+  .pswp{
+    position: relative;
+    top: 110px !important;
+  }
+  .pswp__zoom-wrap{
+    top: -40px;
+  }
+  .pswp__counter{
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: #2B2725;
+    text-align: right;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px; 
+    letter-spacing: 0.25px;
+  }
+  .pswp__button{
+    bottom: 36px;
+  }
+  button.btn.btn--body.btn--circle.btn--large.pswp__button.pswp__button--close {
+    visibility: hidden;
+    position: absolute;
+    bottom: -385px;
+    left: 50%;
+    right: 50%;
+    transform: translate(-50%, 50%);
+}
+  .template-product .pswp{
+    cursor: url('https://cdn.shopify.com/s/files/1/0283/1338/7053/files/Group_114.png?v=1712143002'), auto !important;
+    /* cursor: url('https://cdn.shopify.com/s/files/1/0283/1338/7053/files/Vector.png?v=1690987412'), auto !important; */
+  }
+</style>
+
+<script>
+
+document.body.addEventListener('click',(e)=>{
+    if(e.target.classList.contains('pswp__img')){
+        console.log('abujabudio');
+      document.querySelector(".btn.btn--body.btn--circle.btn--large.pswp__button.pswp__button--close").click();
+    }
+})
+
+
+</script>

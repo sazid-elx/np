@@ -1,0 +1,926 @@
+
+{%- if settings.cart_type == 'drawer' -%}
+ <div class="cart-window-bg"></div>
+  <div id="CartDrawer" class="drawer drawer--right">
+    <form id="CartDrawerForm" action="{{ routes.cart_url }}" method="post" novalidate class="drawer__contents">
+      <div class="drawer__fixed-header">
+        <div class="drawer__header appear-animation appear-delay-1">
+          <div class="drawer__title np-h9">{{ 'cart.general.title' | t }}
+               <sup class="-drawer-cart-item-count{% if cart.item_count > 0 %} visible{% endif %}">{{ cart.item_count }}</sup>
+          </div>
+  
+          <div class="drawer__close">
+            <button type="button" class="drawer__close-button js-drawer-close">
+              <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><path d="M19 17.61l27.12 27.13m0-27.12L19 44.74"/></svg>
+              <span class="icon__fallback-text">{{ 'cart.general.close_cart' | t }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="drawer__inner">
+        <div class="drawer__scrollable">
+          <div data-products class="appear-animation appear-delay-2 cart-items-wrapper-np"></div>
+
+          {% if settings.cart_notes_enable %}
+            <div class="appear-animation appear-delay-3">
+              <label for="CartNoteDrawer">{{ 'cart.general.note' | t }}</label>
+              <textarea name="note" class="input-full cart-notes" id="CartNoteDrawer">{{ cart.note }}</textarea>
+            </div>
+          {% endif %}
+        </div>
+
+        <div class="drawer__footer appear-animation appear-delay-4">
+          <div data-discounts>
+            {% if cart.cart_level_discount_applications != blank %}
+              <div class="cart__discounts cart__item-sub cart__item-row">
+                <div>{{ 'cart.general.discounts' | t }}</div>
+                <div class="text-right">
+                  {% for cart_discount in cart.cart_level_discount_applications %}
+                    <div class="cart__discount">
+                      {{ cart_discount.title }} (-{{ cart_discount.total_allocated_amount | money }})
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="cart__item-sub cart__item-row cart-subtotal-wrapper-np">
+            <div class="ajaxcart__subtotal">{{ 'cart.general.subtotal' | t }}</div>
+            <div data-subtotal class="total-price">{{ cart.total_price | money }}</div>
+          </div>
+
+          <div class="cart-page-button for-mobile">
+            <a href="/cart">Go to shopping bag</a>
+          </div>
+  
+          <div class="cart__checkout-wrapper for-tablet">
+            <button type="submit" name="checkout" data-terms-required="{{ settings.cart_terms_conditions_enable }}" class="btn cart__checkout np-h9">
+              {{ 'cart.general.checkout' | t }}
+            </button>
+
+            {% if additional_checkout_buttons and settings.cart_additional_buttons %}
+              <div class="additional-checkout-buttons additional-checkout-buttons--vertical">{{ content_for_additional_checkout_buttons }}</div>
+            {% endif %}
+          </div>
+  
+            <div class="drawer-clearpay-klarna np-h6 ">
+               
+              <div class="klarna klarna-clearpay-msg">Or 3 interest-free installments of <span class="klarna-clearpay-price klarna">{{cart.total_price | divided_by: 3 | money}}</span> with <img class="klarnap lazy" src="https://cdn.shopify.com/s/files/1/0283/1338/7053/files/2560px-Klarna_Logo_black_svg.png?v=1691141109" loading="lazy"></div>
+              <div class="clearpay klarna-clearpay-msg">Or 4 interest-free installments of <span class="klarna-clearpay-price clearpay">{{cart.total_price | divided_by: 4 | money}}</span> with <img class="clearpay lazy" src="https://cdn.shopify.com/s/files/1/0283/1338/7053/files/CP_logo_lockup_6328x2204_blackclear_png.png?v=1691141110" loading="lazy"></div>
+              {% if  localization.country.iso_code == "GB"%}
+                <div class="delivery">Complimentary UK delivery and returns</div>
+              {% endif %}
+             </div> 
+
+                  <!-- Afterpay Messaging  -->  
+           {% comment %} <div class="drawer-clearpay-klarna np-h6">
+                   <div class="klarna klarna-clearpay-msg">Or 3 interest-free installments of <span class="klarna-clearpay-price klarna">{{cart.total_price | divided_by: 3 | money}}</span> with <img class="klarnap lazy" src="https://cdn.shopify.com/s/files/1/0283/1338/7053/files/Klarna_Logo_black.png?v=1685012094" loading="lazy"></div>
+                    <div class="custom-clearpay-wrapper">
+                        <afterpay-placement
+                          data-locale="en_GB"
+                          data-currency="GBP"
+                          data-amount= "{{ cart.total_price | money }}"
+                          data-badge-theme = "black-on-white"
+                          ></afterpay-placement>
+                <!-- Afterpay Messaging  -->
+                  </div>{% endcomment %}
+          {% if settings.cart_terms_conditions_enable %}
+            <div class="cart__item-row cart__terms">
+              <input type="checkbox" id="CartTermsDrawer" class="cart__terms-checkbox">
+              <label for="CartTermsDrawer">
+                {% if settings.cart_terms_conditions_page != blank %}
+                  {{ 'cart.general.terms_html' | t: url: settings.cart_terms_conditions_page.url }}
+                {% else %}
+                  {{ 'cart.general.terms' | t }}
+                {% endif %}
+              </label>
+            </div>
+          {% endif %}
+
+          <div class="cart__checkout-wrapper for-desktop">
+            <button type="submit" name="checkout" data-terms-required="{{ settings.cart_terms_conditions_enable }}" class="btn cart__checkout np-h9">
+              {{ 'cart.general.checkout' | t }}
+            </button>
+
+            {% if additional_checkout_buttons and settings.cart_additional_buttons %}
+              <div class="additional-checkout-buttons additional-checkout-buttons--vertical">{{ content_for_additional_checkout_buttons }}</div>
+            {% endif %}
+          </div>
+          <div class="cart__item-row text-left cart-footer-subtitle np-h6">
+           </div>
+        </div>
+      </div>
+
+      <div class="drawer__cart-empty appear-animation appear-delay-2">
+        <div class="drawer__scrollable">
+          {{ 'cart.general.empty' | t }}
+        </div>
+      </div>
+    </form>
+  </div>
+{%- endif -%}
+
+<style>
+.cart__item-details .stoke-out-msg p{
+  display: none; 
+}
+.cart__item-details .stoke-out-msg p:first-child{
+  display: block; 
+  color: #FF3023;
+  font-family: Intervogue;
+  font-size: 12.5px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 21px; 
+  letter-spacing: 0.25px;
+  padding-bottom: 5px;
+}
+  #CartDrawer .clearpay.lazy{
+    width: 84px;
+    margin-left: -9px;
+  }
+  #CartDrawer .klarnap.lazy {
+    width: 40px;
+    height: 8px;
+}
+  .drawer-clearpay-klarna{
+    font-style: normal;
+  }
+  .for-tablet,
+   .for-mobile{
+    display: none;
+  }
+  .for-desktop{
+    display: block;
+  }
+#CartDrawer{
+  width: 542px !important;
+}
+#CartDrawer .cart-item-name a.cart__item-name.np-h10{
+  color: #2B2725;
+  font-family: Intervogue;
+  font-size: 13px !important;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 17px;
+  letter-spacing: 0.52px !important;
+  text-transform: uppercase;
+}
+ #CartDrawer .cart-item-name .price-wrapper-np, #CartDrawer .compared-price.np-h6{
+  color: #2B2725;
+  font-family: Intervogue;
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 17px; 
+  letter-spacing: 0.52px;
+  text-transform: uppercase;
+  display: flex;
+  gap: 10px;
+} 
+
+
+.updown-arrow-wrapper {
+    padding-top: 3px;
+    margin-left: -10px;
+}
+
+  #CartDrawer .cart__item {
+    display: flex;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid;
+    border-bottom-color: #e8e8e1;
+    border-bottom-color: var(--colorBorder); 
+}
+
+#CartDrawer .cart__item:first-child {
+      /* margin-top: 20px !important; */
+      /* margin-bottom: 25px; */
+      padding-top: 18px;
+      border-top: 1px solid;
+      border-top-color: #e8e8e1;
+      border-top-color: var(--colorBorder);
+  }
+  .drawer__footer {
+    border-top: 0px;
+  }
+  .js-qty__num {
+    border: 0.25px solid rgba(43, 39, 37, 0.5);
+  }
+  .js-qty__adjust--minus {
+      border-right: 0.25px solid rgba(43, 39, 37, 0.2);
+  }
+  .js-qty__adjust--plus {
+    border-left: 0.25px solid rgba(43, 39, 37, 0.2);
+  }
+  .js-qty__wrapper {
+    max-width: 110px;
+  }
+  .drawer__scrollable {
+    padding: 0px 50px;
+  }
+  .cart__image  {
+    margin-right: 30px;
+  }
+  .drawer__footer {
+    padding: 26px 50px 0px 50px;
+  }
+  .drawer .cart__remove {
+    display: block;
+  }
+  .cart__remove span {
+    color: rgba(43, 39, 37, 0.60) !important;
+    text-align: right;
+    font-family: Intervogue;
+    font-size: 12px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 17px; 
+    letter-spacing: 0.52px;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+  .btn.cart__checkout {
+    text-align: left;
+    text-transform: unset;
+    padding: 22px 36px 22px 24px;
+    font-weight: 500;
+  }
+  .ajaxcart__subtotal {
+    height: 30px;
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px; 
+    letter-spacing: 0.25px;
+  }
+  .drawer__footer .cart__item-sub {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+  .drawer__footer .cart__item-row {
+    margin-bottom: 0px;
+  }
+  .drawer__footer .cart__checkout-wrapper {
+    /* margin-top: 35px; */
+    margin-bottom: 30px;
+  }
+  .cart__item-name {
+    margin-bottom: 0px;
+  }
+ 
+  .color-image {
+    height: 20.57px;
+    width: 16px;
+  }
+  .cart-item-material {
+    text-transform: none;
+  }
+  .np-cart-dropdown-style {
+      color: #2B2725;
+      font-variant-numeric: ordinal;
+      font-feature-settings: 'dlig' on;  /* H10 */
+      font-family: Silvana;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 18px; 
+      letter-spacing: -0.12px;
+  
+  }
+  .cart-item-colour-image {
+    margin: 17px 0px 12px 0px;
+  }
+
+
+
+{% comment %} size-dropdown  {% endcomment %}
+
+.dropbtn {
+   display: inline-block;
+    padding: 3px;
+ 
+    border: none;
+    cursor: pointer;
+    padding-right: 20px;
+    z-index: 2;
+  }
+
+  .arrow {
+    border: solid black;
+    border-width: 0 1px 1px 0;
+    display: inline-block;
+    padding: 2.5px;
+  }
+  .up {
+    transform: rotate(-135deg);
+    -webkit-transform: rotate(-135deg);
+   
+  }
+  
+  .down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+   
+  }
+ 
+
+  
+  
+  .dropdown {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+  
+  .dropdown-content {
+    display: none;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    right: -20px;
+    top: 26px;
+    position: absolute;
+    min-width: 104px;
+    height: auto;
+    overflow: auto;
+    background-color: white;
+    z-index: 99;    
+    padding: 13px 26px;
+  }
+  
+  .dropdown-content a {
+    color: black;
+    text-decoration: none;
+    display: block;
+  }  
+  .show-dropdown {
+    display: flex !important;
+  }
+  .size-dropdown-wrapper  .underline {
+    text-decoration: underline;
+  }
+{% comment %} size-dropdown-end  {% endcomment %}
+
+.compared-price {
+  text-decoration: line-through;
+}
+
+.cart__item-sub.counter-and-remove-wrapper {
+  flex-grow: initial;
+  flex-shrink: initial;
+  flex-basis: auto;
+}
+
+#CartDrawerForm .drawer__fixed-header{
+  /* height: 152px; */
+  overflow: visible;
+  padding-left: 48px;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+
+#CartDrawer .drawer__fixed-header .drawer__header{
+  /* padding-top: 92px; */
+  padding-bottom: 0px;
+}
+
+#CartDrawerForm .drawer__inner .drawer__scrollable::-webkit-scrollbar{
+  width: 7px;
+}
+#CartDrawer .drawer__fixed-header .drawer__header .drawer__title.np-h9{
+  color: #2B2725;
+  font-family: Intervogue;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 25px;
+  letter-spacing: 0.32px;
+  text-transform: capitalize;
+}
+#CartDrawer .drawer__fixed-header .drawer__header .icon.icon-close{
+  position: static;
+  /* top: -66px; */
+  right: 40px;
+}
+@media only screen and (max-width: 768px){
+  #CartDrawer .drawer__fixed-header .drawer__header{
+  padding-top: 92px;
+  padding-bottom: 0px;
+}
+#CartDrawer .drawer__fixed-header .drawer__header .icon.icon-close{
+  position: absolute;
+  top: -66px;
+  right: 40px;
+}
+}
+.total-price{
+  font-family: Intervogue !important;
+}
+@media only screen and (min-width: 769px)
+{ 
+  #CartDrawer .drawer__close-button{
+    height: auto;
+    left: 6px;
+  }
+  .drawer--right.drawer--is-open {
+    right: 0%;
+    transition: right 0.45s;
+    transform: unset;
+  }
+
+.drawer--right {
+    width: 40%;
+    right: -100%;
+    transition: right 0.45s;
+}
+.drawer .cart__image {
+/*       flex: 0 0 144px; */
+      height: 100%;     
+}
+
+}
+@media only screen and (max-width: 768px) {
+  .drawer__footer .cart__item-sub{
+    padding-bottom: 15px;
+  }
+  .drawer-clearpay-klarna{
+    display: none;
+  }
+  button.btn.cart__checkout.np-h9{
+    background: white;
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 171.429% */
+    letter-spacing: 0.28px;
+    text-transform: initial !important;
+    text-align: left;
+    padding: 0px 0px 6px 0px;
+    border-bottom: 1px solid #2B2725;
+  }
+  .cart__checkout{
+    width: auto;
+  }
+  .drawer__footer .cart__checkout-wrapper{
+    margin-bottom: 0px !important;
+  }
+  .cart-page-button.for-mobile{
+    width: 100%;
+    text-align: left;
+    padding: 17px 0px 17px 22px;
+    background: #2B2725;  
+    font-family: Intervogue;
+    font-size: 16px;
+    font-style: normal;
+
+    line-height: 24px; 
+    letter-spacing: 0.8px;
+  }
+  .cart-page-button.for-mobile a{
+     color: #FFF;
+  }
+    .drawer .cart__image img{
+      width: 99px;
+      height: 137px;
+    }
+  .for-mobile{
+    display: block;
+  }
+
+.cart__item-sub.counter-and-remove-wrapper {
+  flex-grow: initial;
+  flex-shrink: initial;
+  flex-basis: auto;
+}
+ #CartDrawer .drawer__fixed-header {
+    height: 58px !important;
+    padding-left: 18px;
+}
+ #CartDrawer .cart__item:first-child{
+   padding-top: 25px !important;
+   padding-bottom: 25px;
+   margin-bottom: 25px !important;
+ }
+  .cart-item-colour-image {
+  margin: 10px 0px;
+}
+.drawer--right.drawer--is-open {
+    right: 0%;
+    transition: right 0.45s;
+    transform: unset;
+}
+  #CartDrawer.drawer--right.drawer--is-open{
+    width: 100% !important;
+    right: 0%;
+    transition: bottom 0.45s;
+    height: 450px;
+    top: unset;
+    bottom: 0;
+  }
+  button.btn.cart__checkout.np-h9:hover{
+    background: transparent !important;
+  }
+#CartDrawer.drawer--right{
+    width: 100%;
+    bottom: -100%;
+    transition: bottom 0.45s;
+}
+.drawer--right {
+    width: 100%;
+    right: -100%;
+    transition: right 0.45s;
+}
+#CartDrawer .drawer__fixed-header .drawer__header{
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+#CartDrawer .drawer__fixed-header .drawer__header .drawer__title.np-h9{
+  display: inline-block;
+  color: #2B2725;
+  font-family: Intervogue;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 25px; 
+  letter-spacing: 0.32px;
+  padding-top: 12px;
+}
+  #CartDrawer .drawer__fixed-header .drawer__header .icon.icon-close{
+    top: 10px !important;
+    right: 0 !important;
+  }
+  #CartDrawer .drawer__fixed-header .drawer__close{
+    position: relative;
+  }
+  .drawer__close-button {
+    position: unset;
+  }
+  #CartDrawer .cart__item:first-child{
+    margin-top: 0px !important;
+  }
+.drawer .cart__image {
+/*       flex: 0 0 140px; */
+      height: 100%;
+      
+      }
+      .js-qty__wrapper {
+    max-width: 100px;
+  }
+      .drawer__scrollable {
+        padding: 0px 18px;
+      }
+      .cart__image {
+        margin-right: 10px !important;
+      } 
+      .cart__item-title {
+    gap: 0px;
+    flex-direction: column;
+    
+    }
+    .cart__item-title .cart__item-price-col {
+      text-align: left !important;
+    }
+    .cart-item-name {
+        width: 100%;
+      
+    }
+    .cart-item-material {
+      display: none;
+    }
+
+    .price-wrapper-np {
+      margin-bottom: 0px;
+    }
+    .drawer__footer .cart__item-sub {
+      flex-direction: row;
+    }
+    .drawer__footer .cart__checkout-wrapper {
+      margin-top: 20px;
+      margin-bottom: 0px;
+    }
+    .drawer__footer {
+      padding: 17px 18px !important;
+    }
+    .cart-footer-subtitle {
+      display: none;
+    }
+    .btn.cart__checkout {
+      text-align: center;
+      padding: 16px;
+      font-family: 'Intervogue';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 21px;
+
+      text-align: center;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+
+      color: #FFFFFF;
+    }
+    .cart__item-name {
+      font-size: 12px;
+      line-height: 18px;
+      letter-spacing: 0.02em;
+      font-weight: 400;
+      font-family: "Intervogue";
+      text-transform: uppercase;
+    }
+
+    .cart__item-price-col, .compared-price {
+      line-height: 18px;
+      letter-spacing: 0.56px;
+    }
+    .cart__remove a {
+      color:rgba(0, 0, 0, 0.6)
+    }
+    .drawer__title {
+      font-family: 'Intervogue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 9px;
+    line-height: 15px;
+    
+    
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    
+    color: #2B2725;
+  }
+  .ajaxcart__subtotal {
+  
+   
+    font-weight: 400;
+    font-size: 10px;
+    line-height: 17px;
+  
+    
+    letter-spacing: -0.01em;
+    
+    color: #2B2725;
+    }
+   
+  }
+
+ .drawer-clearpay-klarna{
+    padding-top: 22px;
+    font-weight: 300;
+    text-transform: none;
+  }
+  .klarna-clearpay-msg {
+    padding-bottom: 17px;
+    border-bottom: 1px solid rgba(43, 39, 37, 0.2);
+    margin-bottom: 15px;
+    }
+    span.klarna-clearpay-price {
+        font-weight: 500;
+    }
+    img.clearpay {
+        vertical-align: middle;
+    }
+    .drawer .cart__image > a{
+      height: auto !important;
+      padding: 0px !important;
+    }
+  .cart__item-details{
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+  .cart__item-sub.counter-and-remove-wrapper{
+    align-items: center;
+  }
+  @media (max-width: 1024px){
+    #CartDrawer{
+      width: 360px !important;
+    }
+    #CartDrawerForm .drawer__fixed-header{
+      height: 104px;
+    }
+    #CartDrawer .cart__item:first-child{
+      margin-bottom: 20px;
+    }
+    #CartDrawer .cart__item{
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+    #CartDrawer .cart__item:last-child{
+      margin-bottom: 0px;
+    }
+    .drawer .cart__image > a{
+      padding: 0px !important;
+    }
+/*     .drawer .cart__image img{
+      width: 98px;
+      height: 136px;
+    } */
+    .cart__item-details{
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+    }
+    #CartDrawer .drawer__fixed-header{
+      padding: 0px 18px;
+      margin: 0px;
+    }
+    .cart-item-colour-image{
+      margin: 12px 0px 0px 0px;
+    }
+    #CartDrawer .drawer__fixed-header .drawer__header .icon.icon-close{
+      top: -44px;
+      right: 23px;
+    }
+    #CartDrawer .drawer__fixed-header .drawer__header{
+      /* padding-top: 55px; */
+      padding-bottom: 0px;
+    }
+    .drawer__scrollable{
+      padding: 0px 18px;
+    }
+    /* #CartDrawer .cart__item:first-child{
+      padding-top: 20px;
+    } */
+    .cart__image{
+      margin-right: 11px;
+    }
+
+    #CartDrawer .cart-item-name a.cart__item-name.np-h10{
+      font-size: 14px !important;
+      line-height: 18px; 
+      letter-spacing: 0.56px !important;
+    }
+    #CartDrawer .cart-item-name .price-wrapper-np{
+      font-size: 14px !important;
+      line-height: 18px !important; 
+      letter-spacing: 0.56px !important;
+    }
+    .cart__remove span{
+      color: rgba(43, 39, 37, 0.60);
+      text-align: right;
+      font-family: Intervogue;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+    .js-qty__wrapper{
+      max-width: 82px;
+    }
+    .js-qty__adjust{
+      padding : 0px 6px;
+    }
+    .cart__item-sub.counter-and-remove-wrapper{
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+    .drawer__footer{
+      padding: 12px 18px;
+    }
+    .drawer__footer .cart__item-sub {
+        flex-direction: row;
+        justify-content: flex-start;
+        align-items: baseline;
+    }
+    .drawer__footer .cart__item-sub .ajaxcart__subtotal,
+     .drawer__footer .cart__item-sub .total-price{
+        font-family: Intervogue;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 500;
+        line-height: 24px; 
+        letter-spacing: 0.28px;
+    }
+    .for-tablet{
+      display: block;
+    }
+    .for-desktop{
+      display: none;
+    }
+    .drawer-clearpay-klarna{
+      padding: 0px;
+    }
+    .drawer__footer .cart__checkout-wrapper{
+      /* margin-top: 20px; */
+      margin-bottom: 26px; 
+    }
+    .btn.cart__checkout.np-h9{
+      color: #FFF;
+      font-family: Intervogue;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; /* 150% */
+      letter-spacing: 0.8px;
+      
+    }
+    .btn.cart__checkout{
+      padding: 17px 0px 17px 22px;
+    }
+     .cart-page-button.for-mobile a:hover{
+      color: #FFF;
+      transition: background 0.2s ease 0s;
+    }
+  }
+
+</style>
+<script>
+  !(function mutationObserverPollingFn() {
+
+      var targetEl = document.querySelector('.cart__item-sub.cart__item-row.cart-subtotal-wrapper-np .total-price');
+
+      if (targetEl) {
+        var symbl = '{{ cart.currency.symbol }}';
+        var options = { childList: true, subtree: true, attributes: true };
+        var observerFn = function (mutations) {
+              for (var mutation of mutations) {
+                      if (mutation.type === 'childList') {
+                        var newKlarnaTotal = symbl+''+(targetEl.innerHTML.substring(1)/3).toFixed(2);
+                        var newClearPayTotal = symbl+''+(targetEl.innerHTML.substring(1)/4).toFixed(2);
+                        $('.drawer-clearpay-klarna .klarna-clearpay-price.klarna').text(newKlarnaTotal);
+                        $('.drawer-clearpay-klarna .klarna-clearpay-price.clearpay').text(newClearPayTotal);
+                      }
+              }
+        };
+        new MutationObserver(observerFn).observe(targetEl, options);
+
+      } else {
+        setTimeout(mutationObserverPollingFn, 25);
+
+      }
+
+    })();
+
+
+// --------- for clearpay price changing ----------//
+  
+// const targetNode10 = document.querySelector(".cart__item-sub.cart__item-row.cart-subtotal-wrapper-np .np-h9");
+// const config10 = { attributes: true, childList: true, subtree: false };
+
+//   const styleTag = document.createElement('style'); 
+//   styleTag.setAttribute('class', 'afterpay-custom');
+// const cssRules = `
+//     .afterpay-paragraph{
+//             font-size: 12px !important;
+//             line-height: 21px !important;
+//             letter-spacing: 0.04em !important;
+//             color: #2B2725 !important;
+//     }
+//      afterpay-placement{
+//        margin : 0px !important;
+//      }
+//      .afterpay-paragraph .afterpay-logo-link .afterpay-logo.type-badge{
+//             cursor: unset !important;
+//             margin-left: -8px !important;
+//             z-index: -1 !important;
+//             position: sticky !important;
+//      }
+//      .afterpay-paragraph .afterpay-logo-link #logo-link{
+//         margin-left: -14px;
+//      }
+    
+// `;
+
+//   styleTag.innerHTML = cssRules;
+
+
+// function myGreeting() {
+//    document.querySelector(".drawer__footer .custom-clearpay-wrapper afterpay-placement").shadowRoot.appendChild(styleTag); 
+// }
+// const myTimeout = setInterval(myGreeting, 10);
+
+  
+// const callback10 = (mutationList, observer10) => {
+//     const cartTotalPrice = document.querySelector(".cart__item-sub.cart__item-row.cart-subtotal-wrapper-np .np-h9").innerText;
+//     const afterpay1 =  document.querySelector(".drawer__footer .custom-clearpay-wrapper");
+  
+//     afterpay1.innerHTML = `<afterpay-placement
+//                     data-locale="en_GB"
+//                     data-currency="GBP"
+//                     data-amount= "${cartTotalPrice}"
+//                     data-badge-theme="black-on-white"
+//                   ></afterpay-placement>`;
+
+  
+  
+// };
+
+// const observer10 = new MutationObserver(callback10);
+// observer10.observe(targetNode10, config10);
+
+
+
+
+</script>

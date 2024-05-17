@@ -1,0 +1,230 @@
+{%- assign animation_row = 1 -%}
+{%- assign drawer_position = 'right' -%}
+{% if logo_alignment == 'center' %}
+  {%- assign drawer_position = 'left' -%}
+{% endif %}
+
+<div id="NavDrawerSearch" class="drawer drawer--{{ drawer_position }}">
+  <div class="drawer__contents">
+
+    {% comment %} <div class="drawer__fixed-header ">
+      <div class="drawer__header appear-animation ">
+        <div class="drawer-menu-close mobile-menu-header-section">
+            <div class="mobile-menu-close-button mobile-menu-search-close">
+              <button type="button" class="menu-drawer__close-button js-drawer-close">
+                <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M1 1L16 16M1 16L16 1" stroke="#2B2725"/>
+                </svg>
+                <span class="icon__fallback-text">{{ 'general.drawers.close_menu' | t }}</span>
+              </button>
+            </div>
+              <div class="ninety-percent-logo-mobile">
+                <a href="/">
+                  <svg class="ninetypercent-icon" width="200" height="8" viewBox="0 0 130 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g clip-path="url(#clip0_1640_477)">
+                  <path d="M0 7.5468V0L5.55314 5.39245V0.479475H6.69913V7.98029L1.146 2.60099V7.5468H0Z" fill="#2B2725"/>
+                  <path d="M12.8818 0.453125V7.52702H11.7358V0.453125H12.8818Z" fill="#2B2725"/>
+                  <path d="M18.0318 7.5468V0L23.5849 5.39245V0.479475H24.7309V7.98029L19.1778 2.60099V7.5468H18.0318Z" fill="#2B2725"/>
+                  <path d="M33.8706 1.45805H30.8217V3.1592H33.2056V4.16413H30.8217V6.52866H33.8706V7.53359H29.6686V0.453125H33.8706V1.45805Z" fill="#2B2725"/>
+                  <path d="M41.1852 1.45805V7.52702H40.0392V1.45805H37.9807V0.453125H43.2367V1.45805H41.1852Z" fill="#2B2725"/>
+                  <path d="M49.1081 4.47285L46.6251 0.459717H47.948L49.6882 3.28402L51.4355 0.459717H52.7583L50.2612 4.47285V7.52704H49.1152V4.47285H49.1081Z" fill="#2B2725"/>
+                  <path d="M127.949 1.47783V7.54679H126.803V1.47783H124.744V0.4729H130V1.47783H127.949Z" fill="#2B2725"/>
+                  <path d="M68.1869 4.67651V7.54679H67.0409V0.4729H68.3425C68.9792 0.4729 69.4602 0.512309 69.7856 0.597695C70.111 0.683081 70.4011 0.834148 70.6557 1.06403C71.0943 1.45812 71.3136 1.96387 71.3136 2.56814C71.3136 3.21838 71.0802 3.7307 70.6133 4.10508C70.1464 4.47947 69.5168 4.66994 68.7245 4.66994H68.194L68.1869 4.67651ZM68.1869 3.68472H68.6184C69.6724 3.68472 70.203 3.31034 70.203 2.555C70.203 1.79967 69.6583 1.45812 68.5689 1.45812H68.1869V3.68472Z" fill="#2B2725"/>
+                  <path d="M79.9369 1.47783H76.888V3.17898H79.272V4.1839H76.888V6.54843H79.9369V7.55336H75.7349V0.4729H79.9369V1.47783Z" fill="#2B2725"/>
+                  <path d="M87.5203 4.53201L89.8759 7.54679H88.4682L86.2965 4.65681H86.0913V7.54679H84.9453V0.4729H86.2894C87.2939 0.4729 88.0225 0.65024 88.4682 0.998352C88.9634 1.38587 89.211 1.90476 89.211 2.54843C89.211 3.04761 89.0553 3.48111 88.7441 3.84236C88.4328 4.20361 88.0296 4.43349 87.5203 4.53201ZM86.0913 3.72413H86.4592C87.5486 3.72413 88.0933 3.33661 88.0933 2.56814C88.0933 1.84564 87.5627 1.48439 86.5087 1.48439H86.0984V3.7307L86.0913 3.72413Z" fill="#2B2725"/>
+                  <path d="M109.605 1.47783H106.557V3.17898H108.941V4.1839H106.557V6.54843H109.605V7.55336H105.404V0.4729H109.605V1.47783Z" fill="#2B2725"/>
+                  <path d="M114.105 7.56657V0.0197754L119.658 5.41222V0.49925H120.804V8.00007L115.251 2.62076V7.56657H114.105Z" fill="#2B2725"/>
+                  <path d="M99.4188 5.87195C99.2349 6.01645 99.051 6.14125 98.8812 6.24634C98.7114 6.35143 98.5487 6.43025 98.3931 6.49593C98.1101 6.62072 97.7635 6.67984 97.3603 6.67984C96.5751 6.67984 95.9172 6.42368 95.3796 5.91793C94.8419 5.41218 94.5731 4.78164 94.5731 4.03944C94.5731 3.29724 94.8419 2.65356 95.3796 2.13468C95.9172 1.6158 96.5751 1.35307 97.3532 1.35307C98.0606 1.35307 98.7468 1.60923 99.4118 2.12811C99.4118 2.12811 99.6594 2.32516 99.8645 2.58131L100.72 2.02959C100.72 2.02959 100.02 1.16916 99.4047 0.86046C99.3976 0.86046 99.3905 0.86046 99.3835 0.853892C98.7539 0.518916 98.1031 0.348145 97.431 0.348145C96.1789 0.348145 95.1603 0.781642 94.368 1.64207C93.7242 2.34486 93.4059 3.15274 93.4059 4.05258C93.4059 5.0575 93.7879 5.91136 94.5519 6.62729C95.323 7.33008 96.2497 7.68476 97.3391 7.68476C98.0606 7.68476 98.7539 7.51399 99.4118 7.16588C100.048 6.87031 100.72 5.97048 100.72 5.97048L99.8645 5.41875C99.6523 5.67491 99.4118 5.87852 99.4118 5.87852L99.4188 5.87195Z" fill="#2B2725"/>
+                  </g>
+                  <defs>
+                  <clipPath id="clip0_1640_477">
+                  <rect width="130" height="8" fill="white"/>
+                  </clipPath>
+                  </defs>
+                  </svg>
+                </a>
+              </div>
+            <div class="header-item header-item--icons nav-drawer-icons">
+              {%- render 'header-icons', section: section -%}
+            </div>
+        </div>
+      </div>
+    </div> {% endcomment %}
+
+    
+    <div class="mobile-site-header__search-container">
+        <div class="mobile-site-header__search" style="    display: flex;  gap: 22px; justify-content: center; align-items: center;">
+            <form action="{{ routes.search_url }}" method="get" role="search" style="width: 77%;"
+              id="HeaderSearchForm_mobile"
+              class="site-header__search-form">
+              <input type="hidden" name="type" value="{{ settings.search_type }}">
+              <input type="hidden" name="options[prefix]" value="last">
+    
+              <input autofocus type="search" name="q" value="{{ search.terms | escape | replace: '*', '' }}" placeholder="{{ 'general.search.placeholder' | t }}" class="site-header__search-input" aria-label="{{ 'general.search.placeholder' | t }}">
+              <button type="submit" class="text-link site-header__search-btn site-header__search-btn--submit" disabled=true>
+                <svg width="14" height="13" viewBox="0 0 14 13" fill="none" class="search-submit-btn" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M-0.000107558 6.19835H12.3966" stroke="#2B2725"/>
+                  <path d="M9.0268 2.12237L13.0536 6.14915L9.0268 10.176" stroke="#2B2725"/>
+                </svg> 
+              </button>
+            </form>
+            <button type="button" id="SearchCloseMobile" class="js-drawer-close ">
+              {% comment %} <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><path d="M19 17.61l27.12 27.13m0-27.12L19 44.74"/></svg> {% endcomment %}
+              <span class="icon__fallback-text">{{ 'general.accessibility.close_modal' | t | json }}</span> 
+              Close
+            </button> 
+        </div>
+        {%- if settings.predictive_search_enabled -%}
+          <div id="PredictiveWrapper_mobile" class="predictive-results hide" data-image-size="{{ settings.predictive_image_size }}">
+            <div class="text-center predictive-results__footer">
+                {% comment %} <button type="button" class="btn btn--small" data-predictive-search-button>
+                  <small>
+                    {{ 'general.search.view_more' | t }}
+                  </small>
+                </button> {% endcomment %}
+                <button class="search-see-all" data-predictive-search-button>
+                  <small>
+                    See all results
+                  </small>
+                </button>
+              </div> 
+          <div class="page-width">
+              <div id="PredictiveResults_mobile" class="predictive-result__layout {% if  settings.predictive_image_size == 'portrait' %}predictive-portrait-result-main{% endif %} "></div>
+            
+            </div>
+          </div>
+        {%- endif -%}
+      </div>
+
+
+  </div>
+
+</div>
+
+<style>
+.predictive-results__footer{
+  padding-bottom: 70px;
+}
+.search-see-all{
+  position: absolute;
+  left: 18px;
+  border-bottom: 1px solid #2B2725;
+  padding-bottom: 11px;
+  padding-inline-start:0px;
+}
+.localization-selector-drawer, .logIn-button {
+  font-family: 'Intervogue';
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+  @media (min-width:769px){
+    #NavDrawer{
+      display:none;
+    }
+  }
+
+  .drawer__fixed-header{
+    margin-bottom:30px;
+    padding-left:10px;
+    padding-right:20px;
+  }
+
+  .mobile-menu-header-section{
+    display:flex;
+    justify-content:  space-between;
+    align-items:center;
+  }
+
+  .mobile-menu-close-button{
+    padding-top: 6px;
+  }
+
+  
+  .mobile-menu-wrapper {
+    list-style-type: none;
+    position: relative;
+    display: flex;
+    border-bottom: 0.25px solid;
+    width: 92%;
+    border-bottom-color: rgba(43, 39, 37, 0.5);
+    margin: 20px 0 15px 15px;
+  }
+
+  .mobile-menu-wrapper li{
+    padding-bottom: 0.75em;
+  }
+  .parent-link {
+    padding-right: 15px;
+    font-family: 'Intervogue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 15px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #2B2725;
+
+  }
+
+  
+  .hidden {
+    display: none;
+  }
+  .child-link-container {
+    position: absolute;
+    left: 0;
+    margin-top: 3em;
+    width: 100%;
+    height: 56vh;
+    overflow-y: scroll;
+  }
+  .option-not-selected{
+    color: rgba(43, 39, 37, 0.5) !important;
+  }
+  .drawer-menu-close{
+    text-align: left;
+  }
+  .ninetypercent-icon{
+
+  }
+  .menu-drawer__close-button{
+    padding-top: 3px;
+  }
+  .nav-drawer-icons{
+
+  }
+  .nav-drawer-footer{
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    width:100%;
+  }
+  .localization-selector-drawer{
+    padding-left: 30px;
+    padding-right: 35px;
+  }
+  .child-link-container a{
+    display: block;
+    padding-bottom: 1em;
+    font-family: 'Intervogue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #2B2725 !important;
+  } 
+  .bottom-hr-line{
+    position: absolute;
+    top: 8%;
+    width: 92%;
+    border-bottom: 0.25px solid;
+    border-bottom-color: rgba(43, 39, 37, 0.5);
+    margin-left:15px;
+    margin-right:15px;
+  }
+</style>
+

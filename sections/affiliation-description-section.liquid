@@ -1,0 +1,535 @@
+<section class="description-section-{{ section.id }} affiliation">
+    {% for block in section.blocks %}
+     {% case block.type %}
+     {% when 'text-with-description' %}
+        <div class="description-block-{{ block.id }}">
+            <div class="block-title{% if block.settings.title-font-style == true %} italic-font-title{% endif %}">
+                <p>{{ block.settings.title }}</p>
+            </div>
+            <div class="block-description{% if block.settings.description-font-style == true %} italic-font-description{% endif %}">
+                {{ block.settings.description }}
+            </div>
+            <div class="affiliation-button {% if block.settings.show_button == false %}hide-btn{% endif %}">
+                <a class="affiliation-btn" target="_blank" href="{{ block.settings.button_link }}">{{ block.settings.btn-text }}</a>
+            </div>
+            <div class="bottom-border {% if block.settings.hide-border == true %}hide-border{% endif %}"></div>
+        </div>
+    
+    {% when 'text-with-list' %}
+        <div class="list-block-{{ block.id }}">
+            <div class="block-title{% if block.settings.title-font-style == true %} italic-font-title{% endif %}">
+                <p>{{ block.settings.title }}</p>
+            </div>
+            <div class="block-description{% if block.settings.description-font-style == true %} italic-font-description{% endif %}">
+                {{ block.settings.list-item }}
+            </div>
+            <div class="affiliation-button {% if block.settings.show_button == false %}hide-btn{% endif %}">
+                <a class="affiliation-btn" target="_blank" href="{{ block.settings.button_link }}">{{ block.settings.btn-text }}</a>
+            </div>
+            <div class="bottom-border {% if block.settings.hide-border == true %}hide-border{% endif %}"></div>
+        </div>
+
+        {% when 'spacer-block' %}
+            <div class="spacer-{{ block.id }}"></div>
+      {% endcase %}
+    {% endfor %}
+</section>
+
+
+<style>
+   .description-section-{{ section.id }}.affiliation{
+     max-width: 934px;
+     margin: 0 auto;
+   }
+    {% for block in section.blocks %}
+        {% case block.type %}
+            {% when 'text-with-description' %}
+                .description-section-{{ section.id }}.affiliation .description-block-{{ block.id }}{
+                    max-width: 585px;
+                    padding: 67px 0px 0px 0px;
+                }
+                .description-section-{{ section.id }}.affiliation .description-block-{{ block.id }} .block-title p{
+                    max-width: 585px;
+                    width: 100%;
+                    font-family: 'Silvana';
+                    font-weight: 400;
+                    font-size: {{ block.settings.font-size-title | append: 'px' }};
+                    line-height: 36px;
+                    letter-spacing: -0.01em;
+                    color: {{ block.settings.title-color }};
+                    padding-bottom: 48px;
+                }
+                .description-section-{{ section.id }}.affiliation .description-block-{{ block.id }} .block-description p{
+                    font-family: 'Intervogue';
+                    font-weight: 400;
+                    font-size: {{ block.settings.font-size-description | append: 'px' }};
+                    line-height: 28px; 
+                    text-align: justify;
+                    letter-spacing: 0.02em;
+                    color: {{ block.settings.description-color }};
+                    max-width: 581px;
+                    width: 100%;
+                }
+         
+                @media only screen and (max-width: 600px){
+                    section.description-section-{{ section.id }}.affiliation .description-block-{{ block.id }} .block-title{
+                      padding-left: 6px;
+                    }
+                    section.description-section-{{ section.id }}.affiliation .description-block-{{ block.id }} .block-title p{
+                        width: 100%;
+                        margin: 0 auto;
+                        padding: 0px 0px 36px;
+                        font-size: 16px;
+                        line-height: 22px;
+                        text-align: justify;
+                        letter-spacing: -0.01em;
+                    }
+                    .description-section-{{ section.id }}.affiliation .description-block-{{ block.id }} .block-description{
+                         padding-left: 6px;
+                    }
+                    .description-section-{{ section.id }}.affiliation .description-block-{{ block.id }} .block-description p{
+                        width: 100%;
+                        margin: 0 auto;
+                        padding: 0px;
+                        font-size: 12px;
+                        line-height: 20px;
+                        text-align: justify;
+                        letter-spacing: 0.02em;
+                    }
+                }
+                 @media only screen and (max-width: 360px){
+                      section.description-section-{{ section.id }}.affiliation .description-block-{{ block.id }} .block-title p{
+                         max-width: 324px;
+                      }
+                       .description-section-{{ section.id }}.affiliation .description-block-{{ block.id }} .block-description p{
+                          max-width: 324px;
+                      }          
+                 }
+
+            {% when 'text-with-list' %}
+
+                .description-section-{{ section.id }}.affiliation .list-block-{{ block.id }}{
+                    max-width: 585px;
+                    padding: 67px 0px 0px 0px;
+                }
+                .description-section-{{ section.id }}.affiliation .list-block-{{ block.id }} .block-title p{
+                    max-width: 585px;
+                    width: 100%;
+                    font-family: 'Silvana';
+                    font-weight: 400;
+                    font-size: {{ block.settings.font-size-title | append: 'px' }};
+                    line-height: 36px;
+                    letter-spacing: -0.01em;
+                    color: {{ block.settings.title-color }};
+                    padding-bottom: 48px;
+                }
+                .description-section-{{ section.id }}.affiliation .list-block-{{ block.id }} .block-description p{
+                    font-family: 'Intervogue';
+                    font-weight: 400;
+                    font-size: {{ block.settings.font-size-description | append: 'px' }};
+                    line-height: 28px; 
+                    text-align: justify;
+                    letter-spacing: 0.02em;
+                    color: {{ block.settings.description-color }};
+                    max-width: 581px;
+                    width: 100%;
+                }
+                .description-section-{{ section.id }}.affiliation .list-block-{{ block.id }} .block-description ul li{
+                    font-family: 'Intervogue';
+                    font-weight: 400;
+                    font-size: {{ block.settings.font-size-description | append: 'px' }};
+                    line-height: 28px; 
+                    text-align: justify;
+                    letter-spacing: 0.02em;
+                    color: {{ block.settings.description-color }};
+                    max-width: 581px;
+                    width: 100%;
+                }
+
+                @media only screen and (max-width: 600px){
+                   .description-section-{{ section.id }}.affiliation .list-block-{{ block.id }} .block-title{
+                     padding-left: 6px;
+                   }
+                    .description-section-{{ section.id }}.affiliation .list-block-{{ block.id }} .block-title p{
+                        width: 100%;
+                        margin: 0 auto;
+                        padding: 0px 0px 36px;
+                        font-size: 16px;
+                        line-height: 22px;
+                        text-align: justify;
+                        letter-spacing: -0.01em;
+                    }
+
+                    .description-section-{{ section.id }}.affiliation .list-block-{{ block.id }} .block-description{
+                         padding-left: 6px;
+                    }
+                    .description-section-{{ section.id }}.affiliation .list-block-{{ block.id }} .block-description p{
+                        width: 100%;
+                        margin: 0 auto;
+                        padding: 0px;
+                        font-size: 12px;
+                        line-height: 20px;
+                        text-align: justify;
+                        letter-spacing: 0.02em;
+                    }
+                    .description-section-{{ section.id }}.affiliation .list-block-{{ block.id }} .block-description ul li{
+                        width: 100%;
+                        margin: 0 auto;
+                        padding: 0px;
+                        font-size: 12px;
+                        line-height: 20px;
+                        text-align: justify;
+                        letter-spacing: 0.02em;
+                    }
+                }
+                @media only screen and (max-width: 360px){
+                    .description-section-{{ section.id }}.affiliation .list-block-{{ block.id }} .block-title p{
+                      max-width: 324px;
+                    }
+                   .description-section-{{ section.id }}.affiliation .list-block-{{ block.id }} .block-description p{
+                      max-width: 324px;
+                    }
+                  .description-section-{{ section.id }}.affiliation .list-block-{{ block.id }} .block-description ul li{
+                      max-width: 324px;
+                    }
+                }
+
+            {% when 'spacer-block' %}
+                .description-section-{{ section.id }}.affiliation .spacer-{{ block.id }}{
+                    height: {{ block.settings.spacer-height }}px;
+                }
+                  
+    {% endcase %}
+{% endfor %}
+
+.description-section-{{ section.id }}.affiliation .affiliation-button{
+    padding-top: 67px;
+}
+.description-section-{{ section.id }}.affiliation .affiliation-button a{
+    -webkit-tap-highlight-color: transparent;
+}
+.description-section-{{ section.id }}.affiliation .affiliation-button a{
+    max-width: 349px;
+    width: 100%;
+    display: inline-block;
+    font-family: 'Intervogue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12.5px;
+    line-height: 21px; 
+    text-align: center;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #2B2725;
+    border: 0.75px solid #2B2725;
+    padding: 8px 0px;
+}
+.description-section-{{ section.id }}.affiliation .bottom-border{
+    max-width: 581px;
+    width: 100%;
+    border-bottom: 1px solid #2B2725;
+    padding-top: 67px;
+}
+.description-section-{{ section.id }}.affiliation p:not(:last-of-type){
+    padding-bottom: 15px;
+}
+.italic-font-description p{
+    font-style: italic;
+}
+.italic-font-title p{
+    font-style: italic;
+}
+.italic-font-description ul li{
+    font-style: italic;
+}
+.hide-btn{
+    display: none;
+}
+.hide-border{
+    display: none;
+}
+@media screen and (max-width: 980px){
+    .description-section-{{ section.id }}.affiliation{
+        padding: 0px 68px;
+    }
+}
+/* @media screen and (max-width: 980px){
+    .description-section-{{ section.id }}.affiliation{
+        padding: 0px 20px;
+    }
+} */
+@media screen and (max-width: 600px){
+    .description-section-{{ section.id }}.affiliation{
+        padding: 0px 12px;
+    }
+  .description-section-{{ section.id }}.affiliation .affiliation-button a{
+    text-align: left;
+    padding: 8px 18px;
+    border: 1px solid #2B2725;
+  }
+}
+@media screen and (max-width: 360px){
+    section.description-section-{{ section.id }}.affiliation{
+        max-width: 360px;
+        margin: 0 auto;
+        padding: 0px 12px;
+    }
+    section.description-section-{{ section.id }}.affiliation .bottom-border{
+        max-width: 335px;
+        width: 100%;
+        border-bottom: 1px solid #2B2725;
+        padding-top: 67px;
+    }
+ }
+</style>
+
+
+
+
+
+
+{% schema %}
+    {
+      "name": "affiliation-description",
+      "settings": [
+        
+      ],
+      "blocks": [
+        {
+            "type": "text-with-description",
+            "name": "Text with description",
+            "settings": [
+
+                {
+                    "type": "text",
+                    "id":"title",
+                    "default": "How it works",
+                    "label": "Title"
+                },
+                {
+                    "type": "richtext",
+                    "id":"description",
+                    "default": "<p>The program is simple, free of charge and rewards you with a commission on every sale generated through your site. You'll be invited to browse the extensive range of Ninety Percent links and banners that you can use on your website. You will also have access to our full product catalogue to promote on your website.</p>",
+                    "label": "Description"
+                },
+                {
+                    "type": "header",
+                    "content": "For Title"
+                },
+                {
+                    "type": "range",
+                    "id": "font-size-title",
+                    "label": "Title Font size",
+                    "min": 8,
+                    "max": 100,
+                    "step": 1,
+                    "unit": "px",
+                    "default": 26
+                },
+                {
+                    "type": "color",
+                    "label": "Title color",
+                    "id": "title-color",
+                    "default": "#2B2725"
+                },
+                {
+                "type": "checkbox",
+                "id": "title-font-style",
+                "label": "Italic style ( Title )",
+                "default": false
+                },
+                {
+                    "type": "header",
+                    "content": "For Description"
+                },
+                {
+                    "type": "range",
+                    "id": "font-size-description",
+                    "label": "Description Font size",
+                    "min": 8,
+                    "max": 100,
+                    "step": 1,
+                    "unit": "px",
+                    "default": 16
+                },
+                {
+                    "type": "color",
+                    "label": "Description color",
+                    "id": "description-color",
+                    "default": "#2B2725"
+                },
+                {
+                "type": "checkbox",
+                "id": "description-font-style",
+                "label": "Italic style ( Description )",
+                "default": false
+                },
+                {
+                    "type": "header",
+                    "content": "For Button"
+                },
+                {
+                    "type": "text",
+                    "id": "btn-text",
+                    "default": "Apply now",
+                    "label": "Button Text"
+                },
+                {
+                "type": "url",
+                "id": "button_link",
+                "label": "Button link"
+                },
+                {
+                "type": "checkbox",
+                "id": "show_button",
+                "label": "Show Button",
+                "default": true
+                },
+                {
+                "type": "checkbox",
+                "id": "hide-border",
+                "label": "Hide Border",
+                "default": false
+                }
+                
+            ]
+        },
+        {
+            "type": "text-with-list",
+            "name": "Text with list",
+            "settings": [
+                {
+                    "type": "text",
+                    "id":"title",
+                    "default": "What are the benefits of joining?",
+                    "label": "Title"
+                },
+                {
+                    "type": "richtext",
+                    "id": "list-item",
+                    "label": "List text",
+                    "default": "<p>Once accepted into the Ninety Percent Affiliate Programme, you can benefit from the following perks: Earn 6% commission on all valid sales</p><ul><li>Earn 6% commission on all valid sales</li><li>30-day cookie period</li><li>14 days return policy</li></ul>"
+                },
+                {
+                    "type": "header",
+                    "content": "For Title"
+                },
+                {
+                    "type": "range",
+                    "id": "font-size-title",
+                    "label": "Title Font size",
+                    "min": 8,
+                    "max": 100,
+                    "step": 1,
+                    "unit": "px",
+                    "default": 26
+                },
+                {
+                    "type": "color",
+                    "label": "Title color",
+                    "id": "title-color",
+                    "default": "#2B2725"
+                },
+                {
+                "type": "checkbox",
+                "id": "title-font-style",
+                "label": "Italic style ( Title )",
+                "default": false
+                },
+                {
+                    "type": "header",
+                    "content": "For Description"
+                },
+                {
+                    "type": "range",
+                    "id": "font-size-description",
+                    "label": "Description Font size",
+                    "min": 8,
+                    "max": 100,
+                    "step": 1,
+                    "unit": "px",
+                    "default": 16
+                },
+                {
+                    "type": "color",
+                    "label": "Description color",
+                    "id": "description-color",
+                    "default": "#2B2725"
+                },
+                {
+                "type": "checkbox",
+                "id": "description-font-style",
+                "label": "Italic style ( Description )",
+                "default": false
+                },
+                {
+                    "type": "header",
+                    "content": "For Button"
+                },
+                {
+                    "type": "text",
+                    "id": "btn-text",
+                    "default": "Apply now",
+                    "label": "Button Text"
+                },
+                {
+                "type": "url",
+                "id": "button_link",
+                "label": "Button link"
+                },
+                {
+                "type": "checkbox",
+                "id": "show_button",
+                "label": "Show Button",
+                "default": true
+                },
+                {
+                "type": "checkbox",
+                "id": "hide-border",
+                "label": "Hide Border",
+                "default": false
+                }
+            ]
+        },
+        {
+            
+          "type": "spacer-block",
+          "name": "Spacer",
+          "settings": [
+            {
+              "type": "range",
+              "id": "spacer-height",
+              "label": "Spacer Height",
+              "min": 0,
+              "max": 200,
+              "step": 5,
+              "unit": "px",
+              "default": 30
+            }
+          ]
+        }  
+      ],
+      "presets": [
+      {
+          "category": "content",
+          "name":"affiliation-description",
+          "blocks": [
+            {
+            "type": "text-with-description"
+            },
+            {
+            "type": "text-with-list"
+            }
+        ]
+      }
+  ]
+     
+    }
+  {% endschema %}
+  
+  {% stylesheet %}
+  {% endstylesheet %}
+  
+  {% javascript %}
+  {% endjavascript %}
+

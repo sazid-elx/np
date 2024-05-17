@@ -1,0 +1,62 @@
+<div class="register-overlay"></div>
+<div class="page-width page-width--tiny register-section">
+  <header class="section-header">
+    <h1 class="section-header__title">{{ 'customer.register.title' | t }}</h1>
+    <div class="register-section-close">
+        <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1 1L16 16M1 16L16 1" stroke="#2B2725"/>
+</svg>
+
+      </div>
+  </header>
+
+  <div id="CustomerRegisterForm" class="form-vertical">
+    {%- form 'create_customer' -%}
+
+    <p class="register-form-font required-field">*Required</p>
+
+      {{ form.errors | default_errors }}
+
+      <label class="register-form-font" for="FirstName">{{ 'customer.register.first_name' | t }}*</label>
+      <input placeholder="First Name*" type="text" name="customer[first_name]" id="FirstName" class="input-full"{% if form.first_name %} value="{{ form.first_name }}"{% endif %} autocapitalize="words" autofocus required>
+
+      <label class="register-form-font" for="LastName">{{ 'customer.register.last_name' | t }}*</label>
+      <input placeholder="Last Name*" type="text" name="customer[last_name]" id="LastName" class="input-full"{% if form.last_name %} value="{{ form.last_name }}"{% endif %} autocapitalize="words" required>
+
+      <label class="register-form-font" for="Email">{{ 'customer.register.email' | t }}*</label>
+      <input placeholder="Email*" type="email" name="customer[email]" id="Email" class="input-full{% if form.errors contains 'email' %} error{% endif %}"{% if form.email %} value="{{ form.email }}"{% endif %} autocorrect="off" autocapitalize="off" required>
+
+      <label class="register-form-font" for="CreatePassword">{{ 'customer.register.password' | t }}*</label>
+      <input placeholder="Password*" type="password" name="customer[password]" id="CreatePassword" class="input-full{% if form.errors contains 'password' %} error{% endif %}" required minlength="8" pattern="^(?=.*[0-9])(?=.*[!@#$%^*])[a-zA-Z0-9!@#$%^*].{8,}$">
+      
+    <label class="register-form-font" for="CreateConfirmPassword">Confirm Password*</label>
+      <input placeholder="Confirm Password*" type="password" name="customer[confirmPassword]" id="CreateConfirmPassword" class="input-full{% if form.errors contains 'password' %} error{% endif %}" required>
+
+
+    <p class="hide confirm-error">
+      Passwords are not matching.
+    </p>
+    
+    <p class="register-form-font pass-style">
+      Password must be at least 8 characters; must contain at least one uppercase letter, one numeric digit, and one special character.
+    </p>
+
+    
+
+    <div class="subs-label">
+      <label class="checkbox_container register-form-font">Subscribe to our newsletter?
+          <input type="hidden" name="customer[accepts_marketing]" value="false" />
+              <input type="checkbox" name="customer[accepts_marketing]" class="input-full{% if form.errors contains 'email' %} error{% endif %}" id="accepts_marketing" value="true">
+              <span class="checkmark"></span>
+          </label>
+    </div>
+
+    <p>
+        <label for="register-submit" class="hidden-label">{{ 'customer.register.submit' | t }}</label>
+        <input type="submit" id="register-submit" value="{{ 'customer.register.submit' | t }}" class="btn btn--full login-new-button new-register-button">
+      </p>
+
+    {%- endform -%}
+  </div>
+</div>
+

@@ -1,0 +1,277 @@
+<section class="section-wrapper{{ section.id }} np-container">
+  <div class="section-inner">
+    <div class="content-wrapper">
+      {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'icon-text' %}
+            <div class="icons-text-wrapper">
+                <div class="icon-text">
+                <div class="icon">
+                    <img src="{{ block.settings.icon-img-one | img_url: '45x45' }}" alt="Icon 01">
+                    
+                </div>
+                <div class="text">
+                    <p>
+                    {{ block.settings.icon-text-one }}
+                    </p>
+                </div>
+                </div>
+
+                <div class="icon-text">
+                <div class="icon">
+                    <img src="{{ block.settings.icon-img-two | img_url: '45x45' }}" alt="Icon 02">
+                </div>
+                <div class="text">
+                    <p>
+                    {{ block.settings.icon-text-two }}
+                    </p>
+                </div>
+                </div>
+
+                <div class="icon-text">
+                <div class="icon">
+                    <img src="{{ block.settings.icon-img-three | img_url: '45x45' }}" alt="Icon 03">
+                </div>
+                <div class="text">
+                    <p>
+                    {{ block.settings.icon-text-three }}
+                    </p>
+                </div>
+                </div>
+
+            </div>
+          {% when 'spacer-block' %}
+            <div class="spacer-{{ block.id }}"> </div>
+        {% endcase %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<style>
+  {% comment %}for desktop{% endcomment %}
+    p{
+        margin: 0;
+    }
+    .np-container {
+        width: 100%;
+        max-width: 1440px;
+        margin: 0 auto;
+    }
+    .section-wrapper{{ section.id }} .section-inner .content-wrapper {
+        max-width: 940px;
+        margin: 0 auto;
+        padding-top: 93px;
+    }
+  {% for block in section.blocks %}
+    {% case block.type %}
+      {% when 'icon-text' %}
+        .icons-text-wrapper {
+            display: flex;
+        }
+        .icons-text-wrapper .icon{
+            width: 45px;
+            height: 45px;
+        }
+        .icon-text {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .icons-text-wrapper .text p {
+            font-family: 'Intervogue';
+            font-style: normal;
+            font-weight: 500;
+            font-size: {{ block.settings.font-size }}px;
+            line-height: 21px;
+            text-align: center;
+            letter-spacing: 0.25px;
+            color: {{ block.settings.text-color }} ;
+            width: 300px;
+        }
+
+      {% when 'spacer-block' %}
+        .section-wrapper{{ section.id }} .section-inner .content-wrapper .spacer-{{ block.id }}{
+            height: {{ block.settings.spacer-height-desktop }}px;
+        }
+
+    {% endcase %}
+  {% endfor %}
+
+
+  {% comment %}for tablet{% endcomment %}
+  @media screen and (min-width:601px) and (max-width: 1024px) {
+    {% for block in section.blocks %}
+        {% case block.type %}
+            {% when 'icon-text' %}
+                .icons-text-wrapper {
+                    display: flex;
+                    flex-direction: column;
+                    margin: 0 auto;
+                    gap: 20px;
+                }
+                .icon-text {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0;
+                    
+                }
+              .section-wrapper{{ section.id }} .section-inner .content-wrapper{
+                  padding-top: 58px;
+                }
+            {% when 'spacer-block' %}
+                .section-wrapper{{ section.id }} .section-inner .content-wrapper .spacer-{{ block.id }}{
+                    height: {{ block.settings.spacer-height-tablet }}px;
+                }
+        {% endcase %}
+    {% endfor %}
+  }
+        
+
+  {% comment %}for mobile{% endcomment %}
+  @media screen and (max-width: 600px) {
+    {% for block in section.blocks %}
+        {% case block.type %}
+            {% when 'icon-text' %}
+                .icons-text-wrapper {
+                    display: flex;
+                    flex-direction: column;
+                    margin: 0 auto;
+                    gap: 20px;
+                }
+                .icon-text {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                }
+                .text p{
+                  width: unset;
+                }
+                .section-wrapper{{ section.id }} .section-inner .content-wrapper{
+                  padding-top: 58px;
+                }
+            {% when 'spacer-block' %}
+                .section-wrapper{{ section.id }} .section-inner .content-wrapper .spacer-{{ block.id }}{
+                    height: {{ block.settings.spacer-height-mobile }}px;
+                }
+        {% endcase %}
+    {% endfor %}
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "Icon With Text",
+    "settings": [],
+    "blocks": [
+      {
+        "name": "Icon-text",
+        "type": "icon-text",
+        "settings": [
+          {
+            "type": "image_picker",
+            "id": "icon-img-one",
+            "label": "Add First Icon Here"
+          },
+          {
+            "type": "image_picker",
+            "id": "icon-img-two",
+            "label": "Add Second Icon Here"
+          },
+          {
+            "type": "image_picker",
+            "id": "icon-img-three",
+            "label": "Add Third Icon Here"
+          },
+          {
+            "type": "text",
+            "id": "icon-text-one",
+            "label": "First Icon's Text",
+            "default": "Lorem"
+          }, {
+            "type": "text",
+            "id": "icon-text-two",
+            "label": "Second Icon's Text",
+            "default": "Lorem"
+          }, {
+            "type": "text",
+            "id": "icon-text-three",
+            "label": "Third Icon's Text",
+            "default": "Lorem"
+          },
+          {
+                "type": "range",
+                "id": "font-size",
+                "min": 9,
+                "max": 50,
+                "step": 0.5,
+                "unit": "px",
+                "label": "Font size",
+                "default": 12.5
+            }, 
+            {
+                "type": "color",
+                "id": "text-color",
+                "label": "Text Color",
+                "default": "#2B2725"
+            }
+        ]
+      }, {
+        "name": "Spacer Block",
+        "type": "spacer-block",
+        "settings": [
+          {
+            "type": "range",
+            "id": "spacer-height-desktop",
+            "min": 0,
+            "max": 200,
+            "step": 5,
+            "unit": "px",
+            "label": "Spacer Height Desktop",
+            "default": 10
+          },
+          {
+            "type": "range",
+            "id": "spacer-height-tablet",
+            "min": 0,
+            "max": 200,
+            "step": 5,
+            "unit": "px",
+            "label": "Spacer Height Tablet",
+            "default": 10
+          }, {
+            "type": "range",
+            "id": "spacer-height-mobile",
+            "min": 0,
+            "max": 200,
+            "step": 5,
+            "unit": "px",
+            "label": "Spacer Height Mobile",
+            "default": 10
+          }
+
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Icon With Text",
+        "blocks": [
+          {
+            "type": "icon-text"
+          }, {
+            "type": "spacer-block"
+          }
+        ]
+      }
+    ]
+  }
+{% endschema %}

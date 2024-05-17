@@ -1,0 +1,505 @@
+<section class="np-double-column-image-{{ section.id }} np-page-width custom-page-width">
+    {% for block in section.blocks %}
+        {% case block.type %}
+           {% when 'double-image' %}
+            <div class="double-column-image-{{ block.id }}">
+                <div class="first-column">  
+                  <a href="{{ block.settings.button_link-first}}">
+                      <div class="image-container">
+                        {% liquid assign image = block.settings.first-image %}
+                        {% liquid assign img_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+                        {% comment %} <img class="image" src="{{ block.settings.first-image | img_url: 'master'}}"> {% endcomment %}
+                        <img class="image lazyload"
+                          data-src="{{ img_url }}"
+                          data-widths="[400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2160, 2600, 3000, 3400, 3800, 4100]"
+                          data-aspectratio="{{ image.aspect_ratio }}"
+                          data-sizes="auto"
+                          alt="{{ image.alt }}"
+                        >
+                        <div class="overlay"></div>
+                      </div>
+                                       
+                      <div class="overlay-context">
+                        <div class="title">{{ block.settings.first-image-overlay-text }}</div>                          
+                          <a class="overlay-link" href="{{ block.settings.button_link-first}}">{{ block.settings.btn-text-first }}</a>
+                      </div>
+                  </a>
+                </div>
+
+                <div class="second-column">
+                  <a href="{{ block.settings.button_link-second }}">
+                     <div class="image-container">
+                        {% comment %} <img class="image" src="{{ block.settings.second-image | img_url: 'master'}}"> {% endcomment %}
+                        {% liquid assign image = block.settings.second-image %}
+                        {% liquid assign img_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+                        <img class="image lazyload"
+                          data-src="{{ img_url }}"
+                          data-widths="[400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2160, 2600, 3000, 3400, 3800, 4100]"
+                          data-aspectratio="{{ image.aspect_ratio }}"
+                          data-sizes="auto"
+                          alt="{{ image.alt }}"
+                        >
+                        <div class="overlay"></div>
+                      </div>
+                        <div class="overlay-context">
+                          <div class="title">{{ block.settings.second-image-overlay-text }}</div>                            
+                            <a class="overlay-link" href="{{ block.settings.button_link-second }}">{{ block.settings.btn-text-second }}</a>
+                        </div>
+                  </a>
+                </div>
+            </div>
+        {% endcase %}
+    {% endfor %}
+</section>
+
+
+<style>
+    .np-double-column-image-{{ section.id }}.np-page-width{
+       margin: 0 auto;
+       padding: 0 50px;
+       display: flex;
+       flex-direction : column;
+       justify-content: center;
+       align-items: center;
+       gap: 3px;
+    }
+    .np-page-width.custom-page-width{
+      max-width: 100%;
+    }
+    @media (max-width: 1024px){
+      .np-double-column-image-{{ section.id }}.np-page-width{
+        padding: 0 25px;
+      }      
+    }
+
+    @media (max-width: 600px){
+        .np-double-column-image-{{ section.id }}.np-page-width{
+          padding: 0 4px;
+        }      
+      }
+
+    {% for block in section.blocks %}
+        {% case block.type %}
+           {% when 'double-image' %}
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }}{
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    gap: 3px;
+                    width: 100%;
+                    line-height: 0px;
+                }
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column,
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column{
+                    flex: 1;
+                    position: relative;
+                }
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .image,
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .image{
+                    width: 100%;
+                }
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .image-container .overlay,
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .image-container .overlay{
+                  position: absolute;
+                  top: 0;
+                  left: 0;
+                  width: 100%;
+                  height: 100%;
+                  background-color: black; 
+                  opacity: 0;
+                  transition: opacity 0.3s ease;
+                  z-index: 10;
+                }
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .image-container .overlay:hover,
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .image-container .overlay:hover{
+                  opacity: 0.2;
+                }
+                {% if block.settings.text_align == 'top-left' %}
+                  .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context,
+                  .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context{
+                       position: absolute;
+                       top: 45px;
+                       left: 45px;
+                       display: flex;
+                       flex-direction: column;
+                       gap: {{ block.settings.overlay-gap}}px;
+                       align-items: flex-start;
+                       -ms-transform: translate(0%, 0%);
+                       transform: translate(0%, 0%);
+                       white-space: nowrap;
+                  }
+                {% endif %}
+               {% if block.settings.text_align == 'top-center'%}
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context,
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context{
+                    position: absolute;
+                    top: 45px;
+                    left: 50%;
+                    right: 50%;
+                    -ms-transform: translate(50%, 0%);
+                    transform: translate(50%, 0%);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: column;
+                    gap: {{ block.settings.overlay-gap}}px;
+                    white-space: nowrap;
+                }
+                {% endif %}
+               {% if block.settings.text_align == 'top-right'%}
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context,
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context{
+                    position: absolute;
+                    top: 45px;
+                    right: 45px;
+                    -ms-transform: translate(0%, 0%);
+                    transform: translate(0%, 0%);
+                    display: flex;
+                    align-items: flex-end;
+                    justify-content: center;
+                    flex-direction: column;
+                    gap: {{ block.settings.overlay-gap}}px;
+                    white-space: nowrap;
+                }
+                {% endif %}
+               {% if block.settings.text_align == 'center-left' %}
+                  .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context,
+                  .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context{
+                       position: absolute;
+                       top: 50%;
+                       left: 45px;
+                       display: flex;
+                       flex-direction: column;
+                       gap: {{ block.settings.overlay-gap}}px;
+                       align-items: flex-start;
+                       -ms-transform: translate(0%, 0%);
+                       transform: translate(0%, 0%);
+                       white-space: nowrap;
+                  }
+                {% endif %}
+               {% if block.settings.text_align == 'center'%}
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context,
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context{
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    -ms-transform: translate(-50%, -50%);
+                    transform: translate(-50%, -50%);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: column;
+                    gap: {{ block.settings.overlay-gap}}px;
+                    white-space: nowrap;
+                }
+                {% endif %}
+                {% if block.settings.text_align == 'center-right' %}
+                  .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context,
+                  .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context{
+                       position: absolute;
+                       top: 50%;
+                       right: 45px;
+                       display: flex;
+                       flex-direction: column;
+                       gap: {{ block.settings.overlay-gap}}px;
+                       align-items: flex-end;
+                       -ms-transform: translate(0%, 0%);
+                       transform: translate(0%, 0%);
+                       white-space: nowrap;
+                  }
+                {% endif %}
+                {% if block.settings.text_align == 'bottom-left' %}
+                  .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context,
+                  .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context{
+                      position: absolute;
+                      bottom: 90px;
+                      left: 45px;
+                      display: flex;
+                      align-items: flex-start;
+                      justify-content: center;
+                      flex-direction: column;
+                      gap: {{ block.settings.overlay-gap}}px;
+                      -ms-transform: translate(0%, 0%);
+                      transform: translate(0%, 0%);
+                      white-space: nowrap;
+                  }
+               {% endif %}
+                {% if block.settings.text_align == 'bottom-center' %}
+                  .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context,
+                  .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context{
+                      position: absolute;
+                      bottom: 90px;
+                      left: 50%;
+                      right:50%;
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      flex-direction: column;
+                      gap: {{ block.settings.overlay-gap}}px;
+                      -ms-transform: translate(0%, 0%);
+                      transform: translate(0%, 0%);
+                      white-space: nowrap;
+                  }
+               {% endif %}
+                {% if block.settings.text_align == 'bottom-right' %}
+                  .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context,
+                  .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context{
+                      position: absolute;
+                      bottom: 90px;
+                      right: 45px;
+                      display: flex;
+                      align-items: flex-end;
+                      justify-content: center;
+                      flex-direction: column;
+                      gap: {{ block.settings.overlay-gap}}px;
+                      -ms-transform: translate(0%, 0%);
+                      transform: translate(0%, 0%);
+                      white-space: nowrap;
+                  }
+               {% endif %}
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context .title,
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context .title{
+                    font-family: 'Silvana';
+                    font-style: normal;
+                    font-weight: 400;                    
+                    line-height: 36px;
+                    text-align: center;
+                    letter-spacing: -0.01em;                   
+                }
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context .title{
+                  font-size: {{ block.settings.font-size-first-title }}px;
+                  color: {{ block.settings.first-title-color }};
+                }
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context .title{
+                    font-size: {{ block.settings.font-size-second-title }}px;
+                    color: {{ block.settings.second-title-color }};
+                }
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context a.overlay-link,
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context a.overlay-link{
+                    font-family: 'Intervogue';
+                    font-style: normal;
+                    font-weight: 500;
+                    font-size: 16px;
+                    line-height: 19px;       
+                    text-align: center;
+                    letter-spacing: 0.02em                  
+                    padding-bottom: 8px;
+                }   
+               .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context a.overlay-link{
+                    color: {{ block.settings.first-title-color }};
+                    border-bottom: 0.75px solid{{ block.settings.first-title-color }};
+               }
+                .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context a.overlay-link{
+                    color: {{ block.settings.second-title-color }};
+                    border-bottom: 0.75px solid{{ block.settings.second-title-color }};
+                }
+                
+                @media (max-width: 1024px){
+                    .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context .title,
+                    .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context .title{
+                        font-size: 16px;
+                        line-height: 28px;
+                        letter-spacing: 0.02em;
+                    }
+                    .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context a.overlay-link,
+                    .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context a.overlay-link{
+                        font-size: 12.5px;
+                        line-height: 21px;
+                    }   
+                    .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context,
+                    .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context{
+                         gap: {{ block.settings.overlay-gap}}px;
+                    }
+                }
+                @media (max-width: 600px){
+                    .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }}{
+                        flex-direction: column;
+                    }
+                    .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context .title,
+                    .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context .title{
+                        font-size: 20px;
+                        line-height: 26px;
+                        letter-spacing: -0.01em;
+                    }
+                    .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .first-column .overlay-context a.overlay-link,
+                    .np-double-column-image-{{ section.id }} .double-column-image-{{ block.id }} .second-column .overlay-context a.overlay-link{
+                        font-size: 14px;
+                        line-height: 16px;
+                        letter-spacing: 0.05em;
+                    }   
+                }
+       {% endcase %}
+     {% endfor %}
+</style>
+
+
+{% schema %}
+    {
+      "name": "double-column-image",
+      "settings": [       
+      ],
+      "blocks": [
+        {
+            "type": "double-image",
+            "name": "double-image",
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "First Image"
+                },
+                {
+                    "type":"image_picker",
+                    "id": "first-image",
+                    "label": "First Image"
+                },
+                {
+                    "type": "richtext",
+                    "id": "first-image-overlay-text",
+                    "label": "Overlay Title",
+                    "default": "<p>Dresses</p>"
+                },
+                {
+                    "type": "text",
+                    "id": "btn-text-first",
+                    "default": "shop",
+                    "label": "Button Text"
+                },
+                {
+                    "type": "url",
+                    "id": "button_link-first",
+                    "label": "Button link"
+                },
+                 {
+                   "type": "range",
+                   "id":"font-size-first-title",
+                   "label":"Title Font Size",
+                   "min": 7.5,
+                   "max": 50,
+                   "step": 0.5,
+                   "unit": "px",
+                   "default": 26
+                 },
+                {
+                   "type": "color",
+                   "id":"first-title-color",
+                   "label":"Overlay Text Color",
+                   "default": "#FFFFFF"
+                 },
+                {
+                    "type": "header",
+                    "content": "Second Image"
+                },
+                {
+                    "type":"image_picker",
+                    "id": "second-image",
+                    "label": "Second Image"
+                },
+                {
+                    "type": "richtext",
+                    "id": "second-image-overlay-text",
+                    "label": "Overlay Title",
+                    "default": "<p>tops & shirts</p>"
+                },
+                {
+                    "type": "text",
+                    "id": "btn-text-second",
+                    "default": "shop",
+                    "label": "Button Text"
+                },
+                {
+                    "type": "url",
+                    "id": "button_link-second",
+                    "label": "Button link"
+                },
+                {
+                   "type": "range",
+                   "id":"font-size-second-title",
+                   "label":"Title Font Size",
+                   "min": 7.5,
+                   "max": 50,
+                   "step": 0.5,
+                   "unit": "px",
+                   "default": 26
+                 },
+                {
+                   "type": "color",
+                   "id":"second-title-color",
+                   "label":"Overlay Text Color",
+                   "default": "#FFFFFF"
+                 },
+                {
+                  "type": "select",
+                  "id": "text_align",
+                  "label": "Text Alignment",
+                  "default": "bottom-center",
+                   "options": [
+                     {
+                       "value": "top-left",
+                       "label": "Top Left"
+                     },
+                     {
+                       "value": "top-center",
+                       "label": "Top Center"
+                     },
+                     {
+                       "value": "top-right",
+                       "label": "Top Right"
+                     },
+                     {
+                       "value": "center-left",
+                       "label": "Center Left"
+                     },
+                     {
+                       "value": "center",
+                       "label": "Center"
+                     },
+                     {
+                       "value": "center-right",
+                       "label": "Center Right"
+                     },
+                    {
+                       "value": "bottom-left",
+                       "label": "Bottom Left"
+                     },
+                     {
+                       "value": "bottom-center",
+                       "label": "Bottom Center"
+                     },
+                     {
+                       "value": "bottom-right",
+                       "label": "Bottom Right"
+                     }
+                   ]
+                },
+              {
+                "type": "range",
+                "id": "overlay-gap",
+                "label": "Overlay Text gap",
+                "min": 0,
+                "max": 50,
+                "step": 1,
+                "unit": "px",
+                "default": 25
+              }
+            ]
+        }
+      ],
+      "presets": [
+        {
+            "category": "content",
+            "name":"double-column-image",
+            "blocks": [
+                {
+                   "type": "double-image"
+                }
+            ]
+        }
+       ]
+  }
+  {% endschema %}
+  
+  {% stylesheet %}
+  {% endstylesheet %}
+  
+  {% javascript %}
+  {% endjavascript %}

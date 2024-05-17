@@ -1,0 +1,154 @@
+{% if product.metafields.custom.complete_look %}
+<div class="products-complete-look-section">
+    <div class="feature-row__item">
+      <div class="custom-look-collection" style="margin: 0 auto;">
+         <h3 class="title">style it with</h3>
+          <div class="image-wrap-pdp" style="height: auto;">
+            {% for product in product.metafields.custom.complete_look.value limit: product_limit %}
+             {% include 'product-grid-item-home' %}
+          {% endfor %}
+
+          </div>       
+      </div>
+    </div>
+</div>
+{% endif %}
+
+<style>
+  .related-products-list-container p.product-color-number{
+    color: rgba(43, 39, 37, 0.50);
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.25px;
+  }
+  .products-complete-look-section{
+    padding-top: 95px;
+    padding-bottom: 100px;
+  }
+  .products-complete-look-section .grid-product__price{
+    margin-top: 0px;
+  }
+  .products-complete-look-section .grid-product__meta.the-product-deatils-home{
+    padding-left: 7px;
+  }
+  .products-complete-look-section .image-wrap-pdp{
+    display: flex;
+    justify-content: center;
+  }
+  .products-complete-look-section .feature-row__item .custom-look-collection .title{
+    color: #2B2725;
+    text-align: center;
+    font-family: Intervogue;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 17px; 
+    letter-spacing: 0.52px;
+    text-transform: uppercase;
+     margin-bottom: 39px;      
+  }
+  .products-complete-look-section .feature-row__item .custom-look-collection .image-wrap-pdp .grid-product-title{
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 17px; 
+    letter-spacing: 0.52px;
+    text-transform: uppercase;
+  }
+  .products-complete-look-section .feature-row__item .custom-look-collection .image-wrap-pdp .grid-product__meta .np-regular_price.look-price{
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px; 
+    letter-spacing: 0.25px;
+    padding-bottom: 5px;
+  }
+  .products-complete-look-section .image-wrap-pdp .grid-product__content.the-look-home .grid-product__image-mask .image-wrap img{
+    position: unset !important;
+  }
+  @media (max-width: 1024px){
+
+    .products-complete-look-section{
+      padding-top: 39px;
+      padding-bottom: 74px;
+    }
+    .products-complete-look-section .feature-row__item .custom-look-collection .title{
+      color: #2B2725;
+      text-align: center;
+      font-family: Intervogue;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 18px; 
+      letter-spacing: 0.56px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .products-complete-look-section .grid-product__meta.the-product-deatils-home{
+      padding-left: 0px;
+    }
+  }
+  @media (max-width: 768px){
+    .products-complete-look-section{
+      padding-top: 31px;
+    }
+    .products-complete-look-section .feature-row__item .custom-look-collection .title{
+      margin-bottom: 28px;
+    }
+    .products-complete-look-section .feature-row__item .custom-look-collection .image-wrap-pdp .grid-product-title{
+        color: #2B2725;
+        font-family: Intervogue;
+        font-size: 14px;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 18px; 
+        letter-spacing: 0.56px;
+        text-transform: uppercase;
+     }
+    .products-complete-look-section .feature-row__item .custom-look-collection .image-wrap-pdp .grid-product__meta .np-regular_price.look-price{
+      color: #2B2725;
+      font-family: Intervogue;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px;
+      letter-spacing: 0.28px;
+    }
+    .products-complete-look-section .grid-product__meta.the-product-deatils-home{
+      padding: 9px 2px 0px 2px;
+    }
+    .template-product .page-width.custom-page-width-pdp-recommendation{
+      margin-top: 31px;
+    }
+    .products-complete-look-section{
+      padding-bottom: 67px;
+    }
+  }
+</style>
+
+{% schema %}
+  {
+    "name": "Complete Look",
+    "settings": [],
+      "presets": [
+      {
+        "name": "Complete Look",
+        "blocks": [
+        ]
+      }
+    ]
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

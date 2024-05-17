@@ -1,0 +1,152 @@
+
+{%- form 'product', product, id: form_id, class: 'product-single__form' -%}
+
+  {%- liquid
+    assign enable_dynamic_buttons = false
+    if show_dynamic_checkout and template != 'product.preorder'
+      assign enable_dynamic_buttons = true
+    endif
+  -%}
+
+  {%- if enable_dynamic_buttons -%}
+    <div class="payment-buttons">
+  {%- endif -%}
+
+    {%- liquid
+      assign default_text = 'products.product.add_to_cart' | t
+      assign button_text = 'products.product.add_to_cart' | t
+      if template contains 'preorder'
+        assign default_text = 'products.product.preorder' | t
+        assign button_text = 'products.product.preorder' | t
+      endif
+      unless current_variant.available
+        assign button_text = 'products.product.sold_out' | t
+      endunless
+    -%}
+{% assign swymProduct = true %}
+  {% for tag in product.tags %}
+{% if tag == "repeat-disabled" %}
+{% assign swymProduct = false %}
+{% break %}
+{% endif %}
+
+  {% endfor %}
+
+    <button
+      {% if product.empty? %}type="button"{% else %}type="submit"{% endif %}
+      name="add"
+      data-add-to-cart
+      class="btn btn--full add-to-cart{% if enable_dynamic_buttons and product.selling_plan_groups == empty %} btn--secondary{% endif %} sticky-mobile-pdp {% if swymProduct == true %} swymProduct{% endif %}"
+      {% unless current_variant.available %} disabled="disabled"{% endunless %}>
+      <span class="np-atc-btn" data-add-to-cart-text data-default-text="{{ default_text }}">
+<!--         {% unless current_variant.available %} {% render 'swym-product-view', product: product %} <button data-swaction="addToWatchlist" data-product-id="{{product.id | json}}"></button> {% endunless %}
+        Add To Bag -->
+        {{ button_text }}
+      </span>
+    </button>
+      <div class="blank"style="height: 2px;"></div>
+
+    {%- if enable_dynamic_buttons -%}
+      {{ form | payment_button }}
+    {%- endif -%}
+
+  {%- if enable_dynamic_buttons -%}
+    </div>
+  {%- endif -%}
+
+  <div class="shopify-payment-terms product__policies">{{ form | payment_terms }}</div>
+
+  <select name="id" data-product-select class="product-single__variants no-js">
+    {%- for variant in product.variants -%}
+      {%- if variant.available -%}
+        <option {% if variant == product.selected_or_first_available_variant %}
+          selected="selected"{% endif %}
+          value="{{ variant.id }}">
+          {{ variant.title }} - {{ variant.price | money_with_currency }}
+        </option>
+      {%- else -%}
+        <option disabled="disabled">
+          {{ variant.title }} - {{ 'products.product.sold_out' | t }}
+        </option>
+      {%- endif -%}
+    {%- endfor -%}
+  </select>
+{%- endform -%}
+
+<style>
+ .swymProduct[disabled="disabled"] {
+  background: white;
+  height: 0px;
+  margin: 0px; 
+  padding: 0px;
+  letter-spacing: normal;
+  opacity: 0;
+  position: absolute !important; 
+}
+.swymProduct[disabled="disabled"] .np-atc-btn{
+  display: none;
+} 
+.swymProduct.disabled {
+  display: none;
+  background: white;
+  height: 0px;
+  margin: 0px; 
+  padding: 0px;
+  letter-spacing: normal;
+  opacity: 0;
+  position: absolute !important; 
+} 
+
+  @media only screen and (max-width: 768px) {
+    .sticky-mobile-pdp.fixed {
+      position: fixed !important;
+      left: 0;
+      bottom: 0;
+      background-color: #2B2725;
+      color: aliceblue;
+      text-align: center !important;
+      z-index: 999999;
+    }
+  }
+</style>
+
+<script>
+  
+//   function aboveViewport(el) {
+//   const rect = el.getBoundingClientRect();
+//   return rect.top >= 10 && rect.left >= 0;
+// }
+
+// function underViewport(el) {
+//   const rect = el.getBoundingClientRect();
+//   return (
+//     rect.bottom <=
+//       (window.innerHeight || document.documentElement.clientHeight) - 10 &&
+//     rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+//   );
+// }
+
+//   // Example usage
+//   const buttonElement = document.querySelector('.blank');
+//   const buttonRect = buttonElement.getBoundingClientRect();
+//   document.addEventListener(
+//   "scroll",
+//   function () {
+//     if (!aboveViewport(buttonElement)) {
+//       // console.log("above view");
+//       document.querySelector('.sticky-mobile-pdp').classList.add("fixed");
+
+//     } else if (!underViewport(buttonElement)) {
+//       // console.log("under view");
+//       // document.querySelector('.sticky-mobile-pdp').classList.add("fixed");
+
+//     } else {
+//       // console.log("middle");
+//       document.querySelector('.sticky-mobile-pdp').classList.remove("fixed");
+//     }
+//   },
+//   {
+//     passive: true,
+//   }
+// );
+</script>

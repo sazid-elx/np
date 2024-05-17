@@ -1,0 +1,344 @@
+<section class="hero-section-{{ section.id }} affiliation">
+    <div class="hero-main-title{% if section.settings.title-font-style == true %} italic-font-title{% endif %}">
+      <p>{{ section.settings.hero-title }}</p>
+    </div>
+    <div class="hero-sub-title{% if section.settings.subtitle-font-style == true %} italic-font-subtitle{% endif %}">
+      <p>{{ section.settings.sub-title }}</p>
+    </div>
+    <div class="hero-description{% if section.settings.description-font-style == true %} italic-font-description{% endif %}">
+      {{ section.settings.description }} 
+    </div>
+    <div class="hero-button {% if section.settings.show_button == false %}hide{% endif %}">
+      <a class="hero-btn" href="{{ section.settings.button_link }}">{{ section.settings.btn-text }}</a>
+    </div>
+
+    {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'spacer-block' %}
+              <div class="spacer-{{ block.id }}">
+                  
+              </div>
+        {% endcase %}
+   {% endfor %}
+</section>
+
+
+<style>
+  @media screen and (max-width: 768px){
+      #MainContent{
+         margin-top: 70px;
+     }
+  }
+    @media screen and (max-width: 600px){
+      #MainContent{
+         margin-top: 115px;
+     }
+  }
+  .hero-section-{{ section.id }}.affiliation{
+    max-width: 934px;
+    margin: 0 auto;
+    padding: 46px 0px 0px 0px;
+  }
+  .hero-section-{{ section.id }}.affiliation .hero-main-title p{
+    max-width: 934px;
+    width: 100%;
+    font-family: 'Silvana';
+    font-weight: 400;
+    font-size: {{ section.settings.font-size-title | append: 'px' }};
+    line-height: 105px;
+    letter-spacing: -0.03em;
+    color: {{ section.settings.title-color }};
+    padding-bottom: 67px;      
+  }
+  .hero-section-{{ section.id }}.affiliation .hero-sub-title p{
+    font-family: 'Silvana';
+    font-weight: 400;
+    font-size: {{ section.settings.font-size-subtitle | append: 'px' }};
+    line-height: 36px;
+    letter-spacing: -0.01em;   
+    color: {{ section.settings.subtitle-color }};
+    max-width: 585px;
+    width: 100%;
+    padding-bottom: 46px; 
+  }
+  .hero-section-{{ section.id }}.affiliation .hero-description p{
+    font-family: 'Intervogue';
+    font-weight: 400;
+    font-size: {{ section.settings.font-size-description | append: 'px' }};
+    line-height: 28px;
+    text-align: justify;
+    color: {{ section.settings.description-color }};
+    max-width: 581px;
+    width: 100%;
+  }
+  .hero-section-{{ section.id }}.affiliation .hero-description p a{
+    text-decoration: underline;
+  }
+  .hero-section-{{ section.id }}.affiliation .hero-button{
+    padding-top: 20px;
+  }
+  .hero-section-{{ section.id }}.affiliation .hero-button a{
+    max-width: 349px;
+    width: 100%;
+    display: inline-block;
+    font-family: 'Intervogue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12.5px;
+    line-height: 21px; 
+    text-align: center;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #2B2725;
+    border: 0.75px solid #2B2725;
+    padding: 8px 0px;
+  }
+
+  .italic-font-description p{
+    font-style: italic;
+  }
+  .italic-font-title p{
+    font-style: italic;
+  }
+  .italic-font-subtitle p{
+      font-style: italic;
+  }
+   @media screen and (max-width: 1024px){
+     .hero-section-{{ section.id }}.affiliation .hero-main-title p{
+          font-size: 80px;
+          line-height: 80px;
+     }
+     .hero-section-{{ section.id }}.affiliation{
+       padding: 46px 68px 0px 68px;
+     }
+   }
+/*   @media screen and (max-width: 980px) and (min-width: 599px){
+    .hero-section-{{ section.id }}.affiliation{
+      padding: 46px 20px 0px 20px;
+    }
+  } */
+  @media screen and (max-width: 600px){
+    .hero-section-{{ section.id }}.affiliation{
+      max-width: 100%;
+      margin: 14px auto 0px;
+      padding: 0px 12px;
+    }
+    .hero-section-{{ section.id }}.affiliation .hero-main-title{
+        padding: 0px 0px 20px 5px;
+    }
+    .hero-section-{{ section.id }}.affiliation .hero-main-title p{
+      width: 100%;
+      font-size: 54px;
+      line-height: 55px;
+      letter-spacing: -2px;
+      padding: 0px;
+    }
+    .hero-section-{{ section.id }}.affiliation .hero-sub-title{
+      padding-left: 5px;
+    }
+    .hero-section-{{ section.id }}.affiliation .hero-sub-title p{
+      width: 100%;
+      font-size: 20px;
+      line-height: 23px;
+      letter-spacing: -0.01px;
+      padding-bottom: 34px;
+    }
+    .hero-section-{{ section.id }}.affiliation .hero-description{
+      padding-left: 5px;
+    }
+    .hero-section-{{ section.id }}.affiliation .hero-description p{
+      width: 100%;
+      font-size: 12px;
+      line-height: 20px;
+      letter-spacing: 0.02px;
+      padding: 0px 0px 0px;
+    }
+    .hero-section-{{ section.id }}.affiliation .hero-button{
+      padding-top: 42px;
+    }
+    .hero-section-{{ section.id }}.affiliation .hero-button a{
+      max-width: 335px;
+      width: 100%;
+      letter-spacing: 0.04em;
+      text-align: left;
+      padding: 8px 18px;
+    }
+  }
+   @media screen and (max-width: 360px){
+     .hero-section-{{ section.id }}.affiliation .hero-main-title p{
+       max-width: 325px;
+     }
+     .hero-section-{{ section.id }}.affiliation .hero-sub-title p{
+       max-width: 298px;
+     }
+     .hero-section-{{ section.id }}.affiliation .hero-description p{
+       max-width: 324px;
+     }
+   }
+
+  {% for block in section.blocks %}
+        {% case block.type %}
+          {% when 'spacer-block' %}
+            .hero-section-{{ section.id }}.affiliation .spacer-{{ block.id }} {
+              height: {{ block.settings.spacer-height }}px; 
+            }
+    {% endcase %}
+  {% endfor %}
+</style>
+
+{% schema %}
+    {
+      "name": "hero-affiliation",
+      "settings": [
+        {
+            "type": "text",
+            "id":"hero-title",
+            "default": "Join the Ninety Percent Affiliate Programme",
+            "label": "Hero Title"
+        },
+        {
+            "type": "text",
+            "id": "sub-title",
+            "default": "Through the Ninety Percent Affiliate Programme, selected fashion and lifestyle websites can earn a commission by promoting Ninety Percent products.",
+            "label": "Hero sub title"
+        },
+        {
+            "type": "richtext",
+            "id": "description",
+            "default": "<p>If your application is accepted, you will be able to earn up to 6% commission on valid sales referred by your website. Get started by filling out our affiliate application here.</p>",
+            "label": "Hero description"
+        },
+        {
+          "type": "header",
+          "content": "For Title"
+        },
+        {
+            "type": "range",
+            "id": "font-size-title",
+            "label": "Title Font size",
+            "min": 8,
+            "max": 100,
+            "step": 1,
+            "unit": "px",
+            "default": 100
+        },
+        {
+            "type": "color",
+            "label": "Title color",
+            "id": "title-color",
+            "default": "#2B2725"
+        },
+        {
+        "type": "checkbox",
+        "id": "title-font-style",
+        "label": "Italic style ( Title )",
+        "default": false
+        },
+        {
+          "type": "header",
+          "content": "For Sub Title"
+        },
+        {
+            "type": "range",
+            "id": "font-size-subtitle",
+            "label": "Sub Title Font size",
+            "min": 8,
+            "max": 100,
+            "step": 1,
+            "unit": "px",
+            "default": 26
+        },
+        {
+          "type": "color",
+          "label": "Sub Title color",
+          "id": "subtitle-color",
+          "default": "#2B2725"
+        },
+        {
+          "type": "checkbox",
+          "id": "subtitle-font-style",
+          "label": "Italic style ( Sub Title )",
+          "default": false
+        },
+        {
+            "type": "header",
+            "content": "For Description"
+        },
+        {
+          "type": "range",
+          "id": "font-size-description",
+          "label": "Description Font size",
+          "min": 8,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "default": 16
+        },
+        {
+          "type": "color",
+          "label": "Description color",
+          "id": "description-color",
+          "default": "#2B2725"
+        },
+        {
+          "type": "checkbox",
+          "id": "description-font-style",
+          "label": "Italic style ( Description )",
+          "default": false
+        },
+        {
+          "type": "header",
+          "content": "For Button"
+        },
+        {
+          "type": "text",
+          "id": "btn-text",
+          "default": "Apply now",
+          "label": "Button Text"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        },
+        {
+          "type": "checkbox",
+          "id": "show_button",
+          "label": "Show Button",
+          "default": true
+        }
+      ],
+      "blocks": [
+        { 
+          "type": "spacer-block",
+          "name": "Spacer",
+          "settings": [
+            {
+              "type": "range",
+              "id": "spacer-height",
+              "label": "Spacer Height",
+              "min": 0,
+              "max": 200,
+              "step": 5,
+              "unit": "px",
+              "default": 30
+            }
+          ]
+        }   
+      ],
+      "presets": [
+      {
+        "category": "content",
+        "name":"hero-affiliation"
+      }
+  ]
+     
+    }
+  {% endschema %}
+  
+  {% stylesheet %}
+  {% endstylesheet %}
+  
+  {% javascript %}
+  {% endjavascript %}
+

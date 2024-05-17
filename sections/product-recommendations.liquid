@@ -1,0 +1,469 @@
+{%- liquid
+  assign recommend_products = true
+
+  if recommendations.products and recommendations.products_count > 0
+    assign related_collection = recommendations
+  endif
+
+  for tag in product.tags
+    if tag contains '_related'
+      assign include_collection_handle = tag | split: '_' | last
+      assign include_collection = collections[include_collection_handle]
+      if include_collection != empty and include_collection.products_count > 0
+        assign related_collection = include_collection
+        assign recommend_products = false
+        break
+      endif
+    endif
+  endfor
+
+  assign number_of_products = section.settings.related_count
+-%}
+
+{%- if section.settings.show_product_recommendations -%}
+  <div
+    id="Recommendations-{{ section.id }}"
+    data-section-id="{{ section.id }}"
+    data-section-type="product-recommendations"
+    data-enable="{{ recommend_products }}"
+    data-product-id="{{ product.id }}"
+    data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ number_of_products }}"
+    data-limit="{{ number_of_products }}">
+
+    <div
+      data-section-id="{{ product.id }}"
+      data-subsection
+      data-section-type="collection-grid"
+      class="index-section">
+      <div class="page-width custom-page-width-pdp-recommendation">
+        <header class="section-header custom-header">
+          <h3 class="section-header__title np-h8 mobile-header">
+            {{ section.settings.product_recommendations_heading }}
+          </h3>
+        </header>
+      </div>
+
+      <div class="page-width page-width--flush-small custom-padding  custom-page-width-pdp-recommendation">
+        <div class="grid-overflow-wrapper">
+          {%- if recommend_products -%}
+            <div class="product-recommendations-placeholder">
+              {% comment %}
+                This content is visually hidden and replaced when recommended products show up
+              {% endcomment %}
+              <div class="grid grid--uniform visually-invisible" aria-hidden="true">
+                {%- render 'product-grid-item-recommendations',
+                  product: product,
+                  quick_shop_enable: settings.quick_shop_enable
+                -%}
+              </div>
+            </div>
+          {%- endif -%}
+          {%- if related_collection.products_count > 1 -%}
+            <div class="product-recommendations">
+              <div class="grid grid--uniform" data-aos="overflow__animation">
+                {%- for product in related_collection.products limit: number_of_products -%}
+                  {%- render 'product-grid-item-recommendations',
+                    product: product,
+                    per_row: number_of_products,
+                    quick_shop_enable: settings.quick_shop_enable
+                  -%}
+                {%- endfor -%}
+              </div>
+            </div>
+          {%- endif -%}
+        </div>
+        
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "t:sections.product-recommendations.name",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_product_recommendations",
+      "label": "t:sections.product-recommendations.settings.show_product_recommendations.label",
+      "info": "t:sections.product-recommendations.settings.show_product_recommendations.info",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "product_recommendations_heading",
+      "label": "t:sections.product-recommendations.settings.product_recommendations_heading.label",
+      "default": "You may also like"
+    },
+    {
+      "type": "range",
+      "id": "related_count",
+      "label": "t:sections.product-recommendations.settings.related_count.label",
+      "default": 5,
+      "min": 2,
+      "max": 6,
+      "step": 1
+    }
+  ]
+}
+{% endschema %}
+
+<style>
+  [data-section-type="product-recommendations"] .image-wrap .grid-product__image.lazyloaded{
+    position: unset !important;
+    aspect-ratio: 472/600;
+  }
+  [data-section-type="product-recommendations"] .index-section{
+    margin-top: 95px;
+    margin-bottom: 149px;
+  }
+ .page-width.custom-page-width-pdp-recommendation .section-header.custom-header {
+    margin-bottom: 38px !important;
+  }
+  .product-recommendations .slick-dots{
+    margin-top: 10px;
+  }
+  .shop-all-button.for-mobile{
+    display: none;
+  }
+  .shop-all-button.for-desktop{
+    display: block;
+    color: #2B2725;
+    text-align: center;
+    font-family: Intervogue;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 28px; /* 175% */
+    letter-spacing: 0.32px;
+    text-align: center;
+    padding-bottom: 7px;
+    border-bottom: 1px solid #2B2725;
+    display: table;
+    margin: 0 auto;
+    margin-top: 45px;
+  }
+  .product-recommendations .grid__item.grid-product{
+    padding-left: 4px !important;
+  }
+    .product-recommendations .slick-slider .slick-dots li button:before{
+    content:"" !important;
+     padding:0;
+  } 
+  .product-recommendations .slick-slider .slick-dots li.slick-active,
+  .product-recommendations .slick-slider .slick-dots li.slick-active button,
+  .product-recommendations .slick-slider .slick-dots li.slick-active button:before {
+    /*width: 6px;*/
+    margin-top: 0px;
+    width:9px;
+    height:12px;
+    background: #2B2725;
+    content:"";
+    padding:0;
+  }
+
+   .product-recommendations .slick-dots{
+    position:relative;
+  }
+  
+  .product-recommendations .slick-dots ul{
+    margin:0;
+  }
+  
+  .product-recommendations .slick-dots li button {    
+    border: 1px solid #2B2725;
+    width:9px !important;
+    height:12px !important;
+    padding:0;
+  }
+  .product-recommendations .slick-dots li {
+    position: relative;
+    display: inline-block;
+     width: 9px;
+    height: 12px; 
+    /* margin: 0 !important;
+    padding: 0 !important; */
+    cursor: pointer;
+  }
+
+  .product-recommendations .grid__item:first-child{
+    padding-left:5px;
+  }
+  
+  .product-recommendations .grid-product__title.grid-product__title--{{ settings.type_product_style }}.custom-title {
+/*     max-width: 230px; */
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 13px !important;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 17px;
+    letter-spacing: 0.52px !important;
+    text-transform: uppercase;
+  }
+  @media (max-width: 1000px) {
+    .product-recommendations .custom-title {
+      max-width: 100%;
+    }
+    .product-recommendations .grid-product__meta{
+      flex-direction: column;
+    }
+    .grid-product__price {
+      text-align: left;
+    }
+  }
+  .product-recommendations .grid-product__price {
+    margin-top: 0px;
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse;
+    justify-content: flex-end;
+    gap: 15px;
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px; 
+    letter-spacing: 0.25px;
+
+  }
+   .product-recommendations .grid-product__price .grid-product__price--original{
+     color: rgba(43, 39, 37, 0.5);
+   }
+    .product-recommendations .grid-product__meta .product-color-varient-count .related-products-list-container .product-color-number{
+    color: rgba(43, 39, 37, 0.50);
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px; /* 168% */
+    letter-spacing: 0.25px;
+  }
+  .product-recommendations .grid-product__meta .product-color-varient-count .related-products-list-container p:not(:first-child){
+     display: none;
+  }
+  @media only screen and (max-width: 1300px){
+    .product-recommendations .custom-title{
+      max-width: 150px;
+/*       padding-right: 11px; */
+    }
+  }
+  .product-recommendations .grid__item .grid-product__image-mask ul{
+    display: none;
+  }
+  .product-recommendations .slick-track{
+    display: flex;
+
+  }
+  .product-recommendations .grid-product__meta{
+/*     display: flex; */
+/*     justify-content: space-between; */
+    padding: 8px;
+    position: relative;
+  }
+   .product-recommendations .grid-product__title{
+    text-align: left;
+  }
+   .material-tag-pdp{
+    font-family: 'Silvana';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    letter-spacing: -0.01em;
+    padding-left: 10px;
+    padding-right: 10px;
+    color: #2B2725;
+  }
+  .section-header.custom-header {
+    margin-bottom: 19px;
+  }
+  .product-recommendations .slick-dotted.slick-slider {
+    margin-bottom: 26px;
+  }
+  .product-recommendations .slick-dots {
+    bottom: 0px;
+  }
+  @media only screen and (max-width: 1000px) {
+    .material-tag-pdp{
+      display: none;
+    }
+    .product-recommendations .grid-product__price {
+      margin-left: 0;
+      position: relative;
+    }
+  }
+  @media (max-width: 1024px){
+    [data-section-type="product-recommendations"] .index-section{
+      margin-top: 39px ;
+    }
+    .page-width.custom-page-width-pdp-recommendation .section-header.custom-header{
+      margin-bottom: 24px !important;
+    }
+    .template-product [data-section-type="product-recommendations"] .section-header__title{
+      color: #2B2725;
+      text-align: center;
+      font-family: Intervogue;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 18px; 
+      letter-spacing: 0.56px;
+      text-transform: uppercase;
+    }
+    .product-recommendations .slick-dots{
+      margin-top: 0px;
+    }
+    [data-section-type="product-recommendations"] .index-section{
+      margin-bottom: 75px;
+    }
+  }
+  @media only screen and (max-width: 768px){
+    .page-width.custom-page-width-pdp-recommendation{
+      padding-top: 16px;
+      padding-left: 4px !important;
+      padding-right: 4px !important;
+      margin-top: 100px;
+    }
+    .page-width.page-width--flush-small.custom-padding.custom-page-width-pdp-recommendation{
+      margin-top: 0px;
+       border-top: 0px;
+    }
+    .page-width.custom-page-width-pdp-recommendation .section-header.custom-header{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 0px 16px 0px;
+      margin-bottom: 0px !important;
+      border-top: 1px solid rgba(43, 39, 37, 0.50);
+    }
+    .page-width.custom-page-width-pdp-recommendation .section-header__title.np-h8.mobile-header{
+      padding-left: 16px;
+      margin-bottom: 0px;
+    }
+    .page-width.custom-page-width-pdp-recommendation span{
+      padding-right: 16px;
+    }
+    .product-recommendations .grid__item.grid-product{
+      padding-left: 0px !important;
+    }
+    .grid-product__meta .related-products-list-container{
+      padding-left: 0px !important;
+    }
+    .shop-all-button.for-desktop{
+      display: none;
+    }
+    .shop-all-button.for-mobile{
+      display: block;
+      color: #2B2725;
+      text-align: right;
+      font-family: Intervogue;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; 
+      letter-spacing: 0.28px;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #2B2725;
+    }
+    .product-recommendations .grid__item.grid-product{
+      padding-left: 0px;
+    }
+    .product-recommendations .slick-dotted.slick-slider {
+      margin-bottom: 109px;
+    }
+    .custom-padding {
+      padding: 0 20px;
+    }
+    .product-recommendations .grid-product__content:nth-child(1){
+      margin-right: 4px;
+    }
+    .product-recommendations .grid-product__meta{
+      flex-direction: column;
+      padding-left: 4px;
+    }
+     .product-recommendations .grid-product__title{
+       padding-right: 11px;
+       font-size: 9px !important;
+     }
+     .grid-overflow-wrapper .grid__item{
+      flex: none !important;
+    } 
+    .grid-overflow-wrapper{
+      overflow: hidden;
+    }
+    .product-recommendations .grid-product__price{
+      padding-right: 5px;
+      display: flex;
+      font-size: 9px;
+    }
+    .section-header__title.np-h8.mobile-header {
+      font-size: 12px;
+      margin-bottom: 5px;
+    }
+    header.section-header {
+      margin-bottom: 0px;
+    }
+    .product-recommendations .grid-product__meta{
+      padding-left: 4px;
+    }
+    .material-tag-pdp{
+      display: none;
+    }
+    .product-recommendations .grid-product__price {
+      right: 0px;
+      color: #2B2725;
+      font-family: Intervogue;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px;
+      letter-spacing: 0.28px;
+    }
+    .product-recommendations .grid-product__meta .product-color-varient-count .related-products-list-container .product-color-number{
+      color: rgba(43, 39, 37, 0.50);
+      font-family: Intervogue;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; 
+      letter-spacing: 0.28px;
+    }
+    .template-product [data-section-type="product-recommendations"] .section-header__title{
+      color: #2B2725;
+      font-family: Intervogue !important;
+      font-size: 14px !important;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 18px; 
+      letter-spacing: 0.56px;
+      text-transform: uppercase;
+    }
+    #Recommendations-{{ section.id }} .grid-overflow-wrapper .grid {
+      display: block;
+    }
+    .product-recommendations .slick-slider .slick-dots li.slick-active,
+    .product-recommendations .slick-slider .slick-dots li.slick-active button,
+    .product-recommendations .slick-slider .slick-dots li.slick-active button:before {
+      width: 7.21px;
+      height: 9.13px;
+    }
+    .product-recommendations .grid-product__title.grid-product__title--body.custom-title{
+      color: #2B2725;
+      font-family: Intervogue !important;;
+      font-size: 14px !important;;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 18px; 
+      letter-spacing: 0.56px !important;;
+      text-transform: uppercase;
+    }
+    .product-recommendations .slick-dots{
+      margin-top: 50px !important;
+    }
+    [data-section-type="product-recommendations"] .index-section{
+      margin-bottom: 0px;
+    }
+  }
+</style>

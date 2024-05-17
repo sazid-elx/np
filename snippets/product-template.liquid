@@ -1,0 +1,2462 @@
+
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign description_parts = product.description | split: 'Model wears'
+  unless thumbnail_position
+    assign thumbnail_position = 'beside'
+  endunless
+
+  assign product_zoom_size = '1800x1800'
+  assign product_image_size = '620x'
+
+  case image_container_width
+    when 'small'
+      assign product_image_width = 'medium-up--two-fifths'
+      assign product_description_width = 'medium-up--three-fifths'
+      assign product_image_size = '480x'
+    when 'medium'
+      assign product_image_width = 'medium-up--one-half'
+      assign product_description_width = 'medium-up--one-half'
+      assign product_image_size = '620x'
+    when 'large'
+      assign product_image_width = 'medium-up--three-fifths'
+      assign product_description_width = 'medium-up--two-fifths'
+      assign product_image_size = '740x'
+  endcase
+
+  assign product_img_structure = product.featured_media | img_url: '1x1' | replace: '_1x1.', '_{width}x.'
+-%}
+
+{%- liquid
+  assign connect_to_sizechart = false
+
+  for block in section.blocks
+    if block.type == 'size_chart'
+      assign sizechart_index = forloop.index0
+      assign next_block_index = sizechart_index | plus: 1
+      assign variant_block = section.blocks[next_block_index]
+
+      if variant_block.type == 'variant_picker' and variant_block.settings.picker_type == 'button' and product.has_only_default_variant == false
+        for option in product.options_with_values
+          assign size_trigger = 'products.general.size_trigger' | t | downcase
+          assign downcased_option = option.name | downcase
+
+          if downcased_option contains size_trigger
+            assign connect_to_sizechart = true
+          endif
+        endfor
+      endif
+
+    endif
+  endfor
+-%}
+{% render 'pdp-drawer', product: product %}
+<div
+  id="ProductSection-{{ section_id }}-{{ product.id }}"
+  class="product-section"
+  data-section-id="{{ section_id }}"
+  data-product-id="{{ product.id }}"
+  data-section-type="product"
+  data-product-handle="{{ product.handle }}"
+  data-product-title="{{ product.title | escape }}"
+  data-product-url="{{ product.url | within: collection }}"
+  data-aspect-ratio="{{ 100 | divided_by: product.featured_media.aspect_ratio }}"
+  data-img-url="{{ product_img_structure }}"
+  {% unless isModal %}
+  data-history="true"
+  {% endunless %}
+  data-modal="{{ isModal }}">
+
+  {%- render 'product-template-variables', product: product, current_variant: current_variant -%}
+
+  <div class="page-content page-content--product">
+
+
+    {% if product.tags contains 'gift-card' %}
+        <div class="gift-card-range-container-mobile">
+          from {{ product.price_min | money_without_trailing_zeros }} to {{ product.price_max | money_without_trailing_zeros }}
+        </div>
+    {% endif %}
+
+        <div class="image-wrap pdp-mobile-slider">
+<!--             <img class="grid-product__image lazyload"
+                data-src="{{ img_url }}"
+                data-widths="[400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2160, 2600, 3000, 3400, 3800, 4100]"
+                data-aspectratio="{{ preview_image.aspect_ratio }}"
+                data-sizes="auto"
+                alt="{{ preview_image.alt | escape }}">
+            <noscript>
+              <img class="grid-product__image lazyloaded"
+                src="{{ preview_image | img_url: '400x' }}"
+                alt="{{ preview_image.alt | escape }}">
+            </noscript> -->
+        <div class="swiper mySwiper">
+          <div class="swiper-wrapper">
+            {%- for image in product.images -%}
+              <div class="swiper-slide">
+                <img style="opacity:1" class="grid-product__image lazyloaded" src="{{ image | img_url: '400x' }}" alt="{{ image.alt | escape }}">
+              </div>
+            {%- endfor -%}
+          </div>
+          <div class="swiper-button-next"></div>
+          <div class="swiper-button-prev"></div>
+          <div class="swiper-pagination"></div>
+        </div>
+
+        <div class="add-to-cart-popup">
+          <img src="https://cdn.shopify.com/s/files/1/0283/1338/7053/files/Ninety_Percent_Icons-02.png?v=1690299124">
+          <p class="text">Item added to shopping bag</p>
+          <a href="{{ routes.cart_url }}" class="popup-btn js-drawer-open-cart" aria-controls="CartDrawer">View</a>
+        </div>
+      </div>
+  
+    <div class="page-width custom-page-width-pdp">
+
+      <div class="grid{% unless image_position == 'left' %} grid--product-images-right{% endunless %}{% if mobile_layout == 'partial' %} grid--product-images--partial{% endif %}">
+
+        {%- if image_position == 'left' -%}
+          <div class="grid__item {{ product_image_width }} product-single__sticky test-99 np-prod-template">
+            {%- render 'product-images',
+              section_id: section_id,
+              product: product,
+              isModal: isModal,
+              image_position: image_position,
+              product_zoom_enable: product_zoom_enable,
+              product_zoom_size: product_zoom_size,
+              product_image_size: product_image_size,
+              thumbnail_arrows: thumbnail_arrows,
+              thumbnail_height: thumbnail_height,
+              thumbnail_position: thumbnail_position,
+              video_looping: video_looping,
+              video_style: video_style -%}
+            {% comment %} <div class="pdp-description-container {% if product.tags contains 'gift-card' %}hide{% endif %} hide">
+              <div class="fabrication-container">
+                {%- capture product_fabrication -%}
+                {% assign fabrications = product.metafields.custom.fabrication | split: '.' %}
+                  <div class="model-wears">{{ fabrications.first }}.</div>
+                {% if fabrications.last contains "," %}
+                {% assign words = fabrications.last | split: ',' %}
+                  <div class="fabric-percentage">
+                    {% for word in words %}
+                      <p>{{ word }}</p>
+                    {% endfor %}
+                  </div>
+
+                  {% else %}
+                  <div class="fabric-percentage">
+                  <span><p>{{ fabrications.last }}</p>,</span>
+                  </div>
+                  {% endif %}
+                {% endcapture %}
+                {%- assign product_fabrication = product_fabrication | remove_last: "," -%}
+                  {{ product_fabrication }}      
+                <div class="factory-location">{{ product.metafields.custom.factory }}</div>  
+                 <p class="learn-more-button-pdp"><u>Learn more</u></p>
+              </div>
+              <div class="description-container">
+                {% if product.description contains "Model wears" %}
+                  {{ description_parts.first | replace: "<br>", "" }}
+                {% else %}
+                  {{ product.description }}
+                {% endif %}
+              </div>
+            </div> {% endcomment %}
+          </div>
+        {%- endif -%}
+
+        <div class="grid__item {{ product_description_width }} pdp-right-block safe-sticky">
+
+          <div class="product-single__meta">
+            {% render 'breadcrumbs_pdp' %}
+            <div class="product-block product-block--header">
+              
+             {% comment %} {%- if settings.show_breadcrumbs and isModal != true -%}
+                {%- render 'breadcrumbs' -%}
+              {%- endif -%} {% endcomment %}
+
+              {%- if settings.vendor_enable -%}
+                <div class="product-single__vendor">
+                  {%- assign vendor_handle = product.vendor | handleize -%}
+                  {%- if collections[vendor_handle] != empty -%}
+                    <a href="{{ routes.collections_url }}/{{ collections[vendor_handle].handle }}">
+                      {{ collections[vendor_handle].title }}
+                    </a>
+                  {%- else -%}
+                    {{ product.vendor | link_to_vendor }}
+                  {%- endif -%}
+                </div>
+              {%- endif -%}
+
+              {%- if isModal -%}
+                <p class="h2 product-single__title np-h9">
+                  {{ product.title }}
+                </p>
+              {%- else -%}
+                <h1 class="h2 product-single__title np-h9">
+                  {%- unless product.empty? -%}
+                    {{ product.title }}
+                  {%- else -%}
+                    {{ 'home_page.onboarding.product_title' | t }}
+                  {%- endunless -%}
+                </h1>
+              {%- endif -%}
+
+              {%- if sku_enable -%}
+                <p data-sku class="product-single__sku">
+                  {%- if current_variant.sku -%}
+                    {{ current_variant.sku }}
+                  {%- endif -%}
+                </p>
+              {%- endif -%}
+            </div>
+
+            <div class="material-page-title-wrapper">
+              {%- capture product_fabric_types -%}
+                {%- for tag in product.tags -%}
+                  {%- if tag contains '_organic-cotton' or tag contains '_tenceltm' or tag contains '_seacell-1' or tag contains '_ecovero-viscose' or tag contains '_micromodal-1' or tag contains '_velour' or tag contains '_recycled-polyamide' or tag contains '_polyester-1' or tag contains '_linen-1' or tag contains '_nylon' or tag contains '_enka®-viscose' or tag contains '_viscose-1' or tag contains '_fillsens®' or tag contains 'lyocell-1' or tag contains '_cotton-1' -%}
+                    {%- assign include_page_handle = tag | split: '_' -%}
+                    {%- assign include_page = pages[include_page_handle.last] -%}
+                    {% comment %}
+                     {% assign words = include_page.title | split: ' ' %}
+                    {% capture titlecase %}
+                      {% for word in words %}
+                        {{ word | capitalize }}
+                      {% endfor %}
+                    {% endcapture %}
+                    {% endcomment %}
+                    <!-- <a href="#" class="pdp-drawer-item drawer-material-pdp">{{ include_page.title }},</a> -->
+                     {% if tag contains '_cotton-1' %}
+                      <p class="pdp-material-title">{{ include_page.title }},</p>
+                    {% else %}
+                      <a href="#" class="pdp-drawer-item drawer-material-pdp">{{ include_page.title }},</a>
+                    {% endif %}
+                    
+                  {%- endif -%}
+                {%- endfor -%}
+              {%- endcapture -%}
+              {%- assign product_fabric_types = product_fabric_types | remove_last: "," -%}
+              {{ product_fabric_types }}
+            </div>
+
+            {% if product.tags contains 'gift-card' %}
+              <div class="gift-card-range-container">
+                from {{ product.price_min | money_without_trailing_zeros }} to {{ product.price_max | money_without_trailing_zeros }}
+              </div>
+            {% endif %}
+
+
+            <div data-product-blocks>
+              {%- capture form_id -%}AddToCartForm-{{ section_id }}-{{ product.id }}{%- endcapture -%}
+               {%- capture new_form_id -%}NewCTAbtn-{{ section_id }}-{{ product.id }}{%- endcapture -%}
+              {%- for block in blocks -%}
+                {%- case block.type -%}
+                  {%- when '@app' -%}
+                  {% render block %}
+                  {%- when 'separator' -%}
+                  <div class="product-block" {{ block.shopify_attributes }}></div>
+                  {%- when 'text' -%}
+                  <div class="product-block" {{ block.shopify_attributes }}>
+                    {{ block.settings.text }}
+                  </div>
+                  {%- when 'tab' -%}
+                  {% assign tab_id = block.id | append: product.id %}
+                  {% capture tab_content %}
+                    {{ block.settings.content }}
+                    {{ block.settings.page.content }}
+                  {% endcapture %}
+                  {% unless tab_content == blank and block.settings.title == blank %}
+                    <div class="product-block product-block--tab" {{ block.shopify_attributes }}>
+                      {%- render 'tab', id: tab_id, title: block.settings.title, content: tab_content -%}
+                    </div>
+                  {% endunless %}
+                  {%- when 'contact' -%}
+                  <div class="product-block product-block--tab" {{ block.shopify_attributes }}>
+                    {% assign tab_id = block.id | append: product.id %}
+                    {%- render 'tab-contact', id: tab_id, block: block -%}
+                  </div>
+                  {%- when 'description' -%}
+                  <div class="product-block{% if block.settings.is_tab %} product-block--tab{% endif %}" {{ block.shopify_attributes }}>
+                    {%- assign id = block.id | append: product.id -%}
+                    {%- render 'product-description', id: id, product: product, is_tab: block.settings.is_tab -%}
+                  </div>
+                  {%- when 'collection' -%}
+                  <div class="product-block{% if block.settings.is_tab %} product-block--tab{% endif %}" {{ block.shopify_attributes }}>
+
+
+                    {% for collection in product.collections %}
+                      <span>
+                        {{ collection.title }}
+                      </span>
+                    {% endfor %}
+
+                  </div>
+                  {%- when 'price' -%}
+                  <div class="product-block product-block--price" {{ block.shopify_attributes }}>
+                    {%- assign hide_sale_price = true -%}
+                    {%- if product.compare_at_price_max > product.price -%}
+                      {%- if current_variant.compare_at_price > current_variant.price -%}
+                        {%- assign hide_sale_price = false -%}
+                      {%- endif -%}
+                      <span
+                        data-a11y-price
+                        class="visually-hidden"
+                        aria-hidden="{{ hide_sale_price }}">
+                        {{ 'products.general.regular_price' | t }}
+                      </span>
+                      <span data-product-price-wrap class="{% if hide_sale_price %} hide{% endif %}">
+                        <span data-compare-price class="product__price product__price--compare np-h9">
+                          {%- if current_variant.compare_at_price > current_variant.price -%}
+                            {{ current_variant.compare_at_price | money }}
+                          {%- endif -%}
+                        </span>
+                      </span>
+                      <span data-compare-price-a11y class="visually-hidden">{{ 'products.general.sale_price' | t }}</span>
+                    {%- else -%}
+                      <span data-a11y-price class="visually-hidden">{{ 'products.general.regular_price' | t }}</span>
+                    {%- endif -%}
+
+                    <span data-product-price class="product__price{% if current_variant.compare_at_price > current_variant.price %} on-sale{% endif %} np-h9 desktop">
+                      {%- unless product.empty? -%}
+                        {{ current_variant.price | money }}
+                      {%- else -%}
+                        {{ 1999 | money }}
+                      {%- endunless -%}
+                    </span>
+
+                    {%- if settings.product_save_amount -%}
+                      {%- if settings.product_save_type == 'dollar' -%}
+                        {%- capture saved_amount -%}
+                          {{ current_variant.compare_at_price | minus: current_variant.price | money }}{%- endcapture -%}
+                      {%- else -%}
+                        {%- capture saved_amount -%}
+                          {{ current_variant.compare_at_price | minus: current_variant.price | times: 100.0 | divided_by: current_variant.compare_at_price | round }}%{%- endcapture -%}
+                      {%- endif -%}
+                      <span data-save-price class="product__price-savings{% if hide_sale_price %} hide{% endif %} np-h9 price_save hide">
+                        {%- unless hide_sale_price -%}
+                          {{ 'products.general.save_html' | t: saved_amount: saved_amount }}
+                        {%- endunless -%}
+                      </span>
+                    {%- endif -%}
+
+                    <div data-unit-price-wrapper class="product__unit-price product__unit-price--spacing {% unless current_variant.unit_price_measurement %} hide{% endunless %}">
+                      {%- capture unit_price_base_unit -%}
+                        <span data-unit-base>
+                          {%- if current_variant.unit_price_measurement -%}
+                            {%- if current_variant.unit_price_measurement.reference_value != 1 -%}
+                              {{ current_variant.unit_price_measurement.reference_value }}
+                            {%- endif -%}
+                            {{ current_variant.unit_price_measurement.reference_unit }}
+                          {%- endif -%}
+                        </span>
+                      {%- endcapture -%}
+
+                      <span data-unit-price>{{ current_variant.unit_price | money }}</span>/{{ unit_price_base_unit }}
+                    </div>
+
+<!--                     {%- if shop.taxes_included or shop.shipping_policy.body != blank -%}
+                      <div class="product__policies rte small--text-center">
+                        {%- if shop.taxes_included -%}
+                          {{ 'products.product.include_taxes' | t }}
+                        {%- endif -%}
+                        {%- if shop.shipping_policy.body != blank -%}
+                          {{ 'products.product.shipping_policy_html' | t: link: shop.shipping_policy.url }}
+                        {%- endif -%}
+                      </div>
+                    {%- endif -%} -->
+                  </div>
+              {% unless product.tags contains 'gift-card' %}
+                <div class="related-color-products">
+                    {%- if product.metafields.custom.colour_image -%}
+                      <ul class="related-products-list-container">
+                        {%- if product.metafields.custom.related_colour_products -%}
+                          {% for related_colour_product in product.metafields.custom.related_colour_products.value %}
+                          
+                              {% if related_colour_product.metafields.custom.colour_image != product.metafields.custom.colour_image %}
+                                    <li class="ProductcolourSwatches__Item">
+                                      <a
+                                        href="{{ related_colour_product.url | within: collection }}"
+                                        data-swatch
+                                        class="ProductcolourSwatches__Swatch">
+                                        <span class="ProductcolourSwatches__Square" style="background-image: url({{ related_colour_product.metafields.custom.colour_image  | img_url: '80x' }})"></span>
+                                      </a>
+                                    </li>
+                                  {% else %}
+                                    <li class="ProductcolourSwatches__Item swatch_active">
+                                      <a class="ProductcolourSwatches__Swatch">
+                                        <span class="ProductcolourSwatches__Square" style="background-image: url({{ product.metafields.custom.colour_image | img_url: '80x' }})"></span>
+                                      </a>
+                                    </li>
+                                  {% endif %}
+                            
+                          {% endfor %}
+                        {%- endif -%}
+                        <li class="ProductcolourSwatches__Item colour-name-desktop">
+                          Colour:
+                          {%- for value in product.options_by_name['color'].values %}
+                          <span>{{ value }}</span>
+                          {%- endfor %}
+                        </li>
+                      </ul>
+                    {%- endif -%}
+                    <div class="product-color-name">
+                        colour:
+                          {%- for value in product.options_by_name['color'].values %}
+                          <span>{{ value }}</span>
+                          {%- endfor %}
+                    </div>
+                </div>
+             {% endunless %} 
+                  {%- when 'quantity_selector' -%}
+                  <div class="product-block" {{ block.shopify_attributes }}>
+                    <div class="product__quantity">
+                      {% assign qty_id = section_id | append: product.id %}
+                      <label for="Quantity-{{ qty_id }}">{{ 'products.product.quantity' | t }}</label>
+                      {%- render 'quantity-input', form_id: form_id, id: qty_id, qty: 1, min: 1 -%}
+                    </div>
+                  </div>
+                  {%- when 'size_chart' -%}
+                  {% if connect_to_sizechart == false %}
+                    {%- capture size_chart_title -%}
+                      {{ 'products.general.size_chart' | t }}<svg
+                        aria-hidden="true"
+                        focusable="false"
+                        role="presentation"
+                        class="icon icon-size-chart"
+                        viewBox="0 0 64 64">
+                        <defs>
+                          <style>
+                            .a {
+                              fill: none;
+                              stroke: #000;
+                              stroke-width: 2px
+                            }
+                          </style>
+                        </defs><path class="a" d="M22.39 33.53c-7.46 0-13.5-3.9-13.5-8.72s6-8.72 13.5-8.72 13.5 3.9 13.5 8.72a12 12 0 0 1-.22 1.73" /><ellipse
+                          cx="22.39"
+                          cy="24.81"
+                          rx="3.28"
+                          ry="2.12" /><path class="a" d="M8.89 24.81V38.5c0 7.9 6.4 9.41 14.3 9.41h31.92V33.53H22.39M46.78 33.53v7.44M38.65 33.53v7.44M30.52 33.53v7.44M22.39 33.53v7.44" /></svg>
+                    {%- endcapture -%}
+
+                    <div class="size-chart__standalone" {{ block.shopify_attributes }}>
+                      {%- render
+                        'tool-tip-trigger',
+                        title: size_chart_title,
+                        content: block.settings.size_chart.content,
+                        context: 'size-chart' -%}
+                      {% style %}
+                        tool-tip-trigger {
+                          text-transform: uppercase;
+                        }
+                      {% endstyle %}
+                    </div>
+                  {% endif %}
+                  {%- when 'variant_picker' -%}
+                  <div
+                    class="product-block"
+                    {% if block.settings.product_dynamic_variants_enable %}data-dynamic-variants-enabled{% endif %}
+                    {{ block.shopify_attributes }}>
+                    {%- unless product.has_only_default_variant -%}
+                      {%- for option in product.options_with_values -%}
+                        {%- liquid
+                            if block.settings.color_swatches
+                              assign is_color = false
+                              assign color_option_index = 0
+                              assign swatch_trigger = 'products.general.color_swatch_trigger' | t | downcase
+                              assign color_option_index = forloop.index0
+                              assign downcased_option = option.name | downcase
+                              if downcased_option contains swatch_trigger
+                                assign is_color = true
+                              elsif swatch_trigger == 'color' and downcased_option contains 'colour'
+                                assign is_color = true
+                              endif
+                            endif
+                          -%}
+
+                        {%- if block.settings.picker_type == 'button' -%}
+                          {%- render 'variant-button'
+                            , block: block,
+                            product: product,
+                            form_id: form_id,
+                            section_id: section_id,
+                            option: option,
+                            forloop: forloop,
+                            variant_labels: block.settings.variant_labels,
+                            is_color: is_color,
+                            color_option_index: color_option_index,
+                            connect_to_sizechart: connect_to_sizechart,
+                            sizechart_index: sizechart_index -%}
+                        {%- else -%}
+                          {%- render 'variant-dropdown'
+                            , product: product,
+                            form_id: form_id,
+                            section_id: section_id,
+                            option: option,
+                            forloop: forloop,
+                            variant_labels: block.settings.variant_labels -%}
+                        {%- endif -%}
+                      {%- endfor -%}
+                    {%- endunless -%}
+                  </div>
+
+                {% unless product.tags contains 'gift-card' %}
+                  <div class="size-guide-button">
+                    <p class="size-guide">View size guide</p>
+                    <div class="popuptext" id="myPopup">
+                           <div class="size-guide-container">
+                              <div class="pdp-drawer-header">
+                                <div class="popup-closed popup-back-btn">
+                                  <svg width="15" height="11" viewBox="0 0 15 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M5.50977 1.1707L0.999766 5.69631L5.50977 10.2219" stroke="#2B2725" stroke-width="1.25" stroke-miterlimit="10"/>
+                                  <path d="M14.9004 5.69629L1.53039 5.69629" stroke="#2B2725" stroke-width="1.25" stroke-miterlimit="10"/>
+                                  </svg>
+                                  <span class="back-span">Back</span>
+                                </div>
+                                <h2 class="pdp-drawer-h2 pdp-drawer-title">SIZE GUIDE</h2>
+                                <div class="popup-close">
+                                  <span class="close-span">Close</span>
+                                  <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M1 1L10 10M1 10L10 1" stroke="#2B2725" stroke-width="1.5"/>
+                                  </svg>
+                                  
+                                </div>
+                              </div>
+                              <div class="pdp-drawer-contents">
+                                  <!-- START KiwiSizing code !-->
+                                  <h2 class="pdp-drawer-product-name">{{ product.title }}</h2>
+                                  <div
+                                    id="KiwiSizingChart"
+                                    data-collections="{{ product.collections | map: 'id' | join: ','}}"
+                                    data-tags="{{ product.tags | join: ',' | escape}}"
+                                    data-product="{{product.id}}"
+                                    data-vendor="{{product.vendor | escape}}"
+                                    data-product-name="{{product.title}}"
+                                    data-product-images="{{product.images | json| escape}}"
+                                    data-type="{{product.type | escape}}"></div>
+                                  <!-- END KiwiSizing code !-->
+                                </div>
+                              </div>
+                    </div>
+                  </div>
+      {% endunless %}
+{% comment %} {% assign swymProduct = true %}
+  {% for tag in product.tags %}
+{% if tag == "repeat-disabled" %}
+{% assign swymProduct = false %}
+{% break %}
+{% endif %}
+
+  {% endfor %}
+<ul>
+ {% if swymProduct == false %}  <li> {{ swymProduct }}   </li>  {% else %} {% assign swymProduct = true %} <li> {{ swymProduct }}   </li>  {% endif %} 
+</ul> {% endcomment %}
+
+                  {%- when 'buy_buttons' -%}
+                  <div style="position: relative;" class="product-block" {{ block.shopify_attributes }}>
+                    {%- unless product.empty? -%}
+                      <div class="product-block" style="max-width: 482px; width: 100% ">
+                        {%- render 'product-form'
+                          , form_id: form_id,
+                          product: product,
+                          show_dynamic_checkout: block.settings.show_dynamic_checkout,
+                          current_variant: current_variant -%}
+                      </div>
+                    {%- endunless -%}
+
+                    {%- if block.settings.surface_pickup_enable -%}
+                      <div
+                        data-store-availability-holder
+                        data-product-name="{{ product.title | escape }}"
+                        data-base-url="{{ shop.url }}{{ routes.root_url }}"></div>
+                    {%- endif -%}
+
+
+                  </div>
+                                  
+                  {%- when 'sales_point' -%}
+                  {%- unless block.settings.text == blank -%}
+                    <div class="product-block product-block--sales-point" {{ block.shopify_attributes }}>
+                      <ul class="sales-points">
+                        <li class="sales-point">
+                          <span class="icon-and-text">
+                            {% case block.settings.icon %}
+                              {% when 'checkmark' %}
+                              <svg
+                                aria-hidden="true"
+                                focusable="false"
+                                role="presentation"
+                                class="icon icon-circle-checkmark"
+                                viewBox="0 0 64 64">
+                                <defs>
+                                  <style>
+                                    .a {
+                                      fill: none;
+                                      stroke: #000;
+                                      stroke-width: 2px
+                                    }
+                                  </style>
+                                </defs><path class="a" d="M52.68 24.48A22 22 0 1 1 47 15.93M21 32l8.5 8.5L57 13" /></svg>
+                              {% when 'gift' %}
+                              <svg
+                                aria-hidden="true"
+                                focusable="false"
+                                role="presentation"
+                                class="icon icon-gift"
+                                viewBox="0 0 64 64">
+                                <defs>
+                                  <style>
+                                    .a {
+                                      fill: none;
+                                      stroke: #000;
+                                      stroke-width: 2px
+                                    }
+                                  </style>
+                                </defs><path class="a" d="M9 20.23h46v8.68H9zM13.34 28.91h36.89v24.3H13.34zM27.82 20.66v32.98M35.91 20.88v32.98M20.52 11.43a3.73 3.73 0 0 0-.74 2.87 4.57 4.57 0 0 0 .8 2.27C22 18.09 25.15 20 32 20.23a12 12 0 0 0-2.43-7 7.52 7.52 0 0 0-5.66-3.12 4 4 0 0 0-3.39 1.32z" /><path class="a" d="M43.37 11.43a3.73 3.73 0 0 1 .74 2.87 4.48 4.48 0 0 1-.8 2.27c-1.42 1.52-4.57 3.41-11.42 3.66a12.08 12.08 0 0 1 2.43-7A7.56 7.56 0 0 1 40 10.14a4 4 0 0 1 3.37 1.29z" /></svg>
+                              {% when 'globe' %}
+                              <svg
+                                aria-hidden="true"
+                                focusable="false"
+                                role="presentation"
+                                class="icon icon-globe"
+                                viewBox="0 0 64 64">
+                                <defs>
+                                  <style>
+                                    .a {
+                                      fill: none;
+                                      stroke: #000;
+                                      stroke-width: 2px
+                                    }
+                                  </style>
+                                </defs><circle
+                                  class="a"
+                                  cx="32"
+                                  cy="32"
+                                  r="22" /><path class="a" d="M13 21h38M10 32h44M13 43h38M32 10c-12 8-12 37 0 44M32 10c12 8 12 37 0 44" /></svg>
+                              {% when 'heart' %}
+                              <svg
+                                aria-hidden="true"
+                                focusable="false"
+                                role="presentation"
+                                class="icon icon-heart"
+                                viewBox="0 0 64 64">
+                                <defs>
+                                  <style>
+                                    .a {
+                                      fill: none;
+                                      stroke: #000;
+                                      stroke-width: 2px
+                                    }
+                                  </style>
+                                </defs><path class="a" d="M51.27 15.05a13 13 0 0 0-18.44 0l-.83.83-.83-.83a13 13 0 0 0-18.44 18.44l.83.83L32 52.77l18.44-18.45.83-.83a13 13 0 0 0 0-18.44z" /></svg>
+                              {% when 'leaf' %}
+                              <svg
+                                aria-hidden="true"
+                                focusable="false"
+                                role="presentation"
+                                class="icon icon-leaf"
+                                viewBox="0 0 64 64">
+                                <defs>
+                                  <style>
+                                    .a {
+                                      fill: none;
+                                      stroke: #000;
+                                      stroke-miterlimit: 10;
+                                      stroke-width: 2px
+                                    }
+                                  </style>
+                                </defs><path class="a" d="M52 11L13 50M35 13v15h16" /><path class="a" d="M52 11c6 24-16.72 47.29-33 32C7 22 29 10 52 11z" /></svg>
+                              {% when 'lock' %}
+                              <svg
+                                aria-hidden="true"
+                                focusable="false"
+                                role="presentation"
+                                class="icon icon-lock"
+                                viewBox="0 0 64 64">
+                                <defs>
+                                  <style>
+                                    .a {
+                                      fill: none;
+                                      stroke: #000;
+                                      stroke-width: 2px
+                                    }
+                                  </style>
+                                </defs><path class="a" d="M19.45 23.6v-3.2c0-7 5.89-11.75 12.55-11.75 7.21 0 12.55 5.49 12.55 11.75v3.2M10 23.6h44v31.75H10zM32 37.47v7.47" /><circle
+                                  class="a"
+                                  cx="32"
+                                  cy="35.87"
+                                  r="1.6" /></svg>
+                              {% when 'package' %}
+                              <svg
+                                aria-hidden="true"
+                                focusable="false"
+                                role="presentation"
+                                class="icon icon-package"
+                                viewBox="0 0 64 64">
+                                <defs>
+                                  <style>
+                                    .a {
+                                      fill: none;
+                                      stroke: #000;
+                                      stroke-width: 2px
+                                    }
+                                  </style>
+                                </defs><path class="a" d="M32 54.52L10 41.95v-19.9L32 9.48l22 12.57v19.9L32 54.52z" /><path class="a" d="M32 54.52v-19.9l22-12.57M32 34.62L10 22.05M41.7 15.02L21 28.33v8.38" /></svg>
+                              {% when 'phone' %}
+                              <svg
+                                aria-hidden="true"
+                                focusable="false"
+                                role="presentation"
+                                class="icon icon-phone"
+                                viewBox="0 0 64 64">
+                                <defs>
+                                  <style>
+                                    .a {
+                                      fill: none;
+                                      stroke: #000;
+                                      stroke-width: 2px
+                                    }
+                                  </style>
+                                </defs><path class="a" d="M18.4 9.65l10.2 10.2-6.32 6.32c2.1 7 6.89 12.46 15.55 15.55l6.32-6.32 10.2 10.2-8.75 8.75C25.71 50.3 13.83 38.21 9.65 18.4z" /></svg>
+                              {% when 'ribbon' %}
+                              <svg
+                                aria-hidden="true"
+                                focusable="false"
+                                role="presentation"
+                                class="icon icon-ribbon"
+                                viewBox="0 0 64 64">
+                                <defs>
+                                  <style>
+                                    .a {
+                                      fill: none;
+                                      stroke: #000;
+                                      stroke-width: 2px
+                                    }
+                                  </style>
+                                </defs><path class="a" d="M28.57 42.31l-8.36 13.07-2.6-7.17-7.61.65 8.35-13.07a17.05 17.05 0 0 0 8.12 5.94 17.3 17.3 0 0 0 1.74.5zM54 48.86l-7.61-.65-2.61 7.17-8.36-13.07.37-.08a16.4 16.4 0 0 0 1.73-.5 17 17 0 0 0 8.12-5.93z" /><path class="a" d="M49 25.64a16.79 16.79 0 0 1-3.14 9.85 3.55 3.55 0 0 1-.23.31 17 17 0 0 1-8.12 5.93 16.4 16.4 0 0 1-1.73.5l-.37.08a16.74 16.74 0 0 1-3.42.35 16.91 16.91 0 0 1-3.43-.35l-.36-.08a17.3 17.3 0 0 1-1.74-.5 17.05 17.05 0 0 1-8.12-5.94c-.07-.09-.15-.19-.22-.3A16.86 16.86 0 0 1 15 25.64a17 17 0 0 1 34 0z" /><path class="a" d="M36.09 27.78l.96 5.63L32 30.75l-5.05 2.66.96-5.63-4.09-3.98 5.65-.82L32 17.86l2.53 5.12 5.64.82-4.08 3.98z" /></svg>
+                              {% when 'shield' %}
+                              <svg
+                                aria-hidden="true"
+                                focusable="false"
+                                role="presentation"
+                                class="icon icon-shield"
+                                viewBox="0 0 64 64">
+                                <defs>
+                                  <style>
+                                    .a {
+                                      fill: none;
+                                      stroke: #000;
+                                      stroke-width: 2px
+                                    }
+                                  </style>
+                                </defs><path class="a" d="M21.18 31.69L28.54 39l15.91-15.88" /><path class="a" d="M53 12.54v15.24a31.41 31.41 0 0 1-3.7 14.95A25.46 25.46 0 0 1 32 56a25.46 25.46 0 0 1-17.3-13.27A31.41 31.41 0 0 1 11 27.78V12.54C24.88 13.67 32 8 32 8s7.12 5.67 21 4.54z" /></svg>
+                              {% when 'tag' %}
+                              <svg
+                                aria-hidden="true"
+                                focusable="false"
+                                role="presentation"
+                                class="icon icon-tag"
+                                viewBox="0 0 64 64">
+                                <defs>
+                                  <style>
+                                    .a {
+                                      fill: none;
+                                      stroke: #000;
+                                      stroke-width: 2px
+                                    }
+                                  </style>
+                                </defs><path class="a" d="M46.69 10.34l-10.55.07-25.8 25.8 17.45 17.45 25.8-25.8.07-10.55-6.97-6.97z" /><circle
+                                  class="a"
+                                  cx="43.95"
+                                  cy="20.05"
+                                  r="3.53" /><path class="a" d="M14.4 32.15L31.85 49.6" /></svg>
+                              {% when 'truck' %}
+                              <svg
+                                aria-hidden="true"
+                                focusable="false"
+                                role="presentation"
+                                class="icon icon-truck"
+                                viewBox="0 0 64 64">
+                                <defs>
+                                  <style>
+                                    .a {
+                                      fill: none;
+                                      stroke: #000;
+                                      stroke-miterlimit: 10;
+                                      stroke-width: 2px
+                                    }
+                                  </style>
+                                </defs><path class="a" d="M16.5 43.22H6.88V16.5h33.14v26.72H23.94M45.42 43.22h-5.4V30.4h17.1v12.82h-4.23M57.12 30.4l-6.41-8.56H40.02" /><circle
+                                  class="a"
+                                  cx="20.24"
+                                  cy="43.76"
+                                  r="3.74" /><path class="a" d="M45.42 43.23a3.82 3.82 0 1 1 0 .37v-.37" /></svg>
+                            {% endcase %}
+                            <span>{{ block.settings.text }}</span>
+                          </span>
+                        </li>
+                      </ul>
+                    </div>
+                  {%- endunless -%}
+                  {%- when 'inventory_status' -%}
+                  {%- render 'product-inventory', product: product, current_variant: current_variant, block: block -%}
+                  {%- when 'share' -%}
+                  <div class="product-block" {{ block.shopify_attributes }}>
+                    {%- render 'social-sharing', share_title: product.title, share_permalink: product.url, share_image: product -%}
+                  </div>
+                  {%- when 'trust_badge' -%}
+                  <div class="product-block" {{ block.shopify_attributes }}>
+                    <div class="aos-animate" style="max-width: {{ block.settings.trust_image.width }}px; margin: 0 auto;">
+                      <div class="image-wrap " style="height: 0; padding-bottom: {{ 100 | divided_by: block.settings.trust_image.aspect_ratio }}%;">
+                        {%- assign img_url = block.settings.trust_image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' -%}
+                        <img
+                          class="lazyload"
+                          data-src="{{ img_url }}"
+                          data-widths="[360, 540, 700, 1024]"
+                          data-aspectratio="{{ block.settings.trust_image.aspect_ratio }}"
+                          data-sizes="auto"
+                          alt="{{ block.settings.trust_image.alt }}">
+                        <noscript>
+                          <img
+                            class="lazyloaded"
+                            src="{{ block.settings.trust_image | img_url: '540x' }}"
+                            alt="{{ block.settings.trust_image.alt }}">
+                        </noscript>
+                      </div>
+                    </div>
+                  </div>
+                  {%- when 'custom' -%}
+                  <div class="product-block" {{ block.shopify_attributes }}>
+                    {{ block.settings.code }}
+                  </div>
+                {%- endcase -%}
+              {%- else -%}
+                <div
+                  data-blocks-holder
+                  data-url="{{ product.url | within: collection }}"
+                  data-template="{{ product.template_suffix }}">
+                  <div class="placeholder-content" style="min-height: 86px;"></div>
+                </div>
+              {%- endfor -%}
+            </div>
+            <div id="errorMessage" style="display: none;">Please select your size.</div>
+           <div class="pdp-clearpay-klarna np-h6 {% if product.tags contains 'gift-card' %}hide{% endif %}">
+               {% assign KlarnaPrice = current_variant.price | divided_by: 3 %}
+               {% assign ClearpayPrice = current_variant.price | divided_by: 4 %} 
+              <div class="klarna klarna-clearpay-msg">Or 3 interest-free installments of <span class="klarna-clearpay-price">{{KlarnaPrice | money}}</span> with <img class="klarnap lazy" src="https://cdn.shopify.com/s/files/1/0283/1338/7053/files/2560px-Klarna_Logo_black_svg.png?v=1691141109" loading="lazy"></div>
+              <div class="clearpay klarna-clearpay-msg">Or 4 interest-free installments of <span class="klarna-clearpay-price">{{ClearpayPrice | money}}</span> with <img class="clearpay lazy" src="https://cdn.shopify.com/s/files/1/0283/1338/7053/files/CP_logo_lockup_6328x2204_blackclear_png.png?v=1691141110" loading="lazy"></div>
+              {% if  localization.country.iso_code == "GB"%}
+                <div class="delivery">Complimentary UK delivery and returns</div>
+              {% endif %}
+            </div>
+            {% comment %} <div class="description-container">
+              {% if product.description contains "Model wears" %}
+                {{ description_parts.first | replace: "<br>", "" }}
+              {% else %}
+                {{ product.description }}
+              {% endif %}
+            </div> {% endcomment %}
+            <div class="description-container hide-m">
+              {% if product.description.size > 300 %}
+                <div class="product-description-short">
+                {{ product.description | truncate: 214, "... " }}<a class="readmore" href="#">Read More</a>
+                </div>
+                <div class="product-description-full" style="display:none;">
+                {{ product.description }} 
+                </div>
+                {% else %}
+                  {{ product.description }}
+              {% endif %} 
+            </div>
+                <div class="mobile-pdp-accordion">
+                      <button class="accordion">Description</button>
+                      <div class="panel">
+                        <div class="description">
+                        {% if product.description contains "Model wears" %}
+                          {{ description_parts.first | replace: "<br>", "" }}
+                        {% else %}
+                          {{ product.description }}
+                        {% endif %}
+                           {% assign fabrications = product.metafields.custom.fabrication | split: '.' %}
+                           <p>&nbsp</p>
+                            <span class="model-wears">{{ fabrications.first }}.</span>
+                        </div>
+                      </div>
+
+                      <button class="accordion">Materials & Factory</button>
+                        <div class="panel">
+               {%- capture product_fabrication -%}
+                {% assign fabrications = product.metafields.custom.fabrication | split: '.' %}
+                {% if fabrications.last contains "," %}
+                {% assign words = fabrications.last | split: ',' %}
+                  <div class="fabric-percentage">
+                    {% for word in words %}
+                      <p>{{ word }}</p>
+                    {% endfor %}
+                  </div>
+                  {% else %}
+                  <div class="fabric-percentage">
+                  <span><p>{{ fabrications.last }}</p></span>
+                  </div>
+                  {% endif %}
+                {% endcapture %}
+                {%- assign product_fabrication = product_fabrication | remove_last: "," -%}
+                  {{ product_fabrication }}  
+                          
+                          {%- for tag in product.tags -%}
+                          {%- if tag contains '_organic-cotton' or tag contains '_tenceltm' or tag contains '_seacell-1' or tag contains '_ecovero-viscose' or tag contains '_micromodal-1' or tag contains '_velour' or tag contains '_recycled-polyamide' or tag contains '_polyester-1' or tag contains '_linen-1' or tag contains '_nylon' or tag contains '_enka®-viscose' or tag contains '_viscose-1' or tag contains '_fillsens®' or tag contains 'lyocell-1' or tag contains '_cotton-1' -%}
+                            {%- assign include_page_handle = tag | split: '_' -%}
+                            {%- assign include_page = pages[include_page_handle.last] -%}
+                      
+                            <div class="pdp-drawer-contents material-factory-content">
+                              <div class="material-content">
+                                <p class="pdp-drawer-h3">{{ include_page.title }}</p>
+                                  {{ include_page.content }}
+                              </div>
+                              
+                            </div>
+                          {%- endif -%}
+                        {%- endfor -%}
+                                <div class="factory-content">
+                                {{ pages["factory"].content }}
+                              </div>
+                        </div>
+
+                       <button class="accordion">Delivery & Returns</button>
+                        <div class="panel">
+                          <div class="delivery-retunrs-wrapper">
+                            <div class="pdp-drawer-contents {% if  localization.country.iso_code == "GB"%}show-UK {% elsif localization.country.currency.iso_code == "EUR"%}show-EU{% elsif localization.country.iso_code == "US"%}show-USA{% else %}rest-world{% endif %}">
+                              {{ pages[settings.product_delivery_return].content }}
+                            </div>
+                          </div>
+                        </div>
+
+                        {% unless product.tags contains 'gift-card' %}
+                       <button class="accordion">Size Guide</button>
+                        <div class="panel">
+                              <div class="pdp-drawer-contents">
+                              <!-- START KiwiSizing code !-->
+                              <h2 class="pdp-drawer-product-name">{{ product.title }}</h2>
+                              <div
+                                id="KiwiSizingChart"
+                                data-collections="{{ product.collections | map: 'id' | join: ','}}"
+                                data-tags="{{ product.tags | join: ',' | escape}}"
+                                data-product="{{product.id}}"
+                                data-vendor="{{product.vendor | escape}}"
+                                data-product-name="{{product.title}}"
+                                data-product-images="{{product.images | json| escape}}"
+                                data-type="{{product.type | escape}}"></div>
+                              <!-- END KiwiSizing code !-->
+                            </div>
+                        </div>
+
+                       <button class="accordion">Care Instructions</button>
+                        <div class="panel">
+                             <div class="pdp-drawer-contents">
+                                {% assign care-instructions = product.metafields.custom.care_instructions | split: "." %}
+                                <ul>
+                                  {% for instruction in care-instructions %}
+                                      <li class="care-instruction-item pdp-drawer-h2">{{ instruction }}</li>
+                                  {% endfor %}
+                                </ul>
+                                <a href="https://ninetypercent.com/pages/new-garment-care" class="care-instruction-link"> Learn more about garment care</a>
+                          <!--       {{ product.metafields.custom.care_instructions }} -->
+                              </div>
+                        </div>
+                        {% endunless %}
+                        {% if product.tags contains "sojo" %}
+                          <button class="accordion">Tailoring Service</button>
+                                  <div class="panel">
+                                    <div class="pdp-drawer-contents">
+                                      {{ pages["sojo-drawer"].content }}
+                                    </div>
+                                  </div>
+                        {% endif %}
+                      
+                </div>
+
+
+         <!-- Afterpay Messaging  -->
+       {% comment %} <div class="pdp-clearpay-klarna np-h6 {% if product.tags contains 'gift-card' %}hide{% endif %}">
+            {% assign KlarnaPrice = current_variant.price | divided_by: 3 %}
+            <div class="klarna klarna-clearpay-msg">Or 3 interest-free installments of <span class="klarna-clearpay-price">{{KlarnaPrice | money}}</span> with <img class="klarnap lazy" src="https://cdn.shopify.com/s/files/1/0283/1338/7053/files/Klarna_Logo_black.png?v=1685012094" loading="lazy"></div>
+            <afterpay-placement
+              data-locale="en_GB"
+              data-currency="GBP"
+              data-amount= "{{ current_variant.price | money }}"
+              data-badge-theme="black-on-white"
+            ></afterpay-placement>
+            <!-- Afterpay Messaging  -->
+        </div>{% endcomment %}
+
+            {% comment %}<klarna-placement
+                data-key="credit-promotion-auto-size"
+                data-locale="en-US"
+                data-purchase-amount="{{ current_variant.price | money }}"
+            ></klarna-placement>{% endcomment %}
+                            
+            {%- unless product.empty? -%}
+              <textarea
+                class="hide"
+                aria-hidden="true"
+                aria-label="Product JSON"
+                data-variant-json>
+                {{ product.variants | json }}
+              </textarea>
+              {%- if product.options.size > 1 -%}
+                <textarea
+                  class="hide"
+                  aria-hidden="true"
+                  aria-label="Variant JSON"
+                  data-current-variant-json>
+                  {{ current_variant | json }}
+                </textarea>
+              {%- endif -%}
+            {%- endunless -%}
+            
+            <div class="pdp-mobile-drawer">
+              <a href="#" class="pdp-drawer-item size-guide {% if product.tags contains 'gift-card' %}hide{% endif %}">SIZE GUIDE</a>
+              <a href="#" class="pdp-drawer-item delivery-return {% if product.tags contains 'gift-card' %}hide{% endif %}">DELIVERY & RETURNS</a>
+              {% if product.tags contains "sojo" %}
+                <a href="#" class="pdp-drawer-item tailoring-service {% if product.tags contains 'gift-card' %}hide{% endif %}">Tailoring Service</a>
+              {% endif %}
+              <a href="#" class="pdp-drawer-item terms-condition-gift-card np-h7 {% unless product.tags contains 'gift-card' %}hide{% endunless %}">Terms & Conditions</a>
+            </div>
+
+             
+            <div class="mobile-description-container" style="display: none;">
+              {% if product.description contains "Model wears" %}
+                {{ description_parts.first | replace: "<br>", "" }}
+              {% else %}
+                {{ product.description }}
+              {% endif %}
+            </div>                       
+
+             <div class="image-wrap pdp-image-wrap {% if product.tags contains 'gift-card' %}hide{% endif %}" style="height: auto; padding-bottom: {{ 100 | divided_by: preview_image.aspect_ratio }}%;">
+
+              {%- for image in product.images -%}
+                <img
+                  style="opacity:1"
+                  class="grid-product__image lazyloaded pdp-mobile-img"
+                  src="{{ image | img_url: '400x' }}"
+                  alt="{{ image.alt | escape }}">
+              {%- endfor -%}
+            </div>
+
+            <div class="pdp-mobile-fabrication {% if product.tags contains 'gift-card' %}hide{% endif %}">
+               {%- capture product_fabrication -%}
+               {% assign fabrications = product.metafields.custom.fabrication | split: '.' %}
+                  <div class="model-wears">{{ fabrications.first | capitalize }}.</div>
+               {% if fabrications.last contains "," %}
+               {% assign words = fabrications.last | split: ',' %}
+                  <div class="fabric-percentage">
+                    {% for word in words %}
+                      <span>{{ word }} </span>
+                    {% endfor %}.
+                  </div>
+
+                {% else %}
+                  <div class="fabric-percentage">
+                      <span>{{ fabrications.last }} </span>
+                  </div>
+                {% endif %}
+                {% endcapture %}
+                {{ product_fabrication }}   
+                        
+                <div class="factory-location">{{ product.metafields.custom.factory }}</div>
+            </div>                        
+
+            <div class="image-wrap pdp-image-wrap" style="height: auto; padding-bottom: {{ 100 | divided_by: preview_image.aspect_ratio }}%;">
+
+              {%- for image in product.images -%}
+                <img
+                  style="opacity:1"
+                  class="grid-product__image lazyloaded pdp-mobile-img-last"
+                  src="{{ image | img_url: '400x' }}"
+                  alt="{{ image.alt | escape }}">
+              {%- endfor -%}
+            </div>                        
+                                    
+            <div class="pdp-nav-desktop">
+              <a href="#" class="pdp-drawer-item materials-factory np-h7 {% if product.tags contains 'gift-card' %}hide{% endif %}">Materials & Factory  → </a>
+              <a href="#" class="pdp-drawer-item delivery-return np-h7 {% if product.tags contains 'gift-card' %}hide{% endif %}">Delivery & Returns  → </a>
+              <a href="#" class="pdp-drawer-item size-guide np-h7 {% if product.tags contains 'gift-card' %}hide{% endif %}">Size Guide  → </a>
+              <a href="#" class="pdp-drawer-item care-instruction np-h7 {% if product.tags contains 'gift-card' %}hide{% endif %}">Care Instructions  → </a>
+              <a href="#" class="pdp-drawer-item terms-condition-gift-card np-h7 {% unless product.tags contains 'gift-card' %}hide{% endunless %}">→ Terms & Conditions</a>
+              <a href="#" class="pdp-drawer-item add-to-wishlist np-h7 hide">→ Add To Wishlist</a>
+              {% if product.tags contains "sojo" %}
+                <a href="#" class="pdp-drawer-item tailoring-service np-h7 {% if product.tags contains 'gift-card' %}hide{% endif %}">Tailoring Service  → </a>
+              {% endif %}
+            </div>
+
+<!--             <div class="pdp-clearpay-klarna np-h6">
+               MAKE INTEREST-FREE PAYMENTS WITH CLEARPAY AND KLARNA
+            </div> -->
+            <!--                                     <span class="popupModal pdp-size-guide" data-id="size-guide">Size guide</span> -->
+          </div>
+        </div>
+
+        {%- unless image_position == 'left' -%}
+          <div class="grid__item {{ product_image_width }} product-single__sticky">
+            {%- render 'product-images'
+              , section_id: section_id,
+              product: product,
+              isModal: isModal,
+              image_position: image_position,
+              product_zoom_enable: product_zoom_enable,
+              product_zoom_size: product_zoom_size,
+              product_image_size: product_image_size,
+              thumbnail_arrows: thumbnail_arrows,
+              thumbnail_position: thumbnail_position,
+              video_looping: video_looping,
+              video_style: video_style -%}
+          </div>
+        {%- endunless -%}
+      </div>
+      {% if product.tags contains 'gift-card' %}
+      <div class="gift-card-description-container">
+        <p class="gift-card-description">
+          {{ product.description }}
+        </p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<style>
+
+    .btn--full {
+      width: 100%;
+      padding: 22px 24px !important;
+      transition: none;
+    }
+  .klarnap.lazy{
+    width: 40px;
+    height: 8px;
+  }
+  .clearpay.lazy{
+    width: 84px;
+    margin-left: -9px;
+  }
+  .np-atc-btn{
+    color: #FFF;
+    font-family: Intervogue;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500 !important;
+    line-height: 27px;
+    letter-spacing: 0.9px;
+    text-transform: initial !important;
+  }
+  .pdp-clearpay-klarna.np-h6 .klarna.klarna-clearpay-msg
+  {
+     font-style: normal;
+  }
+  .pdp-clearpay-klarna.np-h6{
+     font-style: normal !important;
+  }
+  .btn.add-to-cart.sticky-mobile-pdp.disabled{
+    background: rgba(43, 39, 37, 0.30) !important;
+  }
+  .btn.add-to-cart.sticky-mobile-pdp.disabled:hover{
+    background: rgba(43, 39, 37, 0.30) !important;
+  }
+  .btn.add-to-cart.sticky-mobile-pdp.disabled span{
+    color: #FFF;
+    font-family: Intervogue;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 27px; 
+    letter-spacing: 0.9px;
+  }
+  .learn-more-button-pdp{
+    cursor: pointer;
+  }
+ .size-guide-button{
+   display: none;
+ }
+  .template-product sup {
+    top: -0.5em;
+    left: -4px;
+    }
+  /* .template-product .page-width.custom-page-width-pdp{
+    padding: 0px 50px 0px 20px;   
+    max-width: 100%;
+  } */
+
+
+  .template-product .page-width.custom-page-width-pdp-recommendation{
+    padding: 0px 4px;
+    max-width: 100%;
+    overflow: hidden;
+  }
+  .template-product .page-width.custom-page-width-pdp .grid__item.product-single__sticky {
+    padding-left: 0px;
+  }
+  .pdp-nav-desktop .pdp-drawer-item {
+/*       max-width: 28%; */
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.25px;
+    padding-bottom: 5px;
+  }
+  .gift-card-description-container {
+    max-width: 548px;
+    margin-left: 31.3%;
+    margin-right: 27%;
+    margin-top: 138px;
+    text-align: justify;
+  }
+  p.gift-card-description, .gift-card-description-container {
+    font-family: 'Intervogue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 28px;
+    letter-spacing: 0.02em;
+    color: #2B2725;
+  }
+  .gift-card-range-container, .gift-card-range-container-mobile {
+    font-family: 'Silvana';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 18px;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    font-feature-settings: 'ordn' on;
+    color: #2B2725;
+    text-align: start;
+  }
+  .gift-card-range-container-mobile {
+    display: none;
+  }
+  li.ProductcolourSwatches__Item {
+    list-style: none;
+    line-height: 0px;
+    display: inline-block;
+  }
+  li.ProductcolourSwatches__Item a {
+    width: 100%;
+    display: inline-block;
+    /* height: 25px; */
+  }
+  span.ProductcolourSwatches__Square {
+    width: 16px !important;
+    height: 20px !important;
+    background-size: cover;
+    display: block;
+  }
+  .pdp-drawer-item, .pdp-description-container, .material-page-title-wrapper {
+    display: flex;
+  }
+  .pdp-description-container {
+    justify-content: space-between;
+    gap: 30px;
+  }
+
+  .pdp-description-container{
+    padding-top: 100px;
+    padding-left: 42px;
+  }
+
+  .pdp-drawer-item.drawer-material-pdp{
+    text-transform: capitalize;
+  }
+  .show-drawer-delivery .care-instructions-container, .show-drawer-delivery .tailoring-service-wrapper, .show-care-instructions .delivery-retunrs-wrapper,
+  .show-material-pdp .care-instructions-container,
+  .show-material-pdp .delivery-retunrs-wrapper
+  {
+    display: none;
+  }
+  .description-container {
+    width: 345px;
+    /* padding-left: 20px; */
+    text-align: justify;
+    
+  }
+  .description-container p,
+  .description-container span
+  {
+    color: #2B2725;
+    text-align: justify;
+    font-family: Intervogue;
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 25px;
+    letter-spacing: 0.32px;
+  }
+
+  .fabrication-container {
+    width: 345px;
+    /* padding-right: 20px; */
+    color: #2B2725;
+    text-align: justify;
+    font-family: Intervogue;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 25px;
+    letter-spacing: 0.32px;
+  }
+/*   .pdp-nav-desktop {
+    margin-top: 90px;
+  } */
+
+  .fabrication-container .model-wears{
+    margin-bottom:30px;
+  }
+  
+  .pdp-mobile-header {
+    justify-content: space-between;
+  }
+  .mobile-material-wrapper,  .pdp-mobile-slider {
+    display: none;
+  }
+
+  .material-page-title-wrapper a, .pdp-material-title{
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.02em;
+
+  }
+
+  .template-product .product-block--price .product__price.np-h9{
+    color: #2B2725;
+    font-family: Intervogue !important;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 25px;
+    letter-spacing: 0.72px;
+    text-transform: uppercase;
+  }
+
+  .show-size-guide-pdp .delivery-retunrs-wrapper, .show-size-guide-pdp .terms-and-condition-wrapper, .show-size-guide-pdp .tailoring-service-wrapper, .show-size-guide-pdp .care-instructions-container, .show-size-guide-pdp .pdp-material-container, .pdp-mobile-drawer, .pdp-image-wrap,
+  .show-drawer-delivery .size-guide-container, .show-drawer-delivery .pdp-material-container, .show-drawer-delivery .terms-and-condition-wrapper,
+  .show-care-instructions .pdp-material-container, .show-care-instructions .size-guide-container, .show-care-instructions .terms-and-condition-wrapper,
+  .show-drawer-material-pdp .size-guide-container,
+  .show-care-instructions .tailoring-service-wrapper,
+  .show-material-pdp .terms-and-condition-wrapper,
+  .show-drawer-material-pdp .terms-and-condition-wrapper
+  {
+    display: none;
+  }
+  .show-material-pdp .delivery-retunrs-wrapper, .show-material-pdp .tailoring-service-wrapper, .show-material-pdp .care-instructions-container, .show-material-pdp .size-guide-container {
+    display: none;
+  }
+  
+  .show-size-guide-pdp .delivery-retunrs-wrapper, .show-size-guide-pdp .tailoring-service-wrapper, .show-size-guide-pdp .care-instructions-container, .show-size-guide-pdp .pdp-material-container, .pdp-mobile-drawer, .pdp-image-wrap,
+  .show-drawer-delivery .size-guide-container, .show-drawer-delivery .pdp-material-container,
+  .show-care-instructions .pdp-material-container, .show-care-instructions .size-guide-container,
+  .show-drawer-material-pdp .size-guide-container
+  .show-care-instructions .tailoring-service-wrapper,
+  
+  {
+    display: none;
+  }
+  .show-care-instructions .tailoring-service-wrapper {
+    display: none;
+  }
+  .show-drawer-tailoring-service .delivery-retunrs-wrapper, .show-drawer-tailoring-service .care-instructions-container, .show-drawer-tailoring-service .pdp-material-container, .pdp-mobile-drawer, .pdp-image-wrap,
+  .show-drawer-tailoring-service .size-guide-container, .show-drawer-tailoring-service .pdp-material-container,
+  .show-drawer-tailoring-service .pdp-material-container, .show-drawer-tailoring-service .size-guide-container,
+  .show-drawer-tailoring-service .size-guide-container,
+  .show-drawer-tailoring-service .terms-and-condition-wrapper
+  {
+    display: none;
+  }
+
+  .show-drawer-terms-condition-gift-card .delivery-retunrs-wrapper, .show-drawer-terms-condition-gift-card .care-instructions-container, .show-drawer-terms-condition-gift-card .pdp-material-container, .pdp-mobile-drawer, .pdp-image-wrap,
+  .show-drawer-terms-condition-gift-card .size-guide-container, .show-drawer-terms-condition-gift-card .pdp-material-container,
+  .show-drawer-terms-condition-gift-card .pdp-material-container, .show-drawer-terms-condition-gift-card .size-guide-container,
+  .show-drawer-terms-condition-gift-card .size-guide-container, .show-drawer-terms-condition-gift-card .tailoring-service-wrapper
+  {
+    display: none;
+  }
+  .show-materials-factory-pdp .delivery-retunrs-wrapper,
+  .show-materials-factory-pdp .tailoring-service-wrapper,
+  .show-materials-factory-pdp .terms-and-condition-wrapper,
+  .show-materials-factory-pdp .care-instructions-container,
+  .show-materials-factory-pdp .pdp-material-container,
+  .show-materials-factory-pdp .size-guide-container{
+    display: none;
+  }
+  .show-materials-factory-pdp .pdp-material-factory-container{
+    display: block;
+  }
+  
+  {% unless product.tags contains 'gift-card' %}
+    .product-main-slide:last-child,  .product-main-slide:nth-last-child(2){
+/*       width: 49%; */
+      float: left;
+      margin-top: 0px !important;
+    }
+  {% endunless %}
+  .product-main-slide:nth-last-child(2){
+    margin-right: 10px !important;
+  }
+  .related-products-list-container{
+    margin: 0;
+    text-align: left;
+  }
+  ul.related-products-list-container {
+    padding-left: 0;
+  }
+  {% comment %}
+  .related-products-list-container .ProductcolourSwatches__Item:first-child{
+    border-bottom: 1px solid;
+    padding-bottom: 5px;
+  } {% endcomment %}
+  
+  .related-products-list-container .ProductcolourSwatches__Item.swatch_active {
+    border-bottom: 1px solid;
+    padding-bottom: 5px;
+  }
+  li.ProductcolourSwatches__Item{
+    margin-right: 20px;
+    margin-bottom: 25px;
+  }
+ 
+  
+  .related-color-products .product-color-name{
+
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.25px;
+    text-transform: capitalize;
+   }
+  .variant-wrapper .variant-input-wrap{
+    text-align: left;
+  }
+    .pdp-mobile-fabrication {
+    text-align: justify;
+    display: none;
+  }
+   .drawer-material-pdp:not(:first-child){
+      padding-left: 5px;
+    }
+  .np-mobile-pdp-title{
+    font-family: 'Intervogue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 25px;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #2B2725;
+  }
+  /* .np-prod-template .flickity-viewport{
+    margin-left: 22px;
+  } */
+
+  .product-block--header{
+  margin-bottom: 14px;
+  }
+  .variant-wrapper.js {
+    padding-bottom: 25px;
+  }
+  .price_save {
+    color: #c20000;
+  }
+  .variant-input-wrap label{
+      padding-bottom: 0px;
+  }
+  .related-color-products{
+      flex-wrap: wrap;
+    }
+  @media only screen and (max-width: 1024px) {
+    
+    .btn--full {
+      width: 100%;
+      padding: 17px 27px !important;
+      transition: none;
+    }
+    .product-block--header{
+      margin-bottom: 10px;
+    }
+   .fabrication-container {
+     padding-left: 20px;
+   }
+    .product-block--price{
+      padding-top: 5px;
+
+   }
+    .product-single__meta{
+      padding-left: 26px;
+    }
+    .pdp-nav-desktop .pdp-drawer-item {
+      max-width: 66%;
+    }
+    .gift-card-description-container {
+      margin-left: 25%;
+      margin-right: 20.5%;
+    }
+    #CartDrawer.drawer--right {
+      width: 55%;
+    }
+  }
+  
+  @media only screen and (max-width: 768px) {
+    .hide-m{
+      display: none;
+    }
+    .colour-name-desktop{
+      display: none !important;
+    }
+
+    .btn.add-to-cart.sticky-mobile-pdp {
+      padding: 17px 0px 17px 27px;
+    }
+
+    .related-products-list-container li{
+      margin-bottom: 0px;
+    }
+    .related-color-products .product-color-name{
+      color: #2B2725;
+      font-family: Intervogue;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; 
+      letter-spacing: 0.28px;
+    }
+    .template-product .related-color-products{
+      display: flex;
+      flex-direction: column-reverse;
+      /* flex-wrap: wrap-reverse; */
+      align-items: flex-start;     
+      justify-content: center;
+      gap: 24px;
+      /* column-gap: 90px; */
+      
+    }
+    .product-single__meta{
+      padding-left: 0px;
+    }
+    #CartDrawer.drawer--right {
+      width: 100%;
+    }
+    .pdp-mobile-drawer .pdp-drawer-item {
+      max-width: 33%;
+    }
+    .gift-card-description-container {
+      display: none;
+    }
+    .gift-card-range-container-mobile {
+      display: block;
+      padding-top: 15px;
+      padding-left: 15px;
+      padding-bottom: 15px;
+    }
+    .gift-card-range-container {
+      display: none;
+    }
+    .tailoring-service-wrapper {
+      height: 100vh;
+    }
+    .material-page-title-wrapper a, .pdp-material-title{
+      font-size: 14px;
+    }
+    .np-mobile-pdp-title{
+      font-size: 12px;
+    }
+    .pdp-mobile-fabrication .model-wears{
+      margin-bottom:20px;
+    }
+  
+    .pdp-mobile-fabrication .factory-location{
+      margin-top:20px;
+    }
+    
+    span.ProductcolourSwatches__Square {
+      width: 25px !important;
+      height: 32px !important;
+    }
+   
+    .related-products-list-container .ProductcolourSwatches__Item.swatch_active{
+      padding-bottom: 6px;
+    }
+    .pdp-mobile-slider{
+      display: block !important;
+      position: relative;
+    }
+    .related-color-products{
+      padding-bottom: 28px;
+      padding-top: 0;
+    }
+    .np-mobile-pdp-price {
+      font-size: 16px;
+      font-family: 'Intervogue';
+      font-style: normal;
+      font-weight: 400;
+      line-height: 25px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: #2B2725;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .pdp-mobile-drawer{
+      padding-top: 10px;
+    }
+    .pdp-mobile-drawer a{
+      color:#2B2725 !important;
+    }
+
+    .pdp-right-block{
+      padding-left: 18px !important;
+      padding-top: 17px !important;
+      width: 100%;
+    }
+    .pdp-mobile-fabrication {
+      display: none;
+      padding-top: 50px;
+      padding-bottom: 55px;
+      font-family: 'Intervogue';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 11px;
+      line-height: 18px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #2B2725;
+    }
+    .pdp-drawer-item{
+      font-family: 'Intervogue';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 9px;
+      line-height: 15px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;      
+      color: #000000;
+    }
+   .mobile-description-container {
+      display: none;
+      padding-top: 55px;
+      padding-bottom: 55px;
+    }
+    .mobile-description-container p {
+      text-align: justify;
+      font-family: 'Intervogue';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 25px;
+      letter-spacing: 0.02em;    
+      color: #2B2725;
+    }
+    .pdp-nav-desktop,
+    .test-99
+    {
+      display: none;
+    }
+    .pdp-clearpay-klarna {
+      text-align: left;
+    }
+    
+    .pdp-mobile-header {
+      display: flex;
+      padding-left: 15px;
+      padding-right: 15px;
+      align-items: start;
+    }
+    .mobile-material-wrapper {
+      display: flex;
+      padding-top: 15px;
+      padding-bottom: 15px;
+      padding-left: 15px;
+      font-family: 'Intervogue';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 25px;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+      color: #2B2725;
+    }
+
+    .pdp-mobile-img:not(:last-child), .pdp-mobile-img-last {
+      display: none !important;
+
+    }
+    
+    .pdp-mobile-img-last:nth-last-child(2){
+      display: block !important;
+    }
+    .pdp-image-wrap{
+        padding-left: 17px;
+        padding-right: 17px;
+    }
+    .gift-card-description-container {
+      max-width: 548px;
+      margin-left: 0;
+      margin-right: 0;
+    }
+    .pdp-clearpay-klarna {
+      padding-bottom: 40px !important;
+      padding-top: 15px !important; 
+    }
+  }
+  .pdp-clearpay-klarna{
+    max-width: 462px;
+    padding-bottom: 54px;
+    padding-top: 42px;
+    font-weight: 300;
+    text-transform: none;
+  }
+  .klarna-clearpay-msg {
+    padding-bottom: 15px;/*change */
+    border-bottom: 1px solid rgba(43, 39, 37, 0.2);
+    margin-bottom: 15px;/*change */
+    font-style: normal;
+  }
+  span.klarna-clearpay-price {
+      font-weight: 500;
+  }
+  img.clearpay {
+      vertical-align: middle;
+  }
+
+  {% if product.tags contains 'gift-card' %}
+    .pdp-nav-desktop {
+      margin-top: 94px;
+    }
+  {% endif %}                           
+
+  .grid--product-images--partial .pdp-right-block{
+    padding-left: 100px;
+/*     padding-top: 100px; */
+  }
+  .pdp-right-block .variant__button-label{
+    color: #2B2725;
+    font-variant-numeric: ordinal;
+    font-feature-settings: 'dlig' on;
+    font-family: Silvana;
+    font-size: 26px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 36px;
+    letter-spacing: -0.26px;
+    text-transform: lowercase;
+  }
+  .sticky-mobile-pdp{
+    height: 72px;
+     background: #2B2527 !important;
+  }
+  .price_save {
+    color: #c20000;
+  }
+  @media (max-width:1024px){
+
+    .template-product .page-width.custom-page-width-pdp{
+      padding: 0px 20px 0px 4px;
+    }
+     .template-product .grid--product-images--partial .pdp-right-block{
+       padding-left: 0px;
+    }
+     .template-product ..product-single__meta{
+       padding-left: 26px;
+     }
+    .material-page-title-wrapper a, .pdp-material-title{
+      font-size: 14px;
+      line-height: 18px;
+      letter-spacing: 0.56px;
+    }
+    .template-product .product-block--price .product__price.np-h9{
+      color: #2B2725;
+      font-family: Intervogue !important;
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 25px; 
+      letter-spacing: 0.28px;
+    }
+    .product-block--price{
+      padding-bottom: 47px;
+    }
+    .np-atc-btn{
+      font-family: Intervogue;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; 
+      letter-spacing: 0.8px;
+    }
+      .sticky-mobile-pdp{
+        height: 58px;
+      }
+    .pdp-description-container{
+      padding-top: 72px;
+      flex-direction: column-reverse;
+      gap: 50px;
+      padding-left: 11px;
+    }
+      .fabrication-container,
+      .description-container{
+        width: 95%;
+      }
+      .product-recommendations .grid{
+        margin: 0px;
+      }
+      .template-product .page-width.custom-page-width-pdp-recommendation{
+        padding: 0px;
+      }
+      .product-recommendations .grid-product__meta{
+        padding: 3px 0px !important;
+      }
+      #CartDrawer{
+        width: 360px !important;
+      }
+  }
+  @media (max-width: 768px){
+    #errorMessage{
+      text-align: left;
+      padding-left: 13px;
+    }
+    .related-products-list-container{
+      padding-left: 13px !important;
+    }
+    .template-product .page-width.custom-page-width-pdp{
+       padding: 0px 4px;
+    }
+   .template-product .breadcrumb{
+     text-align: left;
+     padding-left: 14px;
+     margin-bottom: 0px;
+   }
+    .pdp-right-block{
+      padding-top: 0px !important;
+    }
+    .template-product .breadcrumb a,
+    .template-product .breadcrumb span.page-title{
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; 
+      letter-spacing: 0.28px;
+    }
+    .template-product .product-single__meta .product-block--header .h2.product-single__title.np-h9{
+      font-size: 22px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 29px; /* 138.889% */
+      letter-spacing: 0.88px;
+      text-transform: uppercase;
+      padding-top: 26px;
+      padding-left: 18px;
+      text-align: left;
+      margin-bottom: 14px;
+    }
+    .material-page-title-wrapper {
+      padding-left: 19px;
+    }
+     .template-product .product-block--price{
+       font-size: 18px;
+       font-style: normal;
+       font-weight: 400;
+       letter-spacing: 0.28px;
+       padding-bottom: 26px;
+       text-align: left;
+       padding-left: 18px;
+       padding-top: 16px;
+       border-bottom: .25px solid rgba(43, 39, 37, 0.50);
+       line-height: 25px ;
+
+     }
+    .template-product .related-color-products{
+      padding-top: 15px;
+      padding-bottom: 19px;
+      border-bottom: 1px solid rgba(43, 39, 37, 0.50);
+      margin-bottom: 0px;
+    }
+    .related-color-products .product-color-name{
+      padding-left: 13px;
+    }
+    ul.related-products-list-container{
+      padding-right: 18px;
+    }
+    .pdp-right-block .variant__button-label{
+      font-feature-settings: 'dlig' on;
+      font-family: Silvana;
+      font-size: 23px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 25px; /* 108.696% */
+      letter-spacing: -0.23px;
+      text-transform: lowercase;
+    }
+    .variant-wrapper.js{
+      padding-left: 13px;
+      padding-top: 18px;
+      padding-bottom: 15px;
+      
+    }
+    .template-product .product-single__form{
+      padding: 0px 13px;
+    }
+    .pdp-clearpay-klarna{
+      padding: 25px 15px 57px 15px;
+    }
+    .size-guide-button {
+      display: block;
+      text-align: right;
+      padding: 0px 13px 31px 13px;
+      
+    }
+    .size-guide-button .size-guide{
+      color: #2B2725;
+      text-align: right;
+      font-family: Intervogue;
+      font-size: 12px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 21px; /* 175% */
+      letter-spacing: 0.24px;
+    }
+    .add-to-cart-popup{
+      display: flex;
+      align-items: center;
+      background: #2B2725;
+      height: 50px;
+      padding: 0px 20px 0px 9px;
+      position: fixed;
+      top: 87px;
+      left: 0;
+      width: 100%;
+      z-index: 9;
+      visibility: hidden;
+       /* margin-top: 200px; */
+    }
+    .add-to-cart-popup img{
+      opacity: 1 !important;
+    }
+    .add-to-cart-popup .text{
+      color: #FFF;
+      font-family: Intervogue;
+      font-size: 12.5px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 15px; /* 120% */
+      letter-spacing: 0.5px;
+      padding-left: 8px;
+       flex: 1;
+    }
+    .add-to-cart-popup .popup-btn.js-drawer-open-cart{
+      color: #FFF;
+      text-align: right;
+      font-family: Intervogue;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: 24px; /* 171.429% */
+      letter-spacing: 0.28px;
+      padding: 0px;
+      border-bottom: 1px solid #FFF;
+    }
+  }
+  .template-product .image-wrap.pdp-mobile-slider .swiper-button-next::before{
+    content: "";
+    width: 15px;
+    height: 15px;
+    border-top: 1px solid;
+    border-right: 1px solid;
+    transform: rotate(45deg);
+    color: #2B2725;
+    visibility: visible;
+    position: absolute;
+  }
+  .template-product .image-wrap.pdp-mobile-slider .swiper-button-prev::before{
+    content: "";
+    width: 15px;
+    height: 15px;
+    border-top: 1px solid;
+    border-right: 1px solid;
+    transform: rotate(222deg);
+    color: #2B2725;
+    visibility: visible;
+     position: absolute;
+  }
+  .template-product .swiper-button-prev.swiper-button-disabled,
+  .template-product .swiper-button-next.swiper-button-disabled{
+    display: none;
+  }
+  .template-product .image-wrap.pdp-mobile-slider .swiper-button-next::after,
+  .template-product .image-wrap.pdp-mobile-slider .swiper-button-prev::after{
+    visibility: hidden;
+  }
+  
+  .template-product .image-wrap.pdp-mobile-slider .swiper-pagination-fraction{
+    left: 20px;
+    bottom: 20px;
+  }
+  .template-product .image-wrap.pdp-mobile-slider .swiper-pagination{
+    text-align: left;
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.25px;
+  }
+  .mobile-pdp-accordion{
+    border-top: 1px solid rgba(43, 39, 37, 0.50);
+  }
+  .accordion {
+    cursor: pointer;
+    padding: 18px 14px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    transition: 0.4s;
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; 
+    letter-spacing: 0.28px;
+}
+  .accordion:after {
+  content: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='3' height='9' viewBox='0 0 3 9' fill='none'%3e%3cpath d='M-0.000383652 6.3C0.255616 6.42 0.479616 6.536 0.671616 6.648C0.863616 6.768 1.02362 6.884 1.15162 6.996L1.15162 -7.23861e-08L1.65562 -5.03555e-08L1.65562 6.996C1.79162 6.884 1.95562 6.768 2.14762 6.648C2.33962 6.536 2.55962 6.42 2.80762 6.3L2.80762 6.72C2.22362 7.224 1.79162 7.752 1.51162 8.304L1.29562 8.304C1.02362 7.752 0.591616 7.224 -0.000383671 6.72L-0.000383652 6.3Z' fill='%232B2725'/%3e%3c/svg%3e");
+  position: relative;
+  bottom: 0px;
+    left: 10px;
+}
+
+.active:after {
+  content: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='9' height='3' viewBox='0 0 9 3' fill='none'%3e%3cpath d='M6.3 2.808C6.42 2.552 6.536 2.328 6.648 2.136C6.768 1.944 6.884 1.784 6.996 1.656L0 1.656L0 1.152L6.996 1.152C6.884 1.016 6.768 0.852 6.648 0.66C6.536 0.468 6.42 0.248 6.3 0L6.72 0C7.224 0.584 7.752 1.016 8.304 1.296V1.512C7.752 1.784 7.224 2.216 6.72 2.808H6.3Z' fill='%232B2725'/%3e%3c/svg%3e");
+  color: #777;
+  font-weight: bold;
+  /* margin-left: 12px; */
+  position: relative;
+  bottom: 2px;
+}
+  
+  .panel {
+  text-align: justify;
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.2s ease-out;
+  border-bottom: 1px solid rgba(43, 39, 37, 0.50);
+}
+  .panel .description,
+  .panel .pdp-drawer-contents,
+  .panel .factory-content
+  {
+    padding: 17px 14px 45px 14px;
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 25px; 
+    letter-spacing: 0.32px;
+  }
+  .panel .pdp-drawer-contents .sojo-drawer-content{
+    padding-bottom: 0px;
+    border-bottom: 0;
+  }
+  .panel .factory-name.pdp-drawer-h3,
+  .panel .pdp-drawer-h3.country-name{
+    border-top: 0px;
+  }
+   .panel .pdp-drawer-h3.country-name{
+      padding-bottom: 0px;
+   }
+  .panel .pdp-drawer-h2.countryDeliveryDetails{
+    padding-top: 16px;
+  }
+  .panel .pdp-drawer-h2.returns-title.pdp-drawer-title{
+    padding-top: 47px;
+    border: 0px;
+    margin-bottom: 0px;
+  }
+  .panel .pdp-drawer-h2{
+    padding-bottom: 0px;
+    padding-top: 26px;
+  }
+  .panel .factory-name.pdp-drawer-h3{
+    padding-top: 0px;
+    padding-bottom: 26px;
+  }
+  .panel .factory-details.pdp-drawer-h2,
+  .panel .pdp-drawer-h2.deliveryDetails,
+  .panel .care-instruction-item.pdp-drawer-h2,
+  .panel .sojo-drawer-content .pdp-drawer-h2{
+    padding-top: 0px;
+  }
+  .panel .location{
+    padding-top: 30px;
+  }
+  .panel .pdp-drawer-h2.returns-details{
+    padding-top: 16px;
+  }
+  .mobile-pdp-accordion .fabric-percentage{
+    padding-left: 14px;
+    padding-bottom: 18px;
+  }
+  .mobile-pdp-accordion .fabric-percentage p{
+    color: #000;
+    font-family: Intervogue;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 25px;
+    letter-spacing: 0.32px;
+  }
+  .popuptext{
+    transition: all 0.1s;
+  }
+</style>
+<script>
+  $('.pdp-drawer-item').on('click', function(e) {
+    if ($(this).hasClass("delivery-return")) {
+      $('body').addClass('show-drawer-delivery');
+      $('html').addClass('lock-scroll js-drawer-open');
+    }
+    if ($(this).hasClass("tailoring-service")) {
+      $('body').addClass('show-drawer-tailoring-service');
+      $('html').addClass('lock-scroll js-drawer-open');
+    }
+    if ($(this).hasClass("terms-condition-gift-card")) {
+      $('body').addClass('show-drawer-terms-condition-gift-card');
+      $('html').addClass('lock-scroll js-drawer-open');
+    }
+    if ($(this).hasClass("care-instruction")) {
+      $('body').addClass('show-care-instructions');
+      $('html').addClass('lock-scroll js-drawer-open');
+    }
+    if ($(this).hasClass("drawer-material-pdp")) {
+      $('body').addClass('show-material-pdp');
+      $('html').addClass('lock-scroll js-drawer-open');
+    }
+    if ($(this).hasClass("size-guide")) {
+      $('body').addClass('show-size-guide-pdp');
+      $('html').addClass('lock-scroll js-drawer-open');
+    }
+    
+    if ($(this).hasClass("drawer-material-pdp")) {
+      $('body').addClass('show-drawer-material-pdp');
+      $('html').addClass('lock-scroll js-drawer-open');
+    }
+    if ($(this).hasClass("materials-factory")) {
+      $('body').addClass('show-materials-factory-pdp');
+      $('html').addClass('lock-scroll js-drawer-open');
+    }
+    e.preventDefault();
+    $('.pdp-drawer-wrapper').addClass("pdp-drawer-open");
+    $('.cart-window-bg').addClass("window-show");
+    if (!$('body').hasClass('pdp-drawer-is-open')) {
+      $('body').addClass('pdp-drawer-is-open');
+    }
+  })
+
+  function closeDrawer(){
+    document.querySelector('.pdp-drawer-close').click();
+    $('html').removeClass('lock-scroll js-drawer-open');
+  }
+  document.querySelector('.cart-window-bg').addEventListener('click', closeDrawer);
+
+  function changePricePerVariantOnDesktop(){
+    variantInputs = document.querySelectorAll(".variant-input")
+    variantInputs.forEach(variant=>{
+      variant.addEventListener('click', (e=>{
+        var label;
+        if (e.target.classList.contains("variant__button-label")){
+          label = e.target
+          var forAttribute = label.getAttribute('for')
+
+          if (forAttribute.includes("gift-card-amount")) {
+            var desktopPrice = document.querySelector(".product__price.desktop")
+            desktopPrice.innerText = label.innerText  
+          }
+        }
+      }))
+    })
+  }
+  changePricePerVariantOnDesktop();
+
+
+
+// For mobile accordion in PDP 
+  
+// Your existing script goes here
+    var acc = document.getElementsByClassName("accordion");
+
+    // Open the first accordion initially
+    acc[0].classList.add("active");
+    var firstPanel = acc[0].nextElementSibling;
+    firstPanel.style.maxHeight = firstPanel.scrollHeight + "px";
+
+    for (var i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        var isActive = this.classList.contains("active");
+
+        // Close all open panels
+        for (var j = 0; j < acc.length; j++) {
+          acc[j].classList.remove("active");
+          acc[j].nextElementSibling.style.maxHeight = null;
+        }
+
+        if (!isActive) {
+          // Open the clicked accordion
+          this.classList.add("active");
+          var panel = this.nextElementSibling;
+          panel.style.maxHeight = panel.scrollHeight + "px";
+        }
+      });
+    }
+
+// In mobile for pdp the size guide pop-up
+  
+  document.querySelector(".size-guide-button .size-guide").addEventListener("click",()=>{
+  
+      var popup = document.getElementById("myPopup");
+      var body = document.body;
+      popup.classList.toggle("show");
+      if (popup.classList.contains("show")) {
+        body.style.overflow = "hidden";
+      } 
+      else {
+        body.style.overflow = "auto";
+      }
+    
+  })
+
+document.querySelector(".size-guide-button .popuptext").addEventListener("transitionend", function(event) {
+  var popup2 = document.querySelector(".popuptext.show");
+  var closeButton = popup2.querySelector(".popup-close");
+
+  if (event.propertyName === "visibility" && popup2.classList.contains("show")) {
+    document.querySelector(".popup-close").addEventListener("click", function() {
+      popup2.classList.remove("show");
+      document.body.style.overflow = "auto";
+    });
+  }
+});
+//for back button
+document.querySelector(".size-guide-button .popuptext").addEventListener("transitionend", function(event) {
+  var popup2 = document.querySelector(".popuptext.show");
+  var closeButton = popup2.querySelector(".popup-close");
+
+  if (event.propertyName === "visibility" && popup2.classList.contains("show")) {
+    document.querySelector(".popup-back-btn").addEventListener("click", function() {
+      popup2.classList.remove("show");
+      document.body.style.overflow = "auto";
+    });
+  }
+});
+
+ document.querySelector(".learn-more-button-pdp").addEventListener("click", (e)=>{
+   document.querySelector(".pdp-nav-desktop .pdp-drawer-item.materials-factory").click();
+ })
+
+</script>
+<script>
+  $('.readmore').click(function (event) {
+    event.preventDefault();
+    var descriptionFull = document.querySelector('.product-description-full');
+    descriptionFull.style.display = 'block';
+    var descriptionShort = document.querySelector('.product-description-short');
+    descriptionShort.style.display = 'none';
+  });
+</script>
+<style>
+
+ @media only screen and (min-width: 1024px){
+
+
+  .related-color-products{
+    max-width: 467px;
+  }
+
+  .klarna-clearpay-msg {
+    padding-bottom: 7px;/*change */
+    border-bottom: 1px solid rgba(43, 39, 37, 0.2);
+    margin-bottom: 7px;/*change */
+    font-style: normal;
+  }
+ 
+  /* .page-width.custom-page-width-pdp{
+     margin-left: 131px;
+  } */
+  .product-slideshow.flickity-enabled .flickity-viewport .product-main-slide {
+    margin-bottom: 95px;
+  }
+  .product-slideshow.flickity-enabled .flickity-viewport .product-main-slide:last-child{
+    margin-bottom: 0px;
+  }
+  .template-product .product-single__meta .product-block--header .h2.product-single__title.np-h9{
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 22px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 32px;
+    letter-spacing: 0.88px;
+    text-transform: uppercase;
+    padding-top: 49px; /*change */
+  }           
+  .product-block--price{
+    padding-top: 15px;
+    padding-bottom: 40px;
+  }
+  .related-color-products{
+    display : flex;
+    row-gap: 24px;
+    column-gap: 49px;
+    /* margin-bottom: 35px; */
+  }
+  .pdp-clearpay-klarna{
+    padding-bottom: 27px !important;
+    padding-top: 14px !important;
+
+  }
+  .description-container{
+    margin-bottom: 30px;
+  }
+ 
+  .product-color-varient-count{
+    margin-left: 7px ;
+  }
+
+
+ }
+ @media only screen and (max-width: 699px){
+  .template-product .breadcrumb-pdp span.page-title, .template-product .breadcrumb-pdp a{
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: 0.28px;
+  }
+
+ }
+ @media only screen and (max-width: 768px){
+  .related-products-list-container li{
+    margin-bottom: 20px;
+  }
+  .back-span, .close-span{
+    font-family: Intervogue;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.02em;    
+    position: relative;
+    bottom: 1px;
+    padding: 0px 6px;
+  }
+  .pdp-drawer-h2.pdp-drawer-title{
+    font-family: Intervogue;
+    font-size: 16px;
+    font-weight: 400 !important;
+    line-height: 35px;
+    letter-spacing: 0.05em;
+    text-align: center;
+    color:rgba(173, 172, 171, 1);
+;
+  }
+ }
+
+ .readless, .readmore{
+  text-decoration: underline;
+  font-size: 16px;
+ }
+
+ @media only screen and (min-width: 1024px) {
+  .product-section .page-content  .template-product .page-width.custom-page-width-pdp
+    {
+      padding: 0px !important;   
+      margin: 0 auto !important;
+    }  
+    .np-prod-template{
+    max-width: 424px;
+    width: 100%;
+  }
+}
+
+@media only screen and (min-width: 769px) {
+  .product-description-full p:not(:first-child){
+    display: none;
+  }
+  .grid.grid--product-images--partial{
+    padding-top: 37px;
+  }
+  .related-color-products .product-color-name{
+    display: none !important;
+  }
+   
+  .colour-name-desktop{
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.25px;
+    text-transform: capitalize;
+    position: relative;
+    bottom: 7px;
+  }
+  /* .grid--product-images--partial > .grid__item.medium-up--one-half.product-single__sticky.np-prod-template {
+    position: static;
+  } */
+  /* .grid--product-images--partial > .grid__item.medium-up--one-half.pdp-right-block.safe-sticky {
+   height: 80vh;
+   overflow-y: scroll;
+
+  } */
+  .grid--product-images--partial > .grid__item.medium-up--one-half.pdp-right-block.safe-sticky {
+    position: sticky;
+    top: var(--safeStickyTop) !important;
+  }
+  /* .grid--product-images--partial > .grid__item.medium-up--one-half.pdp-right-block.safe-sticky::-webkit-scrollbar{
+    display: none;
+  } */
+}
+@media only screen and (min-width: 1266px){
+  .np-prod-template{
+    max-width: 524px;
+    width: 100%;
+  }
+  .grid__item.medium-up--one-half.product-single__sticky.np-prod-template{
+    margin-left: 131px;
+  }
+}
+
+
+</style>
+<script>
+ console.log(window.innerHeight)
+ if (window.innerHeight < 840){
+  document.body.style.setProperty('--safeStickyTop',`-${Math.abs(document.querySelector('.safe-sticky').offsetHeight - window.innerHeight )}px`); 
+ }
+ else if ((window.innerHeight > 841) && (window.innerHeight <= 1000)) {
+  console.log("second else")
+  document.body.style.setProperty('--safeStickyTop',`${Math.abs( window.innerHeight -document.querySelector('.safe-sticky').offsetHeight )}px`); 
+
+ }
+ else{
+  document.body.style.setProperty('--safeStickyTop' , `128px`); 
+  console.log("ajksdhk");
+ }
+ 
+</script>  

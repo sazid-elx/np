@@ -1,0 +1,978 @@
+{%- liquid
+  assign main_menu = linklists[section.settings.main_menu_link_list]
+  assign toolbar_menu = linklists[section.settings.toolbar_menu]
+  assign drawer_menu = linklists[section.settings.drawer_menu_link_list]
+  assign logo-mobile = section.settings.logo-mobile 
+  assign logo_alignment = 'left'
+  assign announce_bar_background = section.settings.announcement-bar-background
+  assign hide_social_on_desktop = section.settings.hide-social-on-desktop
+  if section.settings.main_menu_alignment == 'center-left' or section.settings.main_menu_alignment == 'center-split' or section.settings.main_menu_alignment == 'center' or section.settings.main_menu_alignment == 'center-drawer'
+    assign logo_alignment = 'center'
+  endif
+
+  assign dropdown_alignment = 'left'
+  if section.settings.main_menu_alignment == 'left-center' or section.settings.main_menu_alignment == 'center-split' or section.settings.main_menu_alignment == 'center'
+    assign dropdown_alignment = 'center'
+  endif
+
+  assign template_name = template | replace: '.', ' ' | truncatewords: 2, '' | handle
+
+  assign sticky_header = false
+  if section.settings.header_style == 'sticky'
+    assign sticky_header = true
+  endif
+  assign overlay_header = false
+  if template_name == 'index' and section.settings.sticky_index
+    assign overlay_header = true
+  endif
+  if template_name contains 'collection' and collection.image and section.settings.sticky_collection
+    assign overlay_header = true
+  endif
+-%}
+
+{% comment %} {%- render 'drawer-menu-new',
+  section: section,
+  drawer_menu: drawer_menu,
+  logo-mobile: logo-mobile,
+  toolbar_menu: toolbar_menu,
+  logo_alignment: logo_alignment
+-%} {% endcomment %}
+{%- render 'drawer-menu-new-hmv24',
+  section: section,
+  drawer_menu: drawer_menu,
+  logo-mobile: logo-mobile,
+  toolbar_menu: toolbar_menu,
+  logo_alignment: logo_alignment
+-%}
+{%- render 'drawer-search-menu',
+  section: section,
+  drawer_menu: drawer_menu,
+  logo-mobile: logo-mobile,
+  toolbar_menu: toolbar_menu,
+  logo_alignment: logo_alignment
+-%} 
+{%- render 'cart-drawer' -%}
+{%- render 'login-modal' -%}
+{%- render 'register-modal' -%}
+
+<style>
+  .drawer.drawer--left{
+                    width:100%;
+                  }
+                  .drawer{
+                    max-width:100% ;
+                  }
+  .site-nav__link,
+  .site-nav__dropdown-link:not(.site-nav__dropdown-link--top-level) {
+    font-size: {{ settings.type_navigation_size }}px;
+  }
+  {% if settings.type_navigation_capitalize %}
+    .site-nav__link, .mobile-nav__link--top-level {
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #2B2725;
+    }
+    .mobile-nav__link--top-level {
+      font-size: 1.1em;
+    }
+  {% endif %}
+
+  {% if main_menu.length > 6 %}
+    .site-nav__link {
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  {% endif %}
+
+  {% unless section.settings.mega_menu_images %}
+    .megamenu__colection-image {
+      display: none;
+    }
+  {% endunless %}
+
+  {%- if settings.color_header == settings.color_body_bg or settings.color_body_bg contains settings.color_header -%}
+    .site-header {
+/*       box-shadow: 0 0 1px rgba(0,0,0,0.2); */
+    }
+
+    .toolbar + .header-sticky-wrapper .site-header {
+      border-top: 0;
+    }
+  {%- endif -%}
+
+  {%- if settings.color_announcement == settings.color_body_bg -%}
+    .announcement-bar {
+      border-bottom: 1px solid;
+    }
+  {%- endif -%}
+</style>
+
+<div data-section-id="{{ section.id }}" data-section-type="header">
+  {%- if overlay_header or section.settings.announcement_above_header -%}
+    {%- render 'announcement-bar', section: section, announce_bar_background: announce_bar_background -%}
+  {%- endif -%}
+
+  {%- unless overlay_header -%}
+    {%- if section.settings.show_locale_selector or section.settings.show_currency_selector or section.settings.toolbar_social or section.settings.toolbar_menu != blank -%}
+      {%- render 'toolbar',
+        section: section,
+        toolbar_menu: toolbar_menu,
+        overlay_header: overlay_header,
+        hide_social_on_desktop: hide_social_on_desktop
+      -%}
+    {%- endif -%}
+  {%- endunless -%}
+
+  <div class="header-sticky-wrapper">
+    <div id="HeaderWrapper" class="header-wrapper{% if overlay_header %} header-wrapper--sticky is-light{% endif %}">
+
+      {%- if overlay_header -%}
+        {%- if section.settings.show_locale_selector or section.settings.show_currency_selector or section.settings.toolbar_social or section.settings.toolbar_menu != blank -%}
+          {%- render 'toolbar',
+            section: section,
+            toolbar_menu: toolbar_menu,
+            overlay_header: overlay_header
+          -%}
+        {%- endif -%}
+      {%- endif -%}
+      <header
+        id="SiteHeader"
+        class="site-header{% if settings.type_navigation_style == 'heading' %} site-header--heading-style{% endif %}"
+        data-sticky="{{ sticky_header }}"
+        data-overlay="{{ overlay_header }}">
+        <div class="page-width">
+          <div
+            class="header-layout header-layout--{{ section.settings.main_menu_alignment }}"
+            data-logo-align="{{ logo_alignment }}">
+
+            {%- if logo_alignment == 'left' -%}
+              <div class="header-item header-item--logo">
+                {%- render 'header-logo-block', section: section -%}
+              </div>
+            {%- endif -%}
+
+            {%- if logo_alignment == 'left' and section.settings.main_menu_alignment != 'left-drawer' -%}
+              <div class="header-item header-item--navigation{% if section.settings.main_menu_alignment == 'left-center' %} text-center{% endif %}">
+                {%- render 'header-desktop-nav', main_menu: main_menu, dropdown_alignment: dropdown_alignment -%}
+              </div>
+            {%- endif -%}
+
+            {%- if logo_alignment == 'center' -%}
+              <div class="header-item header-item--left header-item--navigation  {% if  section.settings.main_menu_alignment == 'center-split' %} medium-up--hide{% endif %}">
+                {%- if section.settings.main_menu_alignment == 'center' or section.settings.main_menu_alignment == 'center-split' -%}
+                  {% comment %} {%- if settings.search_enable -%}
+                    <div class="site-nav small--hide">
+                      <a href="{{ routes.search_url }}" class="site-nav__link site-nav__link--icon js-search-header">
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-search" viewBox="0 0 64 64"><path d="M47.16 28.58A18.58 18.58 0 1 1 28.58 10a18.58 18.58 0 0 1 18.58 18.58zM54 54L41.94 42"/></svg>
+                        <span class="icon__fallback-text">{{ 'general.search.title' | t }}</span>
+                      </a>
+                    </div>
+                  {%- endif -%} {% endcomment %}
+                {%- endif -%}
+
+                {%- if section.settings.main_menu_alignment == 'center-left' -%}
+                  {%- render 'header-desktop-nav', main_menu: main_menu, dropdown_alignment: dropdown_alignment -%}
+                {%- endif -%}
+
+                <div class="site-nav{% unless section.settings.main_menu_alignment == 'center-drawer' %} medium-up--hide{% endunless %}">
+                  <button
+                    type="button"
+                    class="site-nav__link site-nav__link--icon js-drawer-open-nav"
+                    aria-controls="NavDrawer">
+                   {% comment %} <svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <line y1="0.5" x2="19" y2="0.5" stroke="black"/>
+                    <line y1="6.5" x2="19" y2="6.5" stroke="black"/>
+                    <line y1="12.5" x2="19" y2="12.5" stroke="black"/>
+                  </svg> {% endcomment %}
+                  <svg xmlns="http://www.w3.org/2000/svg" width="17" height="11" viewBox="0 0 17 11" fill="none">
+                    <path d="M0 1H16.18" stroke="#1D1D1B" stroke-width="1.25" stroke-miterlimit="10"/>
+                    <path d="M0 10.2998H16.18" stroke="#1D1D1B" stroke-width="1.25" stroke-miterlimit="10"/>
+                  </svg>
+
+                    <span class="icon__fallback-text">{{ 'general.drawers.navigation' | t }}</span>
+                  </button>
+                </div>
+              </div>
+
+              {%- if section.settings.main_menu_alignment == 'center-split' -%}
+                {%- render 'header-split-nav', main_menu: main_menu, section: section, dropdown_alignment: dropdown_alignment -%}
+              {%- endif -%}
+
+              {%- if section.settings.main_menu_alignment != 'center-split' -%}
+                <div class="header-item header-item--logo">
+                  {%- render 'header-logo-block', section: section -%}
+                </div>
+              {%- endif -%}
+            {%- endif -%}
+
+            <div class="header-item header-item--icons">
+              {%- render 'header-icons', section: section -%}
+            </div>
+          </div>
+
+          {%- if section.settings.main_menu_alignment == 'center' -%}
+            <div class="text-center">
+              {%- render 'header-desktop-nav', main_menu: main_menu, dropdown_alignment: dropdown_alignment -%}
+            </div>
+          {%- endif -%}
+        </div>
+        <div class="site-header__search-container">
+          <div class="site-header__search" >
+            <div class="page-width" style="justify-content: center;">
+              <form action="{{ routes.search_url }}" method="get" role="search"
+                id="HeaderSearchForm"
+                class="site-header__search-form">
+                <input type="hidden" name="type" value="{{ settings.search_type }}">
+                <input type="hidden" name="options[prefix]" value="last">
+      
+                <input type="search" name="q" value="{{ search.terms | escape | replace: '*', '' }}" placeholder="{{ 'general.search.placeholder' | t }}" class="site-header__search-input" aria-label="{{ 'general.search.placeholder' | t }}">
+                <button type="submit" class="text-link site-header__search-btn site-header__search-btn--submit" disabled=true>
+                  <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-search hide" viewBox="0 0 64 64"><path d="M47.16 28.58A18.58 18.58 0 1 1 28.58 10a18.58 18.58 0 0 1 18.58 18.58zM54 54L41.94 42"/></svg>
+                  <svg width="14" height="13" viewBox="0 0 14 13" fill="none" class="search-submit-btn" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M-0.000107558 6.19835H12.3966" stroke="#2B2725"/>
+                    <path d="M9.0268 2.12237L13.0536 6.14915L9.0268 10.176" stroke="#2B2725"/>
+                  </svg> 
+                  <span class="icon__fallback-text">{{ 'general.search.submit' | t }}</span>
+                </button>
+              </form>
+              <button type="button" id="SearchClose" class="js-search-header-close text-link site-header__search-btn">
+                {% comment %} <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><path d="M19 17.61l27.12 27.13m0-27.12L19 44.74"/></svg> {% endcomment %}
+                Close
+                <span class="icon__fallback-text">{{ 'general.accessibility.close_modal' | t | json }}</span>
+              </button>
+            </div>
+         {% comment %} <div class="search-overlay search-overlay-appeared"></div>  {% endcomment %}
+          </div>
+          {%- if settings.predictive_search_enabled -%}
+            <div id="PredictiveWrapper" class="predictive-results hide" data-image-size="{{ settings.predictive_image_size }}">
+              <div class="page-width">
+                <div class=" predictive-results__footer">
+                  <button class="predictive-results__footer-button"  data-predictive-search-button>
+                    <small>
+                      {{ 'general.search.view_more' | t }}
+                    </small>
+                  </button>
+                </div>
+                <div id="PredictiveResults" class="predictive-result__layout {% if  settings.predictive_image_size == 'portrait' %}predictive-portrait-result-main{% endif %} "></div>
+               
+              </div>
+             
+            </div>
+          {%- endif -%}
+        </div>
+      </header>
+    </div>
+  </div>
+
+  {%- unless overlay_header or section.settings.announcement_above_header -%}
+    {%- render 'announcement-bar', section: section, announce_bar_background: announce_bar_background -%}
+  {%- endunless -%}
+</div>
+
+{% schema %}
+{
+  "name": "t:sections.header.name",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "main_menu_link_list",
+      "label": "t:sections.header.settings.main_menu_link_list.label",
+      "default": "main-menu"
+    },
+      {
+        "type": "link_list",
+        "id": "drawer_menu_link_list",
+        "label": "Mobile Menu",
+        "default": "main-menu"
+      },
+      {
+        "type": "select",
+        "id": "announcement-bar-background",
+        "label": "Announce Bar Background",
+        "default": "black-bg",
+        "options": [
+          {
+            "value": "black-bg",
+            "label": "Black"
+          },
+          {
+            "value": "white-bg",
+            "label": "White"
+          }
+        ]
+      },
+        {
+          "type": "image_picker",
+          "id": "logo-mobile",
+          "label": "Logo Mobile",
+          "info": "Logo for mobile"
+        },
+    {
+      "type": "checkbox",
+      "id": "mega_menu_images",
+      "label": "t:sections.header.settings.mega_menu_images.label",
+      "default": true,
+      "info": "t:sections.header.settings.mega_menu_images.info"
+    },
+    {
+      "type": "select",
+      "id": "main_menu_alignment",
+      "label": "t:sections.header.settings.main_menu_alignment.label",
+      "default": "left",
+      "options": [
+        {
+          "value": "left",
+          "label": "t:sections.header.settings.main_menu_alignment.options.left.label"
+        },
+        {
+          "value": "left-center",
+          "label": "t:sections.header.settings.main_menu_alignment.options.left-center.label"
+        },
+        {
+          "value": "left-drawer",
+          "label": "t:sections.header.settings.main_menu_alignment.options.left-drawer.label"
+        },
+        {
+          "value": "center-left",
+          "label": "t:sections.header.settings.main_menu_alignment.options.center-left.label"
+        },
+        {
+          "value": "center-split",
+          "label": "t:sections.header.settings.main_menu_alignment.options.center-split.label"
+        },
+        {
+          "value": "center",
+          "label": "t:sections.header.settings.main_menu_alignment.options.center.label"
+        },
+        {
+          "value": "center-drawer",
+          "label": "t:sections.header.settings.main_menu_alignment.options.center-drawer.label"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "header_style",
+      "label": "t:sections.header.settings.header_style.label",
+      "default": "normal",
+      "options": [
+        {
+          "value": "normal",
+          "label": "t:sections.header.settings.header_style.options.normal.label"
+        },
+        {
+          "value": "sticky",
+          "label": "t:sections.header.settings.header_style.options.sticky.label"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_index",
+      "label": "t:sections.header.settings.sticky_index.label",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "sticky_collection",
+      "label": "t:sections.header.settings.sticky_collection.label",
+      "info": "t:sections.header.settings.sticky_collection.info",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "t:sections.header.settings.header_announcement_bar"
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_compact",
+      "label": "t:sections.header.settings.announcement_compact.label"
+    },
+    {
+      "type": "checkbox",
+      "id": "announcement_above_header",
+      "label": "t:sections.header.settings.announcement_above_header.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.header.settings.header_toolbar"
+    },
+    {
+      "type": "link_list",
+      "id": "toolbar_menu",
+      "label": "t:sections.header.settings.toolbar_menu.label",
+      "info": "t:sections.header.settings.toolbar_menu.info"
+    },
+    {
+      "type": "checkbox",
+      "id": "toolbar_social",
+      "label": "t:sections.header.settings.toolbar_social.label"
+    },
+    {
+      "type": "header",
+      "content": "t:sections.header.settings.header_language_selector",
+      "info": "t:sections.header.settings.header_language_selector"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_locale_selector",
+      "label": "t:sections.header.settings.show_locale_selector.label",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "t:sections.header.settings.header_currency_selector",
+      "info": "t:sections.header.settings.header_currency_selector"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_currency_selector",
+      "label": "t:sections.header.settings.show_currency_selector.label",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "hide-social-on-desktop",
+      "label": "Hide Social Icons on Desktop",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_currency_flags",
+      "label": "t:sections.header.settings.show_currency_flags.label",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "logo",
+      "name": "t:sections.header.blocks.logo.name",
+      "limit": 1,
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "logo",
+          "label": "t:sections.header.blocks.logo.settings.logo.label"
+        },
+        {
+          "type": "image_picker",
+          "id": "logo-inverted",
+          "label": "t:sections.header.blocks.logo.settings.logo-inverted.label",
+          "info": "t:sections.header.blocks.logo.settings.logo-inverted.info"
+        },
+        {
+          "type": "range",
+          "id": "desktop_logo_width",
+          "label": "t:sections.header.blocks.logo.settings.desktop_logo_width.label",        
+          "min": 20,
+          "max": 100,
+          "step": 1,
+          "unit": "px",
+          "default": 40
+        },
+        {
+          "type": "range",
+          "id": "mobile_logo_width",
+          "label": "t:sections.header.blocks.logo.settings.mobile_logo_width.label",
+          "default": 30,
+          "min": 10,
+          "max": 80,
+          "step": 1,
+          "unit": "px",
+          "info": "t:sections.header.blocks.logo.settings.mobile_logo_width.info"
+        }
+      ]
+    },
+    {
+      "type": "announcement",
+      "name": "t:sections.header.blocks.announcement.name",
+      "limit": 3,
+      "settings": [
+        {
+          "type": "text",
+          "id": "text",
+          "label": "t:sections.header.blocks.announcement.settings.text.label",
+          "default": "Hassle-free returns"
+        },
+        {
+          "type": "text",
+          "id": "link_text",
+          "label": "t:sections.header.blocks.announcement.settings.link_text.label",
+          "default": "30-day postage paid returns"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "t:sections.header.blocks.announcement.settings.link.label"
+        }
+      ]
+    }
+  ],
+  "default": {
+    "settings": {}
+  }
+}
+{% endschema %}
+
+<style>
+    :root {
+    --margin-top-header: 100px;
+  }
+  .white-bg{
+    background-color: white;
+    color: black;
+/*     border-bottom: 0.5px solid #000000; */
+/*     box-shadow: 0px 4px 4px rgb(0 0 0 / 25%); */
+  }
+  #SearchClose, #SearchCloseMobile{
+    color: #2B2725;
+    text-align: right;
+    font-family: Intervogue;
+    font-size: 11px !important;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px; /* 190.909% */
+    letter-spacing: 0.22px;
+  }
+  @media only screen and (min-width:769px) {
+
+    .site-header__search-form {
+      padding-top: 0px;
+      padding-bottom: 0px;
+    }
+    .no-search-results{
+    padding-top: 47px;
+    padding-bottom: 93px;
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 171.429% */
+    letter-spacing: 0.28px;
+    margin: 0 auto;
+  }
+}
+  .site-header__search-container.is-active:has(.no-search-results) .predictive-results__footer{
+    padding: 0;
+
+  }
+@media only screen and (max-width: 768px) {
+  .site-header__search-form {
+    padding-bottom: 0px;
+  }
+  .site-header__search-container{
+    height: 100px;
+  }
+
+  .no-search-results{
+    padding-top: 41px;
+    padding-bottom: 61px;
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 171.429% */
+    letter-spacing: 0.28px;
+  }
+ 
+
+
+
+}
+
+  @media only screen and (max-width : 1024px){
+  #PredictiveWrapper{
+    overflow: unset !important;
+  }
+  #PredictiveResults{
+    overflow: auto;
+  }
+  #PredictiveResults::-webkit-scrollbar{
+    display: none;
+  }
+}
+@media screen and (min-width: 700px) and (max-width: 769px){
+  .site-header__search-container .site-header__search, #PredictiveResults .no-search-results {
+    padding-left: 86px !important;
+    padding-right: 60px;
+}
+}
+
+</style>
+
+<script>
+
+  // disabling submit button
+  var searchInput = document.querySelector("#HeaderSearchForm input[type='search']")
+  var searchSubmitBtn = document.querySelector("#HeaderSearchForm .text-link.site-header__search-btn.site-header__search-btn--submit")
+  if (searchInput.value.length > 0) {
+      searchSubmitBtn.removeAttribute("disabled")
+    }
+  searchInput.addEventListener("input", ()=>{
+    if (searchInput.value[0] === " ") {
+      searchInput.value = ""
+    }
+    if (searchInput.value.length > 0) {
+      searchSubmitBtn.removeAttribute("disabled")
+    }
+    else {
+      searchSubmitBtn.setAttribute("disabled", true)
+    }
+  })
+  // input focus functionality
+  window.addEventListener('load', ()=>{
+      const end = searchInput.value.length
+      searchInput.setSelectionRange(end, end)
+      searchInput.focus()
+    })
+
+  
+  // disabling mobile submit button
+  var searchMobileInput = document.querySelector("#HeaderSearchForm_mobile input[type='search']")
+  var searchMobileSubmitBtn = document.querySelector("#HeaderSearchForm_mobile .text-link.site-header__search-btn.site-header__search-btn--submit")
+
+  if (searchMobileInput.value.length > 0) {
+      searchMobileSubmitBtn.removeAttribute("disabled")
+    }
+  searchMobileInput.addEventListener("input", ()=>{
+    if (searchMobileInput.value[0] === " ") {
+      searchMobileInput.value = ""
+    }
+    if (searchMobileInput.value.length > 0) {
+      searchMobileSubmitBtn.removeAttribute("disabled")
+    }
+    else {
+      searchMobileSubmitBtn.setAttribute("disabled", true)
+    }
+  })
+
+  var announcementHeight =document.querySelector('.announcement-bar.white-bg').clientHeight;
+  var headHeight =document.querySelector('#StickyHeaderWrap').clientHeight;
+  var marginHeight= announcementHeight+headHeight;
+  
+  var root = document.querySelector(':root');
+  var rootStyles = getComputedStyle(root);
+  var deg= rootStyles.getPropertyValue('--margin-top-header');
+  
+  root.style.setProperty('--margin-top-header', `${marginHeight}`);
+</script>
+
+
+{% comment %} 
+ HMV-24 start
+{% endcomment %}
+
+
+
+<style>
+.predictive-results__footer-button small{
+  color: #2B2725;
+  text-align: center;
+  font-family: Intervogue;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 28px; /* 175% */
+  letter-spacing: 0.32px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid #2B2725;
+}
+.predictive-results__footer{
+    text-align: center;
+    padding-top: 44px;
+    padding-bottom: 58px;
+}
+
+    
+.site-header__search-container .site-header__search .page-width #HeaderSearchForm{
+ max-width: 762px !important;
+}
+.site-header__search-container .site-header__search, #PredictiveResults .no-search-results{
+ padding-left: 18px;
+}
+
+
+
+#PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content .grid-product__link .grid-product__image-mask  .grid__image-ratio--portrait .grid__image-contain{
+  object-fit: fill;
+}
+#PredictiveResults> div > .grid.grid--uniform .grid__item {
+  /* padding-left: 8px; */
+
+}
+#PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content  .grid-product__meta{
+  margin-left: 0%;
+}
+
+@media screen and (min-width: 360px) and (max-width: 1024px){
+  .predictive-results__footer-button small{   
+    font-size: 14px;
+    line-height: 24px; /* 171.429% */
+    letter-spacing: 0.28px;
+  }
+}
+
+@media screen and (min-width: 360px) and (max-width: 743px){
+    .predictive-results__footer{
+      text-align: start;
+      padding-left: 18px;
+      padding-top: 48px;
+      padding-bottom: 32px;
+  }
+}
+
+@media screen and (min-width: 360px) and (max-width: 400px) {
+
+  .page-width:has(#PredictiveResults){
+    padding-left: 0px !important;
+    }
+  #PredictiveResults> div > .grid.grid--uniform{
+    display: flex;
+  }
+  #PredictiveResults> div > .grid.grid--uniform .grid__item {
+    padding: 0px;   
+    margin-left:2px ;    
+  }
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content .grid-product__link .grid-product__image-mask  .grid__image-ratio--portrait::before{
+  padding-bottom: 0%;
+  
+  }
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content .grid-product__link .grid-product__image-mask  .grid__image-ratio--portrait .grid__image-contain{
+    object-fit: cover; 
+    position: static;
+  
+  }
+
+
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content  .grid-product__meta{
+    margin-left: 0%;
+  
+  }
+                        /* ============================================================ */
+  #PredictiveResults> div > .grid.grid--uniform .grid__item {
+    width: 52%;
+  }
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content .grid-product__link .grid-product__image-mask  .grid__image-ratio--portrait{
+    height: 212px;
+  
+  }
+
+}
+
+
+@media screen and (min-width: 401px) and (max-width: 743px) {
+  
+  .page-width:has(#PredictiveResults){
+  padding-left: 0px !important;
+  }
+  #PredictiveResults> div > .grid.grid--uniform{
+    display: flex;
+  }
+  #PredictiveResults> div > .grid.grid--uniform .grid__item {
+    padding: 0px;   
+    margin-left:2px ;    
+  }
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content .grid-product__link .grid-product__image-mask  .grid__image-ratio--portrait::before{
+  padding-bottom: 0%;
+  
+  }
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content .grid-product__link .grid-product__image-mask  .grid__image-ratio--portrait .grid__image-contain{
+    object-fit: cover; 
+    position: static;
+  
+  } 
+  
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content  .grid-product__meta{
+    margin-left: 0%;
+  
+  }
+
+
+  #PredictiveResults> div > .grid.grid--uniform .grid__item {
+      width: 35%;
+    }
+    
+    #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content .grid-product__link .grid-product__image-mask  .grid__image-ratio--portrait{
+    height: 212px;
+  
+  }
+}
+
+
+
+@media screen and (min-width: 744px) and (max-width: 1024px) {
+  .predictive-results__footer{
+      padding-top: 44px;
+      padding-bottom: 58px;
+    }
+  .page-width:has(#PredictiveResults){
+    padding-left: 0px !important;
+  }
+  #PredictiveResults> div > .grid.grid--uniform{
+    display: flex;
+  }
+  #PredictiveResults> div > .grid.grid--uniform .grid__item {
+    padding: 0px;   
+    margin-left:2px ;    
+  }
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content .grid-product__link .grid-product__image-mask  .grid__image-ratio--portrait::before{
+  padding-bottom: 0%;
+  
+  }
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content .grid-product__link .grid-product__image-mask  .grid__image-ratio--portrait .grid__image-contain{
+    object-fit: cover; 
+    position: static;
+  
+  }
+
+  
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content  .grid-product__meta{
+    margin-left: 0%;
+  
+  }
+
+  /* =============================================================== */
+    #PredictiveResults> div > .grid.grid--uniform .grid__item {
+      width: 35%;
+    }
+    #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content .grid-product__link .grid-product__image-mask  .grid__image-ratio--portrait{
+      height: 345px;
+  
+    }
+
+}
+
+@media screen and (min-width: 360px) and (max-width: 743px){
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content  .grid-product__meta .grid-product__title a{
+    color: #2B2725;
+    /* H3 Mobile */
+    font-family: Intervogue;
+    font-size: 14px !important;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px; /* 128.571% */
+    letter-spacing: 0.56px;
+    text-transform: uppercase;
+  }
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content  .grid-product__meta .grid-product__price{
+    color: #2B2725;
+    /* H4 Tablet and Mobile */
+    font-family: Intervogue;
+    font-size: 14px ;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 24px; /* 171.429% */
+    letter-spacing: 0.28px;
+  }
+}
+@media screen and (min-width: 744px) and (max-width: 1024px){
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content  .grid-product__meta .grid-product__title a{
+    color: #2B2725;
+    /* H3 Desktop */
+    font-family: Intervogue;
+    font-size: 13px !important;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 17px; /* 130.769% */
+    letter-spacing: 0.52px;
+    text-transform: uppercase;
+  }
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content  .grid-product__meta .grid-product__price{
+    color: #2B2725;
+    /* H4 Desktop */
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px; /* 168% */
+    letter-spacing: 0.25px;
+  }
+}
+@media screen and (min-width: 1025px){
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content  .grid-product__meta .grid-product__title a{
+    color: #2B2725;
+    /* H3 Desktop */
+    font-family: Intervogue;
+    font-size: 13px !important;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 17px; /* 130.769% */
+    letter-spacing: 0.52px;
+    text-transform: uppercase;
+  }
+  #PredictiveResults> div > .grid.grid--uniform .grid__item .grid-product__content  .grid-product__meta .grid-product__price{
+    color: #2B2725;
+    /* H4 Desktop */
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px; /* 168% */
+    letter-spacing: 0.25px;
+  }
+  .grid__image-ratio--portrait:before{
+    padding-bottom: 130%;
+  }
+ 
+}
+
+
+</style>
+
+{% comment %} 
+HMV-2024 end
+{% endcomment %}
+                      <script>
+  function waitForElem(
+      waitFor,
+      callback,
+      minElements = 1,
+      isVariable = false,
+      timer = 50000,
+      frequency = 25
+    ) {
+      let elements = isVariable
+        ? window[waitFor]
+        : document.querySelectorAll(waitFor);
+      if (timer <= 0) return;
+      (!isVariable && elements.length >= minElements) ||
+      (isVariable && typeof window[waitFor] !== "undefined")
+        ? callback(elements)
+        : setTimeout(
+            () =>
+              waitForElem(
+                waitFor,
+                callback,
+                minElements,
+                isVariable,
+                timer - frequency
+              ),
+            frequency
+          );
+  }
+
+  // waitForElem("#launcher", ()=>{
+    
+  //   document.querySelector('#launcher').contentWindow.document.querySelector('button.wrapper-AtBcr').innerHTML=`<svg width="16" height="34" viewBox="0 0 16 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+  //     <g clip-path="url(#clip0_9706_6696)">
+  //     <path d="M12.542 18.7362L11.9433 19.718C13.2956 21.0511 14.0595 23.087 14.0595 25.3295C14.0595 29.98 11.5717 33.3593 8.15495 33.3593C5.22333 33.3593 2.74591 30.8274 2.10591 27.1897C2.08527 27.0863 2.02333 26.6833 2.01301 26.5076C1.9614 26.1253 1.95107 25.7946 1.95107 25.3295C1.95107 21.1441 4.51107 18.1885 8.16527 18.1575H8.20656C9.19753 18.1575 10.1162 18.4158 10.9524 18.9222L11.3653 18.0955C10.3949 17.6821 9.3214 17.4754 8.17559 17.4754C3.52011 17.4754 0.020752 20.9891 0.020752 25.6499C0.020752 30.3107 3.53043 33.9794 8.17559 33.9794C12.8208 33.9794 16.0208 30.476 16.0208 25.6499C16.0208 22.6736 14.7614 20.152 12.5627 18.7155L12.542 18.7362Z" fill="white"/>
+  //     <path d="M7.17428 14.7988C10.5498 14.7988 12.4491 12.5149 13.244 11.3884C12.9446 13.5587 12.3356 15.6979 11.4169 17.7027C9.80653 21.2371 6.81299 24.296 3.10718 25.7222C2.76653 25.8565 2.40524 25.9702 2.08524 26.1252L2.04395 26.1459L2.13686 26.828C2.13686 26.828 3.39621 26.3629 3.52008 26.3112C3.97428 26.1252 4.41815 25.9185 4.8517 25.7015C5.73944 25.2571 6.59621 24.7404 7.40137 24.1617C9.16653 22.9009 10.622 21.3714 11.7885 19.5733C12.8104 18.0128 13.6878 16.3593 14.3278 14.6231C15.0298 12.7422 15.453 10.7477 15.453 8.74286C15.453 2.28389 11.5407 0 8.18589 0C3.86073 0 0.4646 3.44134 0.4646 7.83343C0.4646 9.77629 1.20783 11.5745 2.54976 12.8766C3.79879 14.096 5.4917 14.7988 7.17428 14.7988ZM7.70073 0.868085C10.8594 0.868085 13.4298 4.40243 13.4298 8.74286C13.4298 9.13556 13.4298 9.52827 13.3988 9.94164C11.7678 12.4529 9.99234 13.6723 7.96911 13.6723C4.54202 13.6723 2.58073 11.3574 2.58073 7.31672C2.58073 3.27599 5.15105 0.868085 7.70073 0.868085Z" fill="white"/>
+  //     <path d="M10.9317 18.9222C10.9317 18.9222 11.324 19.0049 11.933 19.718C12.542 20.431 13.0375 19.0979 12.5317 18.7362C12.0982 18.4262 11.933 18.3228 11.3446 18.1058C10.7562 17.8888 10.9317 18.9326 10.9317 18.9326V18.9222Z" fill="white"/>
+  //     <path d="M2.04375 26.1562C1.56891 26.3423 1.69278 26.9623 1.69278 26.9623C1.69278 26.9623 1.99214 26.89 2.13665 26.8383C2.28117 26.7866 2.04375 26.1562 2.04375 26.1562Z" fill="white"/>
+  //     </g>
+  //     <defs>
+  //     <clipPath id="clip0_9706_6696">
+  //     <rect width="16" height="34" fill="white"/>
+  //     </clipPath>
+  //     </defs>
+  //     </svg>`
+  // })
+  
+  waitForElem("#cb-cookie_consent .fYWMEB", ()=>{
+    document.querySelector(".fYWMEB").innerHTML=`<p class="pop-up-decline-btn">Decline</p>`;
+  })
+
+  
+</script>

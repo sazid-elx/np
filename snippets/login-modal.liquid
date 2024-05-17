@@ -1,0 +1,170 @@
+<div class="login-overlay"></div>
+<div class="page-width page-width--tiny login-section">
+  <div class="upper-part">
+    <header class="section-header">
+    <h1 class="section-header__title">{{ 'customer.login.title' | t }}</h1>
+      <div class="login-section-close">
+        <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M1 1L16 16M1 16L16 1" stroke="#2B2725"/>
+</svg>
+
+      </div>
+  </header>
+
+  <div class="note note--success hide" id="ResetSuccess">
+    {{ 'customer.recover_password.success' | t }}
+  </div>
+
+  <div id="CustomerLoginForm" class="form-vertical">
+    {%- form 'customer_login' -%}
+
+      {{ form.errors | default_errors }}
+
+      <input required placeholder="Email Address" type="email" name="customer[email]" id="CustomerEmail" class="input-full{% if form.errors contains 'email' %} error{% endif %}" autocorrect="off" autocapitalize="off" autofocus>
+
+      {%- if form.password_needed -%}
+        <input placeholder="Password" type="password" value="" name="customer[password]" id="CustomerPassword" class="input-full{% if form.errors contains 'password' %} error{% endif %}" required>
+
+    <div class="grid login-forgot-pass">
+          <div class="grid__item one-half text-left">
+            <small class="label-info">
+              <a href="#recover" id="RecoverPassword">
+                {{ 'customer.login.forgot_password' | t }}
+              </a>
+            </small>
+          </div>
+        </div>
+        
+        {%- endif -%}
+
+      <p>
+        <button type="submit" class="btn btn--full login-new-button">
+          {{ 'customer.login.title' | t }}
+        </button>
+      </p>
+
+    {%- endform -%}
+  </div>
+
+  <div id="RecoverPasswordForm" class="hide">
+    <div class="form-vertical">
+       <small class="label-info">{{ 'customer.recover_password.title' | t }}</small>
+       <p class="pass-reset-text">{{ 'customer.recover_password.subtext' | t }}</p>
+
+      {%- form 'recover_customer_password' -%}
+
+        {{ form.errors | default_errors }}
+
+        {%- if form.posted_successfully? -%}
+          <span class="hide reset-password-success"></span>
+        {%- endif -%}
+
+        <!-- <label for="RecoverEmail">{{ 'customer.recover_password.email' | t }}</label> -->
+        <input type="email" value="" name="email" id="RecoverEmail" class="input-full" autocorrect="off" autocapitalize="off" placeholder="Email Address" required>
+
+        <p>
+          <button type="submit" class="btn">
+            {{ 'customer.recover_password.submit' | t }}
+          </button>
+        </p>
+        <button type="button" id="HideRecoverPasswordLink">{{ 'customer.recover_password.cancel' | t }}</button>
+      {%- endform -%}
+    </div>
+  </div>
+
+    <div class="lower-part">
+      <p class="create-an-account np-h5">Create an Account</p>
+      <p style="margin-bottom: 15px;">You will be able to:</p>
+      <ul class="account-facilities np-h5">
+        
+        <li>Recieve our exclusive newsletter</li>
+        <li>Save your wishlist items</li>
+        <li>Shop faster</li>
+        <li>Check your orders and returns</li>
+      </ul>
+
+
+        
+         <span class="new-register-button">{{ 'customer.register.submit' | t }}</span> 
+  
+      
+
+      
+    </div>
+
+  </div>
+
+  {%- if shop.checkout.guest_login -%}
+    <hr class="hr--clear">
+
+    <h1>{{ 'customer.login.guest_title' | t }}</h1>
+    <hr class="hr--small">
+
+    {%- form 'guest_login' -%}
+      <button type="submit" class="btn">
+        {{ 'customer.login.guest_continue' | t }}
+      </button>
+    {%- endform -%}
+  {%- endif -%}
+</div>
+
+<style>
+  .login-section::-webkit-scrollbar {
+    display: none;
+  }
+  .account-facilities.np-h5 li::before{
+    content: "-";
+    margin-right: 10px;
+  
+  }
+  #RecoverPasswordForm .form-vertical h2 {
+    text-align: left;
+    font-family: 'Intervogue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 20px;
+    line-height: 24px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #2B2725;
+  }
+  #RecoverPasswordForm .form-vertical small {
+    font-family: 'Intervogue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 28px;
+    text-align: justify;
+    letter-spacing: 0.02em;
+    color: #2b2725;
+  }
+  #RecoverPasswordForm .form-vertical .pass-reset-text {
+    font-size: 16px;
+    line-height: 28px;
+    text-align: justify;
+    letter-spacing: 0.02em;
+  }
+  #RecoverPasswordForm .form-vertical p{
+    text-align: left;   
+  }
+  #RecoverPasswordForm .form-vertical .np-h5{
+    margin-bottom: 40px;
+  }
+  
+  #HideRecoverPasswordLink{
+    display:block;
+    margin-bottom: 40px;
+    margin-top:20px;
+
+  }
+.note.note--success{
+  border-bottom: none !important ;
+}
+@media only screen and (min-width: 769px){
+  .login-section .grid__item .label-info {
+    margin-bottom: 40px;
+  }
+}
+
+</style>
+

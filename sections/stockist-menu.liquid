@@ -1,0 +1,349 @@
+<div class="page-width stockist-page">
+ 
+  <div id="az-faq" class="">
+      <div class="faq-content">
+        <section class="left-submenu">
+          <div id="faq-nav">
+            <nav>
+              {% if section.settings.faq_menu_title %}
+              <a href="#stockists" class="active"> {{ section.settings.faq_menu_title }}</a>
+              {% endif %}
+            </nav>
+          </div>
+          <div id="single-contact">
+            <a href="https://ninetypercent.com/pages/new-faq">FAQ</a>
+          </div>
+          <div id="faq-contact">
+            <p>{{ section.settings.faq-contact-title }}</p>
+            <img src="{{ section.settings.faq-contact-icon | img_url: 'master' }}" class="custom-contact-icon" alt="{{ section.settings.faq-contact-icon.alt | escape }}">
+            <h3>{{ section.settings.faq-contact-number }}</h3>
+            <span class="faq-contact-email"> <a href="{{ section.settings.faq-contact-email-cta }}">{{ section.settings.faq-contact-email }}</a></span>
+            <img src="{{ section.settings.faq-contact-logo | img_url: 'master' }}" class="custom-contact-logo" alt="{{ section.settings.faq-contact-logo.alt | escape }}">
+          </div>
+        </section>
+        
+        <section id="faq-first">
+          <div class="">
+            <p class="custom-faq-title">      
+              Stockists
+            </p>
+        </div>
+          {% for block in section.blocks %}
+          {% case block.type %}
+          {% when 'question' %}
+          <div class="faq-card faq-card-custom-font">
+            <button class="accordion">{{ block.settings.title }}
+             <svg xmlns="http://www.w3.org/2000/svg" width="9" height="6" viewBox="0 0 9 6" fill="none">
+              <path d="M1.00001 4.75001L4.74998 1.00004L8.49998 4.75002" stroke="#2B2725"/>
+              </svg>
+            </button>
+            <div class="panel">
+              {{ block.settings.text }}
+            </div>
+          </div>
+          {% endcase %}
+          {% endfor %}
+          <div class="bottom-text-faq-el">
+            <p>For wholesale enquiries, please click <a href="https://ninetypercent.com/pages/contact-us">here</a></p>
+          </div>
+        </section>
+      </div>
+  </div>
+</div>
+
+<style>
+@media screen and (min-width: 1025px){
+  #az-faq {
+      max-width: 1440px;
+      margin: auto;
+  }
+}
+ .stockist-page #faq-nav{
+   padding-top: 35px;
+ }
+.stockist-page .custom-faq-title{
+  color: #2B2725;
+  font-variant-numeric: ordinal;
+  font-family: Silvana;
+  font-size: 100px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 105px; 
+  letter-spacing: -3px;
+  margin-bottom: 17px;
+}
+.stockist-page .faq-card.faq-card-custom-font .accordion svg{
+  display: block;
+  position: absolute;
+  right: 0%;
+  width: 10px;
+  height: 10px;
+  transform: scaleY(-1);
+}
+.stockist-page .faq-card.faq-card-custom-font .accordion.active svg{
+   transform: scaleY(1);
+}
+  .stockist-page .faq-content {
+    display: grid;
+    grid-auto-flow: column;
+    grid-template-columns: 1fr 2rem 1fr 1fr;
+    grid-gap: 24px;
+    align-items: start;
+    padding-top: 50px;
+    margin-top: 50px;
+    margin-left: 6.5%;
+}
+ .stockist-page .faq-card {
+   position: relative;
+   max-width: 581px;
+   height: auto;
+ }
+ .stockist-page #faq-contact{
+   display: none;
+ }
+  .stockist-page .bottom-text-faq-el{
+    padding-top: 63px;
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.25px;
+    padding-bottom: 560px;
+  }
+  .stockist-page .bottom-text-faq-el p a{
+    text-decoration-line: underline;
+  }
+  
+  @media screen and (min-width: 769px){
+   .faq-content section:not(:first-child){
+     grid-column: 3/5; 
+   }
+  }
+.stockist-page .accordion{
+   color: #2B2725;
+  font-family: Intervogue;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 27px; 
+  letter-spacing: 0.9px;
+  cursor: pointer;
+  padding: 23px 0px 17px 0px;
+  width: 100%;
+  border-bottom: 1px solid #2B2725;
+  text-align: left;
+  outline: none;
+  transition: 0.4s;
+  display: flex;
+  align-items: center;
+}
+.stockist-page .panel {
+  padding: 36px 0px 70px 0px;
+  display: none;
+  background-color: white;
+  overflow: hidden;
+}
+  .stockist-page .panel p{
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 13px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 17px; 
+    letter-spacing: 0.52px;
+    text-transform: uppercase;
+  }
+  .stockist-page .panel p a{
+    text-decoration-line: underline;
+  }
+.stockist-page .panel p strong{
+  color: #2B2725;
+  font-family: Intervogue;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 25px; 
+  letter-spacing: 0.32px;
+  display: block;
+  padding-bottom: 16px;
+  text-transform: capitalize;
+}
+
+  .left-submenu a{
+    font-family: 'Intervogue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 12.5px;
+    line-height: 26px;
+    letter-spacing: 0.05em;
+  }
+
+  .stockist-page .panel p:not(:first-child) strong{
+    padding-top: 55px;
+  }
+  
+  @media screen and (max-width: 1024px){
+    .stockist-page .custom-faq-title{
+      font-size: 80px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 82px; 
+      letter-spacing: -2.4px;
+    }
+    .stockist-page .faq-content{
+      margin-left: 0px;
+    }
+    .page-width.stockist-page{
+      padding: 0px 25px;
+    }
+  .stockist-page .faq-content{
+    grid-template-columns: 1fr 2rem 1fr 2fr;
+  }
+  .stockist-page .bottom-text-faq-el{
+    padding-bottom: 160px;
+  }
+  }
+   @media screen and (max-width: 768px){
+    .stockist-page .faq-content{
+      display: unset;
+    }
+      .stockist-page #faq-nav,
+     .stockist-page  #single-contact{
+       display: none;
+     }
+    .page-width.stockist-page{
+      padding: 0px 20px;
+    }
+
+    .stockist-page .custom-faq-title {
+      font-size: 50px;
+      line-height: 48px;
+      letter-spacing: -1.5px;
+    }
+
+    .stockist-page .accordion {
+      font-size: 16px;
+      line-height: 24px;
+      letter-spacing: 0.8px;
+    }
+
+    .stockist-page .panel p {
+      font-size: 14px;
+      line-height: 18px;
+      letter-spacing: 0.56px;
+    }
+    .stockist-page .bottom-text-faq-el{
+      padding-bottom: 35px;
+    }
+   }
+	</style>
+
+                  
+<script>
+var acc = document.getElementsByClassName("accordion");
+var i;
+
+for (i = 0; i < acc.length; i++) {
+  acc[i].addEventListener("click", function() {
+    for (j = 0; j < acc.length; j++) {
+      if (acc[j] !== this) {
+        acc[j].classList.remove("active");
+        acc[j].nextElementSibling.style.display = "none";
+      }
+    }
+
+    this.classList.toggle("active");
+    var panel = this.nextElementSibling;
+    if (panel.style.display === "block") {
+      panel.style.display = "none";
+    } else {
+      panel.style.display = "block";
+    }
+  });
+}
+</script>
+
+
+{% schema %}
+  {
+    "name": "United Kingdom",
+	"class": "stockist-first",
+    "settings": [
+            {
+              "type": "text",
+              "id": "faq_heading",
+              "label": "FAQ Heading",
+ 			  "default": "Frequently Asked Questions"
+            },
+            {
+              "type": "richtext",
+              "id": "faq_sub_heading",
+              "label": "FAQ Sub Heading",
+ 			  "default": "<p>Need further help? Please Contact us or email our Customer Care team hello@ninetypercent.com </p>"
+            }, 
+			{
+              "type": "text",
+              "id": "faq_menu_title",
+              "label": "First FAQ Menu",
+              "default": "Shopping FAQs"
+            },
+			{
+              "type": "text",
+              "id": "faq-contact-title",
+              "label": "FAQ Contact Title",
+              "default": "Contact us for more information"
+            },
+			{
+              "type": "image_picker",
+              "id": "faq-contact-icon",
+              "label": "FAQ Contact Icon"
+            },
+            {
+              "type": "text",
+              "id": "faq-contact-number",
+              "label": "FAQ Contact Number",
+              "default": "+44 (0) 3300 010628"
+            },
+			{
+              "type": "text",
+              "id": "faq-contact-email",
+              "label": "FAQ Contact Email",
+              "default": "Email Us"
+            },
+			{
+              "type": "url",
+              "id": "faq-contact-email-cta",
+              "label": "FAQ Contact Email"
+            }            
+		],
+	"blocks": [
+		{
+		"type": "question",
+        "name": "Question",
+        "settings": [
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Question",
+            "default": "Frequently asked question"
+          },
+          {
+            "type": "richtext",
+            "id": "text",
+            "label": "Text",
+            "default": "<p>Use this text to answer questions in as much detail as possible for your customers.</p>"
+          }
+        ]
+		}
+		]
+     
+  }
+{% endschema %}
+
+{% stylesheet %}
+{% endstylesheet %}
+
+{% javascript %}
+{% endjavascript %}

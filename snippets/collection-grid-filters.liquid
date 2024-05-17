@@ -1,0 +1,149 @@
+{% comment %}
+- collection: Liquid 'collection' or 'search' object
+- enable_sidebar: boolean
+- filter_style: 'sidebar' or 'drawer'
+- enable_color_swatches: boolean
+- collapsed: boolean
+{% endcomment %}
+
+{% liquid
+  assign filters = collection.filters
+  assign current_filter_size = 0
+
+  for filter in filters
+    assign current_filter_size = current_filter_size | plus: filter.active_values.size 
+  endfor
+%}
+
+{%- assign animation_row = 1 -%}
+
+{%- if enable_sidebar -%}
+<div id="CollectionSidebar" data-style="{{ filter_style }}">
+
+    {% comment %}{%- if filter_style == 'topbar' -%}
+      <div>
+        {%- render 'collection-topbar-filters', filters: collection.filters, collapsed: collapsed, enable_color_swatches: enable_color_swatches -%}
+      </div>
+    {% endif %}{% endcomment %}
+
+   {% comment %} {%- if filter_style == 'sidebar' -%}
+    <div class="collection-sidebar small--hide" id="custom-sidebar-drawer">
+        {%- render 'collection-grid-filters-form', location: 'CollectionSidebar', filters: collection.filters, collapsed: collapsed, enable_color_swatches: enable_color_swatches -%}
+    </div>
+    {%- endif -%} {% endcomment %}
+
+<div class="Desktop-mobile-filter">
+  <div id="FilterDrawer" class="drawer drawer--right custom-filter-drawer">
+      <div class="drawer__contents">
+        <div class="drawer__fixed-header">
+          <div class="drawer__header appear-animation appear-delay-{{ animation_row }}">
+            <div class="mobile-filter-btn-container">
+              <a href="{{ collection.url }}" class="mobile-filter-reset-btn{% if current_filter_size > 0 %} active {% endif %}">Reset</a>
+            </div>
+            <div class="h2 drawer__title">
+              {% comment %}{{ 'collections.filters.title_tags' | t }}{% endcomment %}
+                Filters
+            </div>
+            <div class="drawer__close">
+              <button type="button" class="drawer__close-button js-drawer-close">
+                <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" viewBox="0 0 64 64"><path d="M19 17.61l27.12 27.13m0-27.12L19 44.74"/></svg>
+                <span class="icon__fallback-text">{{ 'general.drawers.close_menu' | t }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {%- assign animation_row = animation_row | plus: 1 -%}
+        <div class="drawer__scrollable appear-animation appear-delay-{{ animation_row }}">
+          {%- render 'collection-grid-filters-form', location: 'SidebarDrawer', filters: collection.filters, collapsed: collapsed, enable_color_swatches: enable_color_swatches -%}
+        </div>
+        <div class="filter-bottom-overlay"></div>  
+        <div class="filter-footer">
+            <div class="filter-show-all-button{% if current_filter_size > 0 %} active-button {% endif %}">
+               <button {% if current_filter_size == 0 %} disabled {% endif %}>Show all</button>
+            </div>
+            <div class="mobile-filter-btn-container for-mobile">
+              <a href="{{ collection.url }}" class="mobile-filter-reset-btn for-mobile{% if current_filter_size > 0 %} active {% endif %}">Reset</a>
+            </div>
+        </div>          
+
+      </div>
+    </div>
+</div>
+
+</div>
+
+{%- endif -%}
+
+
+<style>
+  .filter-footer{
+    margin-top: 53px;
+  }
+ .filter-bottom-overlay{
+   background: #FFFFFF;
+  box-shadow: 0px 4px 12px 15px #FFFFFF;
+  transform: rotate(180deg);
+ }
+ .mobile-filter-btn-container.for-mobile,
+  .filter-show-all-button
+  {
+   display: none;
+ }
+  @media(max-width: 768px){
+  #FilterDrawer .drawer__close-button .icon{
+      position: absolute;
+      top: 28px;
+      right: -16px;
+    }
+    .mobile-filter-btn-container.for-mobile{
+        display: block;
+        padding: 27px 0px 89px 40px;
+    }
+    .mobile-filter-btn-container{
+     display: none;
+   }
+    .filter-show-all-button{
+      display: inline-block;    
+      margin-left: 18px;
+      background: rgba(43, 39, 37, 0.3);
+      cursor: not-allowed;
+    }
+    .filter-show-all-button.active-button{
+    	background: #2B2725;
+        cursor: pointer;
+    }
+    .filter-show-all-button button{
+      width: 324px;
+      height: 46px;    
+      font-family: 'Intervogue';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 21px;
+      letter-spacing: 0.04em;
+      color: #FFFFFF;
+      text-align: left;
+      padding: 12px 22px;
+    }
+  .filter-footer{
+    margin-top: 14px;
+  }
+    
+  }
+  {% if filter_style == "topbar" %}
+    
+  {% elsif filter_style == "sidebar" %}
+    #CollectionAjaxContent .grid {
+      margin: 0 0 0 0;
+    }
+  {% endif %}
+</style>
+
+<script>
+  document.querySelector(".mobile-filter-reset-btn").addEventListener('click', ()=>{
+    const filterDrawer = document.querySelector("#FilterDrawer")
+    filterDrawer.classList.remove("drawer--is-open")
+    window.location.search = "" 
+  })
+</script>

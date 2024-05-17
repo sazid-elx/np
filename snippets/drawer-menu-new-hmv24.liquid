@@ -1,0 +1,544 @@
+{%- assign animation_row = 1 -%}
+{%- assign drawer_position = 'right' -%}
+{% if logo_alignment == 'center' %}
+  {%- assign drawer_position = 'left' -%}
+{% endif %}
+{%- assign drawer_title = '' -%}
+
+<div id="NavDrawer" class="drawer drawer--{{ drawer_position }} drawer-hmv drawer--{{ drawer_position }}-hmv">
+  <div class="drawer__contents">
+
+    <div class="drawer__fixed-header ">
+      <div class="drawer__header ">
+        <div class="drawer-menu-close mobile-menu-header-section mobile-menu-header-section-hmv " >
+          <div class="mobile-menu-close-button tab-hide">
+            <button type="button" class="menu-drawer__close-button js-drawer-close">
+                <span class="menu-drawer__close-span">Close</span> 
+                <span class="icon__fallback-text">{{ 'general.drawers.close_menu' | t }}</span>
+            </button>
+          </div>
+          <div class="mobile-menu-close-button" style="margin-top: 3px; ">
+            <button type="button" class="menu-drawer__close-button js-drawer-close" style="padding-left:5px ;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11" fill="none">
+                  <path d="M1 1L10 10M1 10L10 1" stroke="#2B2725" stroke-width="1.5"/>
+                </svg>
+                <span class="icon__fallback-text">{{ 'general.drawers.close_menu' | t }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mobile-menu-wrapper-main">
+        {%- for link in drawer_menu.links -%}        
+            
+          <div class="mobile-menu-wrapper-hmv">    
+            {% unless link.levels > 0 %}
+              <a class="parent-link" href="{{ link.url }}" >{{ link.title }}</a>     
+            {% endunless %}
+            {% if link.levels > 0 %} 
+                <div class="single-item-menu">
+                  <div class="parent-link-container" style="display: flex; justify-content: space-between; align-items: center;">
+                    {% if link.levels > 0 %} 
+                      <a class="parent-link " >{{ link.title }}</a>                       
+                      <div class="svg-for-parent">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="7" height="10" viewBox="0 0 7 10" fill="none">
+                        <path d="M1.19592 1.19592L5.39183 5.39183L1.19592 9.58776" stroke="#2B2725"/>
+                        </svg>
+                      </div>
+                                     
+                    {% endif %}   
+                  </div>                        
+                </div>
+                    
+                <div class="child-link-container hiddens">
+                    <div class="mobile-menu-close-button mobile-hide" style="margin-top: 3px;">
+                      <button type="button" class="menu-drawer__close-button js-drawer-close">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11" fill="none">
+                            <path d="M1 1L10 10M1 10L10 1" stroke="#2B2725" stroke-width="1.5"/>
+                          </svg>
+                          <span class="icon__fallback-text">{{ 'general.drawers.close_menu' | t }}</span>
+                      </button>
+                    </div>
+                    <div class="child-link-container-head"  style="position:sticky; top:0; padding-top: 15px; background:#ffffff; margin-top:0px; margin-bottom: 50px; display: flex; justify-content: space-between; align-items: center;">
+                        <button class="child-link-container-close-btn" style="padding-left: 0px;">
+                          <span class="menu-drawer__close-span" style="display: flex; align-items: center; gap: 9px"> 
+                          <span style="margin-top: 3px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="9.0" viewBox="0 0 15 11" fill="none">
+                              <path d="M5.50977 1.1707L0.999766 5.69631L5.50977 10.2219" stroke="#2B2725" stroke-width="1.25" stroke-miterlimit="10"/>
+                              <path d="M14.9004 5.69629L1.53039 5.69629" stroke="#2B2725" stroke-width="1.25" stroke-miterlimit="10"/>
+                            </svg>
+                          </span> 
+                          <span>Back</span>
+                          </span>
+                          </button>
+                        <p class="child-link-container-main-title tab-hide">{{  link.title }}</p>
+                        <div class="drawer-menu-close mobile-menu-header-section mobile-menu-header-section-hmv tab-hide">
+                            <div class="mobile-menu-close-button tab-hide">
+                              <button type="button" class="menu-drawer__close-button js-drawer-close">
+                                  <span class="menu-drawer__close-span">Close</span> 
+                                  <span class="icon__fallback-text">{{ 'general.drawers.close_menu' | t }}</span>
+                              </button>
+                            </div>
+                            <div class="mobile-menu-close-button tab-hide" style="margin-top: 3px;">
+                              <button type="button" class="menu-drawer__close-button js-drawer-close">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 11 11" fill="none">
+                                    <path d="M1 1L10 10M1 10L10 1" stroke="#2B2725" stroke-width="1.5"/>
+                                  </svg>
+                                  <span class="icon__fallback-text">{{ 'general.drawers.close_menu' | t }}</span>
+                              </button>
+                            </div>
+                        </div>                
+                    </div>
+
+                    {%- for childlink in link.links -%}
+                      {% unless childlink.levels > 0 %}
+                        <a  href="{{ childlink.url }}">{{ childlink.title }} </a>  
+                      {% endunless %}
+                      
+                        
+                          
+                        {% if childlink.levels > 0 %}
+                          <a class="parent-of-child {% if forloop.first  %} parent-of-child-first  {% endif %}" href="{{ childlink.url }}">{{ childlink.title }} </a> 
+                          {% for grandchildlink in childlink.links  %} 
+                            <a class="grand-children-single" href="{{ grandchildlink.url }}">{{ grandchildlink.title }}</a> 
+                          {% endfor %}
+                        {% endif %}  
+                        
+                        
+                    {% endfor %}
+                    
+                    
+                   <div class="child-link-container-footer"  >
+                        <p class="line-gbp"> We ship worldwide. Select your country: <span class="localization-selector-drawer currency-selector-toggler gbp" style="padding: 0px; padding-left:9px; display:inline"> {{ localization.country.iso_code }} / {{ localization.country.currency.iso_code }}</span> </p> 
+                        <div class="login-container" style="margin-left: -6px;">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
+                            <path d="M19.0002 18.9999C21.0989 18.9999 22.8002 17.2986 22.8002 15.1999C22.8002 13.1012 21.0989 11.3999 19.0002 11.3999C16.9015 11.3999 15.2002 13.1012 15.2002 15.1999C15.2002 17.2986 16.9015 18.9999 19.0002 18.9999Z" stroke="#2B2725" stroke-width="1.25" stroke-miterlimit="10"/>
+                            <path d="M25.8402 21.28H12.1602V25.84H25.8402V21.28Z" stroke="#2B2725" stroke-width="1.25" stroke-miterlimit="10"/>
+                          </svg>
+                          <a class="logIn-button" style="    padding-bottom: 0px; margin-bottom: -5px; " href="{{ routes.account_url }}">LOGIN/MY ACCOUNT</a>
+                        </div>         
+                    </div>    
+
+                </div>  
+            {% endif %}   
+          </div> 
+
+        {% endfor %}        
+    </div> 
+    
+    <div class="nav-drawer-footer nav-drawer-footer-hmv">
+      <div class="mobile-login-nav" style="margin-bottom: 21px;">
+        <p class="line-gbp" style="padding-left: 20px;"> We ship worldwide. Select your country:  <span class="localization-selector-drawer currency-selector-toggler gbp" style="padding: 0px; padding-left:9px;"> {{ localization.country.iso_code }} / {{ localization.country.currency.iso_code }} </span></p> 
+        <div class="login-container" style="display: flex; align-items: center; justify-content: flex-start; padding-left: 10px;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 38 38" fill="none">
+            <path d="M19.0002 18.9999C21.0989 18.9999 22.8002 17.2986 22.8002 15.1999C22.8002 13.1012 21.0989 11.3999 19.0002 11.3999C16.9015 11.3999 15.2002 13.1012 15.2002 15.1999C15.2002 17.2986 16.9015 18.9999 19.0002 18.9999Z" stroke="#2B2725" stroke-width="1.25" stroke-miterlimit="10"/>
+            <path d="M25.8402 21.28H12.1602V25.84H25.8402V21.28Z" stroke="#2B2725" stroke-width="1.25" stroke-miterlimit="10"/>
+          </svg>
+          <a class="logIn-button" style="padding-top: 8px;" href="{{ routes.account_url }}">LOGIN/MY ACCOUNT</a>
+        </div>         
+      </div>
+      <hr style="width: 100%; height: 0px;  margin: 0px !important ">
+      <ul class="mobile-nav__social mobile-nav__social-hmv  ">
+        {%- if settings.social_instagram_link != blank -%}
+          <li class="mobile-nav__social-item">
+            <a target="_blank" rel="noopener" href="{{ settings.social_instagram_link }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Instagram' }}">
+            
+            <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="17.5" cy="17.5" r="17.5" fill="#2B2725"/>
+            <rect x="8.625" y="8.625" width="17.75" height="17.75" rx="4.375" stroke="white" stroke-width="1.25"/>
+            <circle cx="17.5" cy="17.5" r="4.5" stroke="white" stroke-width="1.25"/>
+            <circle cx="23.25" cy="12.25" r="1.25" fill="white"/>
+            </svg>                
+
+            <span class="icon__fallback-text">Instagram</span>
+            </a>
+          </li>
+        {%- endif -%}
+        {%- if settings.social_facebook_link != blank -%}
+          <li class="mobile-nav__social-item">
+            <a target="_blank" rel="noopener" href="{{ settings.social_facebook_link }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Facebook' }}">
+              <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="17.5" cy="17.5" r="17.5" fill="#2B2725"/>
+              <path d="M21.6216 14.2773L21.4052 17.1208H18.5448V27H14.9277V17.1208H13V14.2773H14.9277V12.3731C14.9277 11.5322 14.9526 10.2342 15.5505 9.42809C16.1843 8.57758 17.05 8 18.5448 8C20.9754 8 22 8.35544 22 8.35544L21.5204 11.2672C21.0127 11.124 20.4899 11.0441 19.9633 11.0291C19.2175 11.0291 18.5448 11.3021 18.5448 12.0701V14.2915L21.6216 14.2773Z" fill="white"/>
+              </svg>
+
+              <span class="icon__fallback-text">Facebook</span>
+            </a>
+          </li>
+        {%- endif -%}
+        {%- if settings.social_pinterest_link != blank -%}
+          <li class="mobile-nav__social-item">
+            <a target="_blank" rel="noopener" href="{{ settings.social_pinterest_link }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Pinterest' }}">
+              <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path id="pin" d="M12.3025 34.2154C12.498 33.8812 12.6935 33.5603 12.8757 33.236C13.5052 32.1176 14.0949 30.9827 14.4395 29.7419C14.7145 28.7493 14.9663 27.75 15.228 26.7574C15.3373 26.3405 15.4467 25.9236 15.5593 25.5C15.5792 25.5133 15.5924 25.5166 15.5991 25.5265C16.0298 26.2544 16.6858 26.7044 17.4378 27.0386C18.4914 27.5052 19.5947 27.5713 20.7211 27.4059C23.0502 27.0651 24.8757 25.8872 26.2904 24.0442C27.4633 22.5188 28.1391 20.7784 28.4572 18.8957C28.6295 17.8799 28.6957 16.8574 28.6162 15.8317C28.4506 13.7273 27.7051 11.8545 26.3302 10.2465C24.72 8.36374 22.6659 7.22221 20.2473 6.75898C17.6002 6.25273 15.006 6.50089 12.5146 7.54316C10.4174 8.41999 8.78403 9.84609 7.65427 11.8248C6.76636 13.3799 6.32903 15.0575 6.2959 16.8442C6.26277 18.674 6.7531 20.3615 7.73378 21.9001C8.23737 22.6909 8.87017 23.3526 9.71501 23.7927C9.82103 23.8489 9.93368 23.8953 10.0496 23.9284C10.2053 23.9714 10.3213 23.9118 10.3876 23.7629C10.424 23.6769 10.4472 23.5842 10.4704 23.4949C10.6228 22.8795 10.7719 22.2673 10.9243 21.6519C10.9674 21.4765 10.9442 21.3144 10.8282 21.1721C10.2054 20.3846 9.83428 19.478 9.65869 18.5019C9.18823 15.8449 9.94362 13.5586 11.8553 11.6725C12.9552 10.5906 14.3103 9.97513 15.8277 9.71374C16.9707 9.51521 18.117 9.50528 19.2468 9.76668C22.0497 10.4185 23.8586 12.106 24.5511 14.9251C24.783 15.8714 24.7763 16.8343 24.7001 17.7971C24.6206 18.7468 24.4417 19.6765 24.117 20.5765C23.7393 21.6221 23.2093 22.5717 22.4009 23.3493C21.4798 24.2361 20.3865 24.7324 19.0944 24.6761C18.1203 24.6331 17.3451 24.203 16.8614 23.3328C16.5102 22.7074 16.4903 22.039 16.6858 21.3607C17.0171 20.2093 17.365 19.0611 17.6963 17.9096C17.8917 17.2313 18.064 16.5497 18.0938 15.8416C18.117 15.2791 18.0342 14.7365 17.7426 14.2435C17.3086 13.5056 16.6328 13.2111 15.8045 13.2376C14.8636 13.2674 14.1579 13.7472 13.6145 14.4817C13.0546 15.2394 12.7962 16.1097 12.7332 17.0394C12.667 18.0585 12.8128 19.0479 13.2037 19.9975C13.2236 20.0504 13.2203 20.1199 13.207 20.1762C12.7962 21.9199 12.3854 23.6636 11.9745 25.4074C11.6996 26.582 11.4113 27.7566 11.1562 28.9379C10.9541 29.8743 10.9442 30.8338 10.9872 31.7868C11.0137 32.4187 11.0767 33.0474 11.1231 33.6794C11.1231 33.7026 11.1231 33.7224 11.1264 33.7754C9.40358 33.1004 7.8398 32.1937 6.42842 31.0257C3.32405 28.4581 1.2865 25.2155 0.418466 21.2846C-1.33748 13.2939 2.56866 5.46192 9.5858 1.89834C16.7951 -1.76119 25.6179 -0.0273798 30.8923 6.21633C36.1403 12.4303 36.3689 21.5162 31.5251 27.9585C26.5522 34.5728 18.5345 36.1842 12.3025 34.2154Z" fill="#2B2725"/>
+              </svg>
+              <span class="icon__fallback-text">Pinterest</span>
+            </a>
+          </li>
+        {%- endif -%}
+        {%- if settings.social_tiktok_link != blank -%}
+          <li class="mobile-nav__social-item">
+            <a target="_blank" rel="noopener" href="{{ settings.social_tiktok_link }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: 'Tiktok' }}">
+              <svg width="35" height="35" viewBox="0 0 35 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path id="ticktock" d="M17.5367 0C7.90388 0 0.0902691 7.76849 0.000800321 17.2861C-0.0919821 27.039 7.89394 35.2746 18.0172 34.993C27.3849 34.7346 34.9433 27.1218 34.9997 17.73C35.0593 7.82812 27.302 0 17.5367 0ZM27.8388 15.3316C26.8447 15.4111 25.8705 15.2521 24.9427 14.9208C24.0182 14.5895 23.1401 14.139 22.1791 13.7149V14.2748C22.1725 16.9847 22.2321 19.6978 22.1427 22.4044C22.0101 26.4559 18.5308 29.5898 14.3456 29.5434C10.4024 29.4971 7.05889 26.1644 6.97605 22.1891C6.87995 17.6638 10.4653 14.0959 14.8891 14.3179C15.1111 14.3278 15.3298 14.3643 15.575 14.3908V18.5384C14.9752 18.5384 14.4318 18.4754 13.9049 18.5516C12.2083 18.8001 10.9591 20.3935 11.0651 22.1062C11.1745 23.8918 12.6523 25.3196 14.4417 25.3727C16.1184 25.4257 17.656 24.1304 17.8879 22.4574C17.9343 22.1261 17.9575 21.7882 17.9575 21.4536C17.9608 16.3685 17.9608 11.2867 17.9608 6.20485V5.56217H22.1095C22.1725 7.1225 22.7126 8.4708 23.8227 9.57727C24.9261 10.6738 26.2615 11.1939 27.8322 11.2635V15.3382L27.8388 15.3316Z" fill="#2B2725"/>
+              </svg>
+              <span class="icon__fallback-text">Tiktok</span>
+            </a>
+          </li>
+        {%- endif -%}
+        
+        
+      </ul>   
+    </div>
+
+  </div>
+
+</div>
+<script>
+  // document.querySelector(.child-link-container-head).addEventListener("click", ()=>{
+  //   console.log("back button clicked")
+  // })
+</script>
+<style>
+ .nav-drawer-footer-hmv .mobile-login-nav .line-gbp, .child-link-container-footer .line-gbp{
+    color: #2B2725;    
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.25px;
+  }
+  .nav-drawer-footer-hmv.mobile-login-nav .line-gbp .gbp, .child-link-container-footer .line-gbp .gbp{
+    color: #2B2725;
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 15px; /* 120% */
+    letter-spacing: 0.625px;
+    text-transform: uppercase;
+  }
+  
+  :root {
+      --mobile-footer-height: 162px; /* Default Fallback Value */
+  }
+  .hmv-line-height{
+    height: 1px;
+    border-top: 0.25px solid rgba(43, 39, 37, 0.50);;
+    width: 100%;
+  }
+ .child-link-container .parent-of-child{
+    color: var(--NP-Grey, #ADACAB) !important;
+    font-family: Intervogue;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 18px; /* 112.5% */
+    letter-spacing: 0.64px;
+    text-transform: uppercase;
+    padding-bottom: 16px;
+    border-bottom: 0.25px solid rgba(43, 39, 37, 0.50);
+    margin-bottom: 20px;
+    margin-right: 22px;
+    margin-top: 58px;
+  }
+  .child-link-container-footer{
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    width:100%;
+    padding: 159px 0 85px;
+    gap: 13px;
+  }
+  @supports (-webkit-hyphens:none){
+    .child-link-container-footer {
+      padding: 159px 0 170px;
+    }
+  }
+
+  .child-link-container-footer .login-container{
+    display: flex; 
+    align-items: center; 
+    justify-content: flex-start;
+    
+  }
+
+.localization-selector-drawer, .logIn-button {
+  font-family: 'Intervogue';
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+  @media (min-width:769px){
+    #NavDrawer{
+      display:none;
+    }
+  }
+
+  .drawer__fixed-header{
+    margin-bottom:30px;
+    padding-left:10px;
+    padding-right:20px;
+  }
+
+  .mobile-menu-header-section.mobile-menu-header-section-hmv{
+    display:flex;
+    justify-content:flex-end;
+    align-items:center;
+  }
+  .menu-drawer__close-span{
+    color: #2B2725;
+    font-family: 'Intervogue';
+    font-size: 11px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px; /* 190.909% */
+    letter-spacing: 0.22px;
+  }
+  .mobile-menu-close-button{
+    padding-top: 0px !important;
+  }
+ 
+  .mobile-menu-close-button button{
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+  .mobile-menu-wrapper-hmv {
+    display: flex;
+    flex-direction: column;
+    /* border-bottom: 0.25px solid; */
+    width: 92%;
+    /* border-bottom-color: rgba(43, 39, 37, 0.5); */
+    margin: 0px 0 16px 18px;
+  }
+
+/* hmv-24 textstytling */
+
+  .mobile-menu-wrapper-hmv .parent-link {
+    padding-right: 18px;
+    font-family: 'Intervogue';
+    color: #2B2725;    
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 35px; /* 218.75% */
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+
+  }
+
+  /* hmv-24 textstytling */
+
+  
+  .child-link-container {
+    left: 0;
+    top: 0;
+    /* margin-top: 3em; */
+    margin-top: 0em !important;
+    width: 100%;
+    height: 100vh !important;
+    height: 100dvh !important;
+    visibility: hidden;   
+    transform: translateX(1123px);
+    background: #ffffff;
+    z-index: 222;
+    transition: all .01s ease-out;
+    padding-left: 18px;
+  
+  }
+    @supports ( height: 100dvh;){
+    .child-link-container {
+      height: 100dvh !important;
+  }}
+  .active-mobile-child-link{
+    transform: translateX(0);
+    transition: all 0.01s ease-in;
+    visibility: visible;
+  }
+
+  .child-link-container-main-title{
+    color: var(--NP-Grey, #ADACAB);
+    text-align: center;
+    font-family: Intervogue;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 35px; /* 218.75% */
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+  }
+  
+  .option-not-selected{
+    color: rgba(43, 39, 37, 0.5) !important;
+  }
+  .drawer-menu-close{
+    text-align: left;
+  }
+  .ninetypercent-icon{
+
+  }
+  .menu-drawer__close-button{
+    padding-top: 0px !important;
+  }
+  .nav-drawer-icons{
+
+  }
+  .nav-drawer-footer.nav-drawer-footer-hmv{
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    width:100%;
+    background-color: white;
+    /* padding-top: 159px; */
+    z-index: 99999;
+  }
+  .localization-selector-drawer{
+    padding-left: 30px;
+    padding-right: 35px;
+  }
+  .child-link-container .grand-children-single{
+    display: block;
+    padding-bottom: 16px;
+    font-family: 'Intervogue';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 24px;
+    letter-spacing: 0.28px;
+    text-transform: capitalize;
+    color: #2B2725 !important;
+  } 
+  .parent-of-child.parent-of-child-first{
+    display: none;
+  }
+  .bottom-hr-line{
+    position: absolute;
+    top: 8%;
+    width: 92%;
+    border-bottom: 0.25px solid;
+    border-bottom-color: rgba(43, 39, 37, 0.5);
+    margin-left:15px;
+    margin-right:15px;
+  }
+  /* @media (orientation: landscape) and (max-width: 2400px ) and (max-height: 1080px) {
+  .child-link-container {
+      height: 11vh !important;
+    }
+  } */
+  .not-selected{
+    display: none;
+  }
+
+  @media screen and (min-width: 700px) and (max-width: 769px){
+  /* .shopify-section-header .drawer.drawer-hmv {
+        max-width: 48% !important;
+    } */
+    .mobile-menu-header-section.mobile-menu-header-section-hmv{
+    
+      justify-content:flex-start;
+      
+    }
+    .tab-hide{
+      display: none;
+    }
+    #shopify-section-header .drawer.drawer--left.drawer-hmv.drawer--left-hmv{
+      
+        max-width: 48% !important;
+        left: -48% !important;
+    }
+
+    .js-drawer-open .main-content:after {
+         background-color: #000000e8;
+    }
+    .js-drawer-closing .main-content:after,
+    .js-drawer-open .main-content:after {
+    content: "";
+    display: block;
+    position: fixed;
+    top: var(--margin-top-header);
+    left: 0;
+    right: 1%;
+    bottom: 0;   
+    opacity: 0;
+    }
+
+      .child-link-container-head .child-link-container-close-btn{
+      padding-left: 0px;
+      
+    }
+    .mobile-menu-close-button.mobile-hide .menu-drawer__close-button{
+      padding-left: 0px;
+      padding-top: 15px !important;
+    }
+    .mobile-menu-header-section-hmv .mobile-menu-close-button .menu-drawer__close-button.tab-close{
+      padding-left: 7px !important;
+      padding-top: 15px !important;
+    }
+ }
+  .no-display{
+    display: none;
+  }
+  @media  (max-width : 699px){
+    .mobile-hide{
+        display: none !important;
+    }
+
+  }
+ 
+
+</style>
+
+<script>
+ 
+
+  $('.single-item-menu').on('click', function() {
+    var parentWrapper = $(this).closest('.mobile-menu-wrapper-hmv');
+    
+    $(this).siblings('.child-link-container').addClass('active-mobile-child-link');  
+    $(".mobile-login-nav").addClass("no-display");
+
+    $('.child-link-container').not($(this).siblings('.child-link-container')).removeClass('active-mobile-child-link')
+    
+  });
+  $('.child-link-container-close-btn').on('click', function() {
+   
+     $('.child-link-container').removeClass('active-mobile-child-link');   
+     $(".mobile-login-nav").removeClass("no-display");   
+  });
+    
+    function iPhoneDevices() {
+
+    return [
+
+      'iPad Simulator',
+
+      'iPhone Simulator',
+
+      'iPod Simulator',
+
+      'iPad',
+
+      'iPhone',
+
+      'iPod'
+
+    ].includes(navigator.platform)
+
+// iPad on iOS 13 detection
+
+    || (navigator.userAgent.includes("Mac") && "ontouchend" in document)
+
+  };
+
+  const iphoneDetector = iPhoneDevices();
+  if (iphoneDetector == true) {
+    document.querySelector('body').classList.add("adjust-header");
+  }
+    document.querySelectorAll(".nav-drawer-footer .line-gbp").forEach(d => 
+        d.addEventListener('click', () => {
+        document.querySelector(".menu-drawer__close-button.js-drawer-close").click();
+    }))
+</script>

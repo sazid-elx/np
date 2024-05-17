@@ -1,0 +1,132 @@
+ {% unless template == 'index' or template == 'cart' or template == 'list-collections' %}
+
+<nav class="breadcrumb-pdp" role="navigation" aria-label="breadcrumbs">
+  {% if product.url %}
+      <a href="https://ninetypercent.com/collections/women-styles-all" title="Shop all">Shop All</a>
+  {% else %}
+     <a href="/" title="Home">Home</a>
+  {% endif %}
+
+ 
+
+  {% if template contains 'page' %}
+
+    <span class="divider" aria-hidden="true">|</span>
+
+    <span>{{ page.title }}</span>
+
+  {% elsif template contains 'product' %}
+    
+    {% if collection.url %} 
+     {% if collection.title == "All Styles" %}
+       {% else %}
+           <span class="divider" aria-hidden="true">|</span>
+          {{ collection.title | link_to: collection.url }}
+      {% endif %}
+
+    {% endif %}
+  
+    <span class="divider" aria-hidden="true">|</span>
+    <span class="page-title">{{ product.title }}</span>
+
+  {% elsif template contains 'collection' and collection.handle %}
+
+    <span class="divider" aria-hidden="true">/</span>
+
+    {% if current_tags %}
+
+      {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+
+      {{ collection.title | link_to: url }}
+
+      <span class="divider" aria-hidden="true">/</span>
+
+      <span>{{ current_tags | join: " + " }}</span>
+
+    {% else %}
+
+      <span>{{ collection.title }}</span>
+
+    {% endif %}
+
+  {% elsif template == 'blog' %}
+
+    <span class="divider" aria-hidden="true">/</span>
+
+    {% if current_tags %}
+
+      {{ blog.title | link_to: blog.url }}
+
+      <span class="divider" aria-hidden="true">/</span>
+
+      <span>{{ current_tags | join: " + " }}</span>
+
+    {% else %}
+
+    <span>{{ blog.title }}</span>
+
+    {% endif %}
+
+  {% elsif template == 'article' %}
+
+    <span class="divider" aria-hidden="true">/</span>
+
+    {{ blog.title | link_to: blog.url }}
+
+    <span class="divider" aria-hidden="true">/</span>
+
+    <span>{{ article.title }}</span>
+
+  {% else %}
+
+   <span class="divider" aria-hidden="true">/</span>
+
+   <span>{{ page_title }}</span>
+
+  {% endif %}
+
+</nav>
+
+{% endunless %} 
+
+<style>
+  .template-product .breadcrumb-pdp {
+margin-top: 0px;
+}
+.template-product .breadcrumb-pdp span.divider {
+    color: rgba(43, 39, 37, 0.20);
+    font-family: Intervogue;
+    font-size: 12.5px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 21px;
+    letter-spacing: 0.25px;
+}
+.template-product .breadcrumb-pdp a
+{
+  font-family: 'Intervogue';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12.5px;
+  line-height: 21px; 
+  letter-spacing: 0.25px;
+  color: #2B2725;
+}
+.template-product .breadcrumb-pdp span.page-title{
+  font-family: 'Intervogue';
+  font-style: normal;
+  font-weight: 500;
+  font-size: 12.5px;
+  line-height: 21px; 
+  letter-spacing: 0.02em;
+  color: #2B2725;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+@media only screen and (min-width:769px) {
+
+.template-product .breadcrumb {
+  text-align: left
+}
+}
+</style>

@@ -1,0 +1,391 @@
+<section class="section-wrapper-{{ section.id }} np-page-width">
+  {% for block in section.blocks %}
+  {% case block.type %}
+      {% when "image-with-caption" %}
+    <div class="image-with-caption">
+      {% comment %} <img class="image-{{ block.id }}" src="{{ block.settings.image | img_url: 'master' }}"> {% endcomment %}
+      {% liquid assign image = block.settings.image %}
+      {% liquid assign img_url = image | img_url: '1x1' | replace: '_1x1.', '_{width}x.' %}
+      <img class="image-{{ block.id }} lazyload"
+      data-src="{{ img_url }}"
+      data-widths="[400, 600, 800, 1000, 1200, 1400, 1600, 1800, 2000, 2160, 2600, 3000, 3400, 3800, 4100]"
+      data-aspectratio="{{ image.aspect_ratio }}"
+      data-sizes="auto"
+      alt="{{ image.alt }}"
+      >
+      <p class="image-caption-{{ block.id }}"> {{ block.settings.image-caption }} <a href="{{ block.settings.button-url }}">{{ block.settings.button-text }}</a> </p>
+    </div>
+
+  {% endcase %}
+{% endfor %}
+
+    
+    <div class="author-part-{{ section.id }}">
+      {% for block in section.blocks %}
+  {% case block.type %}
+      {% when "author" %}
+      <p class="author-name">
+        {{ block.settings.author-name }}
+      </p>
+
+      {% when "description" %}
+      <div class="part-description">
+        {{ block.settings.description }}
+      </div>
+
+    {% when "author-quotes" %}
+      <div class="quotes-alignment">
+        <p class="author-quotes np-h3">
+          {{ block.settings.author-quotes }}
+        </p>
+
+      <p class="author-quotes-name">
+        {{ block.settings.author-quotes-name }}
+      </p>
+      </div>
+      
+    
+
+    {% when 'spacer' %}
+      <section class="custom-spacer-{{ block.id }} image-text-spacer">
+    
+      </section>
+
+    {% endcase %}
+{% endfor %}
+</div>
+</section>
+
+<style>
+  .np-page-width {
+          max-width: 1440px;
+          margin: 0 auto;
+      }
+
+  .section-wrapper-{{ section.id }}.np-page-width{
+    max-width: {{section.settings.section-width}}px;
+  }
+  
+  .section-wrapper-{{ section.id }} .author-part-{{ section.id }}{
+    max-width:{{section.settings.text-width}}px;
+    margin:0 auto;
+    }
+  
+  .section-wrapper-{{ section.id }} p{
+    margin:0;
+  }
+
+  @media (max-width: 768px) {
+          .np-page-width {
+              padding: 0 20px;
+          }
+    
+  .section-wrapper-{{ section.id }}{
+    max-width: 100%;
+  }
+    
+   .section-wrapper-{{ section.id }} .author-part-{{ section.id }}{
+    max-width:100%;
+    }
+      }
+
+  {% for block in section.blocks %}
+  {% case block.type %}
+      {% when "image-with-caption" %}
+    .image-{{ block.id }}{
+      width:100%;
+    }
+    
+    .image-caption-{{ block.id }}{
+      font-family: 'Intervogue';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 12.5px;
+      line-height: 21px;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+      color: rgba(43, 39, 37, 0.4);
+      }
+     
+
+    .image-caption-{{ block.id }} a{
+    text-decoration: underline;
+    color: rgba(43, 39, 37, 0.4);
+    }
+
+  {% if block.settings.show-caption == false %}
+                  .image-caption-{{ block.id }}{
+                      display: none;
+                  }
+              {% endif %}
+
+    
+    {% when "author" %}   
+
+  .section-wrapper-{{ section.id }} .author-name{
+    font-family: 'Silvana';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 26px;
+    line-height: 31px;
+    text-align: justify;
+    letter-spacing: -0.01em;
+    font-feature-settings: 'ordn' on, 'ss03' on;
+    color: #2B2725;
+    text-transform: capitalize;
+    margin-bottom:40px;
+  }
+
+    {% when "description" %} 
+  .section-wrapper-{{ section.id }} .part-description{
+    font-family: 'Intervogue';
+    font-style: normal;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 28px;
+    text-align: justify;
+    letter-spacing: 0.02em;
+    color: #2B2725;
+    margin-bottom:60px;
+    margin-left:{{ block.settings.description-left-margin }}px;
+  }
+
+    {% when "author-quotes" %} 
+    .section-wrapper-{{ section.id }} .quotes-alignment{
+      max-width:{{ block.settings.quotes-width }}px;
+      margin:0;
+    }
+
+    .section-wrapper-{{ section.id }} .author-quotes.np-h3{
+      font-style: italic;
+      line-height:37.21px;
+    }
+    
+    .section-wrapper-{{ section.id }} .author-quotes{
+      margin-bottom:22px;
+    }
+  
+    .section-wrapper-{{ section.id }} .author-quotes-name{
+      font-family: 'Intervogue';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 12px;
+      line-height: 27px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: #2B2725;
+      text-align:{{block.settings.text-alignment}};
+    }
+
+  {% if block.settings.name-font-style %}
+.section-wrapper-{{ section.id }} .author-quotes-name{
+      line-height: 21px;
+    }
+        {% endif %}
+
+
+  @media (max-width:768px){  
+    .section-wrapper-{{ section.id }} .quotes-alignment{
+      margin:0 auto;
+    }
+  }
+
+  {% when 'spacer' %}
+              .custom-spacer-{{ block.id }}.image-text-spacer{
+                  height: {{ block.settings.spacer }}px;
+              }
+
+    {% endcase %}
+{% endfor %}
+</style>
+
+{% schema %}
+  {
+    "name": "Author Creation",
+    "settings": [
+      {
+                    "type": "range",
+                    "id": "section-width",
+                    "min": 350,
+                    "max": 850,
+                    "step": 5,
+                    "unit": "px",
+                    "default": 350,
+                    "label": "Section Width"
+                },
+                    {
+                    "type": "range",
+                    "id": "text-width",
+                    "min": 300,
+                    "max": 800,
+                    "step": 5,
+                    "unit": "px",
+                    "default": 300,
+                    "label": "Width of Text Part"
+                }
+    ],
+    "blocks":[
+      {
+            "name": "Image With Caption",
+            "type": "image-with-caption",
+            "settings": [
+          {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Select Image"
+          },
+          {
+                    "type": "text",
+                    "id": "image-caption",
+                    "label": "Caption",
+                    "default": "obsidian by lee krasner"
+          },
+          {
+            "type": "checkbox",
+            "id": "show-caption",
+            "label": "Show Caption",
+            "default":true
+          },
+              {
+                    "type": "text",
+                    "id": "button-text",
+                    "label": "Button Text"
+          },  
+                {
+                    "type": "url",
+                    "id": "button-url",
+                    "label": "Button Link",
+                    "default": "/"
+          }
+            ]
+      },
+      {
+            "name": "author",
+            "type": "author",
+            "settings": [
+              {
+                    "type": "text",
+                    "id": "author-name",
+                    "label": "author Name",
+                    "default": "lee krasner"
+                }       
+            ]
+      },
+       {
+            "name": "Description",
+            "type": "description",
+            "settings": [
+                 {
+                    "type": "richtext",
+                    "id": "description",
+                    "label": "Description",
+                    "default": "<p>lee krasner</p>"
+                },
+               {
+                    "type": "range",
+                    "id": "description-left-margin",
+                    "min": 0,
+                    "max": 500,
+                    "step": 5,
+                    "unit": "px",
+                    "default": 0,
+                    "label": "Left Margin of Description"
+                }
+            ]
+       },
+       {
+            "name": "author Quotes",
+            "type": "author-quotes",
+            "settings": [
+              {
+                    "type": "range",
+                    "id": "quotes-width",
+                    "min": 100,
+                    "max": 600,
+                    "step": 5,
+                    "unit": "px",
+                    "default": 100,
+                    "label": "Width of Quotes Section"
+                },
+              {
+                    "type": "html",
+                    "id": "author-quotes",
+                    "label": "Author Quotes",
+                    "default": "lee krasner"
+                },
+              {
+                    "type": "text",
+                    "id": "author-quotes-name",
+                    "label": "Author Name",
+                    "default": "lee krasner"
+                },
+              {
+                    "type": "checkbox",
+                    "id": "name-font-style",
+                    "label": "Change Author Name Font Style",
+                    "default": false
+                },
+              {
+                "type": "select",
+                "id": "text-alignment",
+                "label": "Author Name Position",
+                "options": [
+                  {
+                    "value": "left",
+                    "label": "Left"                          
+                  },
+                  {
+                    "value": "center",
+                    "label": "Middle"                          
+                  },
+                  {
+                    "value": "right",
+                    "label": "Right"                          
+                  }
+                ],
+                "default": "center"                    
+      }
+            ]
+       },
+      {
+            "name": "Spacer",
+            "type": "spacer",
+            "settings": [
+                {
+                    "type": "range",
+                    "id": "spacer",
+                    "min": 0,
+                    "max": 200,
+                    "step": 5,
+                    "unit": "px",
+                    "default": 10,
+                    "label": "Height"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Author Creation",
+          "blocks":[
+            {
+              "type":"image-with-caption"
+            },
+            {
+              "type":"author"
+            },
+            {
+              "type":"description"
+            },
+            {
+              "type":"author-quotes"
+            },
+            {
+              "type":"spacer"
+            }
+          ]
+        }
+    ]
+  }
+{% endschema %}
+

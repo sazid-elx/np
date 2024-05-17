@@ -1,0 +1,456 @@
+{% comment %}
+  Snippet Arguments
+  - collection: Liquid 'collection' or 'search' object
+  - items: Paginated 'collection.products' or 'search.results' list. Cannot be pulled from the the 'collection' object passed in above
+  - enable_sidebar: boolean
+  - filter_style: 'sidebar' or 'drawer'
+  - enable_sort: boolean
+  - enable_collection_count
+  - per_row
+  - mobile_flush_grid
+  - quick_shop_enable
+{% endcomment %}
+
+{% liquid
+  if collection.products
+    assign count = collection.products_count
+    assign count_label = 'collections.general.items_with_count'
+  endif
+
+  if collection.results
+    assign count = collection.results_count
+    assign count_label = 'general.search.result_count'
+  endif
+
+  assign filters = collection.filters
+  assign sort_by = collection.sort_by
+  assign default_sort_by = collection.default_sort_by
+  assign sort_options = collection.sort_options
+  assign current_filter_size = 0
+  assign active_filters = ''
+
+  for filter in filters
+    assign current_filter_size = current_filter_size | plus: filter.active_values.size
+    for active_value in filter.active_values
+      assign active_filters = active_filters | append: active_value.param_name | append: ','
+    endfor
+  endfor
+
+  if active_filters contains 'availability'
+    assign current_filter_size = current_filter_size | minus: 1
+  endif
+%}
+
+<div class="collection-grid__wrapper tab-filter">
+  <div class="collection-filter" style={{ '--topA:unset' }}>
+     <div class="collection-filter-main">
+        <h1 class="product-count-mobile">
+        {{ collection.title }}      
+        </h1>
+        <span class="product-number">{{ collection.products_count }}</span>
+      </div>
+    <div class="collection-description">
+      <div class="text-paragraph for-plp-page">
+         <h2>{{ collection.description }}</h2>
+      </div>
+     
+    </div>
+    <form class="filter-form collection-category-tab">
+      {%- for filter in filters -%}
+        {% if filter.label == 'Product type' %}
+          <div class="collection-category-tab-wrapper">
+            <div
+              class="category-list"
+              data-collapsible-id="{{ filter_id }}"
+            >
+           <div class="left-arrow">
+                <svg class="left-tab-arrow" xmlns="http://www.w3.org/2000/svg" width="71" height="35" viewBox="0 0 71 35" fill="none">
+                <g id="Group 143">
+                <rect id="Rectangle 180" x="71" y="35" width="71" height="35" transform="rotate(180 71 35)" fill="url(#paint0_linear_8622_5794)"/>
+                <path id="Rectangle 181" d="M10.0001 23.9999L4 18L9.97669 11.9767" stroke="#2B2725" stroke-width="1.25"/>
+                </g>
+                <defs>
+                <linearGradient id="paint0_linear_8622_5794" x1="142" y1="70" x2="106.5" y2="70" gradientUnits="userSpaceOnUse">
+                <stop offset="0.369792" stop-color="white"/>
+                <stop offset="1" stop-color="white" stop-opacity="0"/>
+                </linearGradient>
+                </defs>
+                </svg>
+            </div>
+              <ul class="no-bullets tag-list">
+                 <li class="tag">
+                   <label>
+                     <input type="radio" class="tag__input">
+                     <a href="{{ collection.url }}" class="filter-reset-btn tag--active">All</a>
+                   </label>
+                   </li>
+                {%- for filter_value in filter.values -%}
+                  <li id="tag-list" class="tag{% if filter_value.active %} tag--active{% endif %}{% if filter_value.count == 0 %} hide{% endif %}">
+                    <label class="tag__checkbox-wrapper text-label">{{ filter_value.label | escape }}
+                      <input
+                        type="radio"
+                        class="tag__input"
+                        name="{{ filter_value.param_name }}"
+                        value="{{ filter_value.value }}"
+                        {% if filter_value.active %}
+                          checked
+                        {% endif %}
+                         data-toggle-class="tag--active"
+                      >
+                    </label>
+                  </li>
+                {%- endfor -%}
+              </ul>
+              <div class="right-arrow">
+                <svg class="right-tab-arrow" xmlns="http://www.w3.org/2000/svg" width="71" height="35" viewBox="0 0 71 35" fill="none">
+                <g id="Group 143">
+                <rect id="Rectangle 180" x="71" y="35" width="71" height="35" transform="rotate(180 71 35)" fill="url(#paint0_linear_8622_5794)"/>
+                <path id="Rectangle 181" d="M10.0001 23.9999L4 18L9.97669 11.9767" stroke="#2B2725" stroke-width="1.25"/>
+                </g>
+                <defs>
+                <linearGradient id="paint0_linear_8622_5794" x1="142" y1="70" x2="106.5" y2="70" gradientUnits="userSpaceOnUse">
+                <stop offset="0.369792" stop-color="white"/>
+                <stop offset="1" stop-color="white" stop-opacity="0"/>
+                </linearGradient>
+                </defs>
+                </svg>
+
+              </div>
+            </div>
+          </div>
+        {% endif %}
+      {%- endfor -%}
+    </form>
+    <div class="filter-sort-mobile-container">
+      <div class="collection-filter__item filter-bar-btn">
+        <button
+          type="button"
+          class="js-drawer-open-collection-filters btn btn--tertiary collection-filter__item--drawer {% unless current_filter_size == 0 %}btn--tertiary-active{% endunless %}"
+          aria-controls="FilterDrawer"
+        >
+          <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-filter" viewBox="0 0 64 64">
+            <path d="M48 42h10M48 42a5 5 0 1 1-5-5 5 5 0 0 1 5 5zM7 42h31M16 22H6M16 22a5 5 0 1 1 5 5 5 5 0 0 1-5-5zM57 22H26"/>
+          </svg>
+          {{ 'collections.filters.title_tags' | t }}
+          {%- if current_filter_size > 0 -%}
+            <span class="applied-filter-count">
+              {{ current_filter_size }}
+            </span>
+          {%- endif -%}
+        </button>
+      </div>
+      <div class="filter-section-border"></div>
+      <div class="collection-filter__item collection-filter__item--sort">
+        {% comment %}
+          <div class="collection-filter__sort-container">
+          {%- assign sort_by = sort_by | default: default_sort_by -%}
+          <label for="SortBy" class="hidden-label">{{ 'collections.sorting.title' | t }}</label>
+          <select name="SortBy" id="SortBy" data-default-sortby="{{ default_sort_by }}">
+            {% comment %} <option value="title-ascending"{% if sort_by == default_sort_by %} selected="selected"{% endif %}>{{ 'collections.sorting.title' | t }}</option> {% endcomment %}
+            <option value="sort" selected="selected">Sort</option>
+            {%- for option in sort_options -%}
+            <option value="{{ option.value }}"{% if option.value == sort_by %} selected="selected"{% endif %}>{{ option.name }}</option>
+            {%- endfor -%}
+          </select>
+          </div>
+        {% endcomment %}
+        <div class="sorting-section-mobile">
+          <span class="sort-btn sort-btn-mobile">Sort By</span>
+          {%- render 'collapsible-icon-sortBy' -%}
+          <ul class="sort-list-mobile">
+            {% for option in sort_options %}
+              {% if option.value != 'manual'
+                and option.value != 'title-ascending'
+                and option.value != 'title-descending'
+                and option.value != 'created-ascending'
+              %}
+                {% if sort_by == option.value %}
+                  <li class="sort-list-item active" data-name="{{ option.value }}">
+                    {{ option.name }}
+                    <label class="sorting-list-container" data-name="{{ option.value }}">
+                      <input type="checkbox" checked="checked" data-name="{{ option.value }}">
+                      <span class="sorting-checkmark" data-name="{{ option.value }}"></span>
+                    </label>
+                  </li>
+                {% else %}
+                  <li class="sort-list-item" data-name="{{ option.value }}">
+                    {{ option.name }}
+                    <label class="sorting-list-container" data-name="{{ option.value }}">
+                      <input type="checkbox" data-name="{{ option.value }}">
+                      <span class="sorting-checkmark" data-name="{{ option.value }}"></span>
+                    </label>
+                  </li>
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  <hr class="filter-line-mobile">
+
+  <div
+    class="grid grid--uniform{% if mobile_flush_grid %} small--grid--flush{% endif %}"
+    {% unless enable_collection_count %}
+      data-scroll-to
+    {% endunless %}
+  >
+    {% if items.size > 0 %}
+      {%- for item in items -%}
+        {%- if item.object_type == 'product' -%}
+          {%- render 'product-grid-item', product: item, per_row: per_row, quick_shop_enable: quick_shop_enable -%}
+        {%- else -%}
+          {%- render 'search-grid-item', item: item, per_row: per_row %}
+        {%- endif -%}
+      {%- endfor -%}
+    {% else %}
+      <div class="np-h3 no-products-available">
+        <div>No Products Available</div>
+        <a href="{{ collection.url }}" class="collection-filter-reset">Clear Filters</a>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{%- if enable_sidebar and filter_style != 'drawer' and collection.filters.size > 0 -%}
+  {% comment %}
+    Sidebar enabled but not in drawer mode, only show filter button on mobile
+  {% endcomment %}
+  {% style %}
+  {% endstyle %}
+{%- endif -%}
+
+{%- if enable_sidebar == false or collection.filters.size == 0 -%}
+  {% comment %}
+    Disable sidebar & filter features
+  {% endcomment %}
+  {% style %}
+    .collection-filter__item--drawer {
+      display: block;
+    }
+    .collection-filter__item--count {
+      text-align: left;
+    }
+    html[dir="rtl"] .collection-filter__item--count {
+      text-align: right;
+    }
+  {% endstyle %}
+{%- endif -%}
+
+{%- unless enable_sort -%}
+  {% style %}
+    .collection-filter__sort-container {
+      display: none;
+    }
+  {% endstyle %}
+{%- endunless -%}
+
+              
+<style>
+  .filter-sort-mobile-container .collection-filter__item.collection-filter__item--sort .sorting-section-mobile .sort-list-mobile.show-sort-list li.sort-list-item{
+    position: relative;
+    padding-left: 52px;
+  }
+    /* Hide the browser's default checkbox */
+  .filter-sort-mobile-container .collection-filter__item.collection-filter__item--sort .sorting-section-mobile .sort-list-mobile.show-sort-list li.sort-list-item .sorting-list-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+  }
+
+  /* Create a custom checkbox */
+  .filter-sort-mobile-container .collection-filter__item.collection-filter__item--sort .sorting-section-mobile .sort-list-mobile.show-sort-list li.sort-list-item .sorting-list-container .sorting-checkmark {
+    position: absolute;
+    top: 2px;
+    left: 20px;
+    height: 12px;
+    width: 12px;
+    background-color: #FFFFFF;
+    border: 1px solid #1D1D1B;
+    cursor: pointer;
+  }
+
+  /* When the checkbox is checked, add a blue background */
+  .filter-sort-mobile-container .collection-filter__item.collection-filter__item--sort .sorting-section-mobile .sort-list-mobile.show-sort-list li.sort-list-item .sorting-list-container input:checked ~ .sorting-checkmark {
+    background-color: #1D1D1B;
+  }
+
+  /* Create the checkmark/indicator (hidden when not checked) */
+  .filter-sort-mobile-container .collection-filter__item.collection-filter__item--sort .sorting-section-mobile .sort-list-mobile.show-sort-list li.sort-list-item .sorting-list-container .sorting-checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+  }
+
+  /* Show the checkmark when checked */
+  .filter-sort-mobile-container .collection-filter__item.collection-filter__item--sort .sorting-section-mobile .sort-list-mobile.show-sort-list li.sort-list-item .sorting-list-container input:checked ~ .sorting-checkmark:after {
+    display: block;
+  }
+
+  /* Style the checkmark/indicator */
+  .filter-sort-mobile-container .collection-filter__item.collection-filter__item--sort .sorting-section-mobile .sort-list-mobile.show-sort-list li.sort-list-item .sorting-list-container .sorting-checkmark:after {
+    left: 3px;
+    top: 1px;
+    width: 4px;
+    height: 7px;
+    border: solid #FFFFFF;;
+    border-width: 0 1px 1px 0;
+    -webkit-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    transform: rotate(45deg);
+  }
+  /*   #CollectionAjaxContent .filter-sort-mobile-container.sticky{
+      position: -webkit-sticky;
+      position: sticky;
+      top: 400px;
+    } */
+
+
+</style>
+
+<script>
+  
+  
+  function sortingFunctionWithoutMultipleOptions(){
+    var sortItems = document.querySelectorAll(".sort-list-item")
+    sortItems.forEach(item=>{
+      item.addEventListener('click', (e)=>{
+        console.log("sort clicked")
+        let url = "";
+        if (window.location.search.indexOf("filter") === -1){
+          console.log(e.target.dataset.name);
+          url += `?sort_by=${e.target.dataset.name}`
+        }
+        else {
+          var index = window.location.search.indexOf("sort_by")
+          switch (index) {
+            case -1: url += window.location.search + `&sort_by=${e.target.dataset.name}`; break;
+            default:
+              var initIndex = window.location.search.indexOf("sort_by")
+              var toBeReplaced = window.location.search.slice(initIndex)
+              url += window.location.search.replace(toBeReplaced, `sort_by=${e.target.dataset.name}`)
+          }
+        }
+        window.location.search = url;
+      })
+    })
+                            }
+
+// filter related overlay and other button functionality
+
+// filter overlay 
+let cartDrawer = document.querySelector("#CartDrawer");
+let customOverlay = document.createElement("div");
+customOverlay.classList.add("custom_overlay");
+cartDrawer.insertAdjacentElement("beforebegin", customOverlay); 
+
+  document.querySelector(".collection-filter button.js-drawer-open-collection-filters").addEventListener("click",()=>{
+      customOverlay.classList.add("show-filter-overlay");
+  });
+  document.body.addEventListener("click", e=> {
+     if(e.target.closest('.drawer__close button')){
+        customOverlay.classList.remove("show-filter-overlay");     
+     } else if(e.target.closest('.show-filter-overlay')){
+        customOverlay.classList.remove("show-filter-overlay");
+      }
+  })
+
+
+// mutation observer for filter 
+
+new MutationObserver(() => {
+    customOverlay.classList.remove("show-filter-overlay");
+    document.querySelector(".collection-filter button.js-drawer-open-collection-filters").addEventListener("click",()=>{
+              customOverlay.classList.add("show-filter-overlay");
+    });
+
+  if(document.querySelector("#FilterDrawer .drawer__contents .filter-footer .filter-show-all-button.active-button")){
+      document.querySelector("#FilterDrawer .drawer__contents .filter-footer .filter-show-all-button.active-button").addEventListener('click', ()=>{
+        document.querySelector("#FilterDrawer .drawer__fixed-header .drawer__close > button").click();
+  });
+  }
+  
+// category tab filter 
+  
+const activeTags = document.querySelectorAll('.filter-form.collection-category-tab .collection-category-tab-wrapper .no-bullets.tag-list #tag-list.tag--active');
+const filterResetBtn = document.querySelector('.filter-form.collection-category-tab .collection-category-tab-wrapper .no-bullets.tag-list .filter-reset-btn');
+if (activeTags.length > 0) {  
+  filterResetBtn.classList.remove('tag--active');
+}
+else{
+   filterResetBtn.classList.add('tag--active');
+}
+  
+setupSlider();
+
+}).observe(document.querySelector("#CollectionAjaxContent"), {childList: true, subtree: true});
+
+  if(document.querySelector("#FilterDrawer .drawer__contents .filter-footer .filter-show-all-button.active-button")){
+      document.querySelector("#FilterDrawer .drawer__contents .filter-footer .filter-show-all-button.active-button").addEventListener('click', ()=>{
+    document.querySelector("#FilterDrawer .drawer__fixed-header .drawer__close > button").click();
+  })
+  }
+
+
+// category filter tab
+function setupSlider() {
+  const list = document.querySelector('.filter-form.collection-category-tab .collection-category-tab-wrapper .no-bullets.tag-list');
+  const leftArrow = document.querySelector('.filter-form.collection-category-tab .collection-category-tab-wrapper .category-list .left-arrow');
+  const rightArrow = document.querySelector('.filter-form.collection-category-tab .collection-category-tab-wrapper .category-list .right-arrow');
+
+  let scrollPosition = 0;
+
+  function checkOverflow() {
+    if (list.scrollWidth <= list.clientWidth) {
+      leftArrow.style.display = 'none';
+      rightArrow.style.display = 'none';
+    } else if (scrollPosition === 0) {
+      leftArrow.style.display = 'none';
+      rightArrow.style.display = 'block';
+    } else if (1 >= list.scrollWidth - list.clientWidth - scrollPosition) {
+      leftArrow.style.display = 'block';
+      rightArrow.style.display = 'none';
+    } else {
+      leftArrow.style.display = 'block';
+      rightArrow.style.display = 'block';
+    }
+  }
+
+  function updateScrollPosition() {
+    scrollPosition = list.scrollLeft;
+    checkOverflow();
+  }
+
+  checkOverflow();
+
+  leftArrow.addEventListener('click', () => {
+    scrollPosition -= 100;
+    if (scrollPosition < 0) {
+      scrollPosition = 0;
+    }
+    list.scrollTo({ left: scrollPosition, behavior: 'smooth' });
+    checkOverflow();
+  });
+
+  rightArrow.addEventListener('click', () => {
+    scrollPosition += 100;
+    const maxScrollPosition = list.scrollWidth - list.clientWidth;
+    if (scrollPosition > maxScrollPosition) {
+      scrollPosition = maxScrollPosition;
+    }
+    list.scrollTo({ left: scrollPosition, behavior: 'smooth' });
+    checkOverflow();
+  });
+
+  list.addEventListener('scroll', updateScrollPosition);
+  window.addEventListener('resize', checkOverflow);
+}
+
+document.addEventListener("DOMContentLoaded", setupSlider);
+
+</script>
+
+              

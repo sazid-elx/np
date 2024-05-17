@@ -1,0 +1,196 @@
+<section class="section-wrapper-{{ section.id }} np-page-width">
+  <div class="press-page-wrapper">
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when "main-title" %}
+        <div class="block-{{block.id}}">
+          <div class="main-section-inner">
+            <div class="main-tittle-div">
+              <p class="main-title">
+                {{ block.settings.press-main-title }}
+              </p>
+            </div>
+            <div class="main-description-div">
+<!--               <p class="main-description"> -->
+                {{ block.settings.press-main-description }}
+<!--               </p> -->
+            </div>
+          </div>
+        </div>
+        {% when 'spacer-block' %}
+        <div class="spacer-{{ block.id }}">
+
+        </div>
+
+      {% endcase %}
+    {% endfor %}
+  </div>
+</section>
+
+
+
+{% schema %}
+  {
+    "name": "press-title-block",
+    "blocks": [
+      {
+        "name": "Main Title",
+        "type": "main-title",
+        "settings": [
+          {
+            "type": "text",
+            "id": "press-main-title",
+            "label": "Main Heading",
+            "default": "Press"
+          }, {
+            "type": "richtext",
+            "id": "press-main-description",
+            "label": "Description",
+            "default": "<p>Write something</p>"
+          }, {
+            "type": "range",
+            "id": "margin-top-bottom",
+            "min": 5,
+            "max": 100,
+            "step": 1,
+            "unit": "px",
+            "label": "Margin Top Bottom",
+            "default": 10
+          }
+        ]
+      }, {
+        "name": "Spacer Block",
+        "type": "spacer-block",
+        "settings": [
+          {
+            "type": "range",
+            "id": "spacer-height-desktop",
+            "min": 0,
+            "max": 200,
+            "step": 5,
+            "unit": "px",
+            "label": "Spacer Height Desktop",
+            "default": 10
+          }, {
+            "type": "range",
+            "id": "spacer-height-mobile",
+            "min": 0,
+            "max": 200,
+            "step": 5,
+            "unit": "px",
+            "label": "Spacer Height Mobile",
+            "default": 10
+          }
+
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "press-title-block",
+        "blocks": [
+          {
+            "type": "main-title"
+          }, 
+          {
+            "type": "spacer-block"
+          }
+        ]
+      }
+    ]
+
+  }
+{% endschema %}
+
+{% style %}
+ .np-page-width {
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+.np-page-width .press-page-wrapper {
+    margin: 0 auto;
+    max-width: 972px;
+    width: 100%;
+    padding: 0 10px;
+  }
+  {% for block in section.blocks %}
+    {% case block.type %}
+      {% when "main-title" %}
+      
+      .block-{{ block.id}}.main-section-inner .main-tittle-div {}
+      .block-{{ block.id}} .main-section-inner .main-tittle-div .main-title {
+        font-family: 'Silvana';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 100px;
+        line-height: 105px;
+        letter-spacing: -0.03em;
+        color: #2B2725;
+        margin: {{ block.settings.margin-top-bottom }}px 0;
+      }
+      .block-{{ block.id}}.main-section-inner .main-description-div {}
+      .block-{{ block.id}} .main-section-inner .main-description-div > p {
+        font-family: 'Silvana';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 26px;
+        line-height: 36px;
+        letter-spacing: -0.01em;
+        color: #2B2725;
+      }
+      .block-{{ block.id}} .main-section-inner .main-description-div > p a{
+        text-decoration: underline;
+      }
+      {% when 'spacer-block' %}
+      .section-wrapper-{{ section.id }} .spacer-{{ block.id }}{
+        height: {{ block.settings.spacer-height-desktop }}px;
+      }
+    {% endcase %}
+  {% endfor %}
+
+
+
+  @media screen and (max-width: 768px) {
+    .np-page-width {
+      padding: 0 20px;
+    }
+    .np-page-width .press-page-wrapper {
+        margin: 0;
+        padding: 0;
+    }
+
+    {% for block in section.blocks %}
+      {% case block.type %}
+        {% when "main-title" %}
+        .block-{{ block.id}} .main-section-inner {
+          margin-left: 0;
+          padding: 0;
+        }
+        .block-{{ block.id}} .main-section-inner .main-tittle-div .main-title {
+          margin: 14px 0 0 0;
+          color: #2B2725;
+          font-size: 54px;
+          font-family: Silvana;
+          line-height: 55px;
+          letter-spacing: -2px;
+        }
+        .block-{{ block.id}} .main-section-inner .main-description-div {}
+        .block-{{ block.id}} .main-section-inner .main-description-div > p{
+          color: #2B2725;
+          font-size: 19px;
+          font-family: Silvana;
+          line-height: 26px;
+          letter-spacing: -0.19px;
+          margin: 37px 0 0 0;
+          width: 100%;
+        }
+        {% when 'spacer-block' %}
+        .section-wrapper-{{ section.id }} .spacer-{{ block.id }}{
+          height: {{ block.settings.spacer-height-mobile }}px;
+        }
+
+      {% endcase %}
+    {% endfor %}
+
+  }
+{% endstyle %}

@@ -1,0 +1,51 @@
+{%- if linklists[block.settings.menu].links.size > 0 -%}
+  {%- if block.settings.show_footer_title -%}
+    
+    <button type="button" class="h4 footer__title collapsible-trigger collapsible-trigger-btn medium-up--hide" aria-controls="Footer-{{ block.id }}">
+      {{ linklists[block.settings.menu].title }}
+      {%- render 'collapsible-icons' -%}
+    </button>
+  {%- endif -%}
+  <div
+    {% if block.settings.show_footer_title %}
+      id="Footer-{{ block.id }}" class="collapsible-content collapsible-content--small"
+    {% endif %}>
+    <div class="collapsible-content__inner">
+      <p class="h4 footer__title small--hide">
+        {{ linklists[block.settings.menu].title }}
+      </p>
+      <div class="footer__collapsible{% unless block.settings.show_footer_title %} footer_collapsible--disabled{% endunless %}">
+        <ul class="no-bullets site-footer__linklist">
+          {%- for link in linklists[block.settings.menu].links -%}
+            <li>
+              {%- if link.url contains 'modal_' -%}
+                {%- assign page_handle = link.url | split: 'modal_' -%}
+              		<a class="popupModal" data-id="{{ page_handle.last }}"><span>{{ link.title }}</span></a>
+                {%- else -%}
+                    <a href="{{ link.url }}">{{ link.title }}</a>
+               {%- endif -%}
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </div>
+  </div>
+{%- endif -%}
+
+
+{% comment %}
+
+ <p class="footer__small-text">
+        	{% for link in linklists[section.settings.copyright-menu].links %}
+              {%- if link.url contains 'modal_' -%}
+                {%- assign page_handle = link.url | split: 'modal_' -%}
+              		<a class="popupModal" data-id="{{ page_handle.last }}"><span>{{ link.title }}</span></a>
+                {%- else -%}
+                    <a href="{{ link.url }}">{{ link.title }}</a>
+               {%- endif -%}
+        		{% if forloop.last == false %}
+                  |
+                {% endif %}
+            {% endfor %}
+        </p>
+{% endcomment %}

@@ -1,0 +1,356 @@
+<section class="section-wrapper-{{ section.id }} np-page-width">
+  <div class="press-page-wrapper">
+    <div class="blog-section-inner">
+        {% for block in section.blocks %}
+            {% case block.type %}
+                {% when 'three-image' %}
+                    <div class="blog-post-wrapper">
+                        <div class="blog">
+                           <a class="image-link-one" target="_blank" href="{{ block.settings.first-image-link }}">
+                                <div class="blog-img">
+                                    <img src="{{ block.settings.image-first | img_url: 'master'}}" alt="first image">
+                                </div>
+                            </a>
+                        </div>
+
+                        <div class="layout-img-div">
+                              <a class="image-link-two" target="_blank" href="{{ block.settings.second-image-link }}">
+                                  <div class="layout-img">                                   
+                                      <img src="{{ block.settings.image-second | img_url: 'master'}}" alt="second image">                                   
+                                  </div>
+                               </a>
+                            <a class="image-link-three" target="_blank" href="{{ block.settings.third-image-link }}">
+                              <div class="layout-img">                              
+                                  <img src="{{ block.settings.image-third | img_url: 'master'}}" alt="third image">                               
+                              </div>
+                             </a>
+                        </div>
+                    </div>
+                    <div class="blog-details-wrapper-{{ block.id }}">
+                        <p class="blog-author">{{ block.settings.blog-author }}</p>
+                        <p class="blog-title">{{ block.settings.blog-title }}</p>
+                    </div>
+
+                {% when 'spacer-block' %}
+                    <div class="spacer-{{ block.id }}"></div>
+            {% endcase %}
+        {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+  {
+    "name": "Press Three img layout",
+    "settings": [],
+    "blocks": [
+      {
+        "name": "Three Image",
+        "type": "three-image",
+        "settings": [
+            {
+                "type": "image_picker",
+                "id": "image-first",
+                "label": "Add First Image "
+            },
+            {
+            "type": "url",
+            "id": "first-image-link",
+            "label": "First Image link"
+            },
+            {
+                "type": "image_picker",
+                "id": "image-second",
+                "label": "Add Second Image "
+            }, 
+            {
+            "type": "url",
+            "id": "second-image-link",
+            "label": "Second Image link"
+            },
+          {
+                "type": "image_picker",
+                "id": "image-third",
+                "label": "Add Third Image "
+            },
+            {
+            "type": "url",
+            "id": "third-image-link",
+            "label": "Third Image link"
+          },
+            {
+                "type": "text",
+                "id": "blog-author",
+                "label": "Megazine Name",
+                "default": "ex: Vogue, Times"
+            },
+            {
+                "type": "text",
+                "id": "blog-title",
+                "label": "Blog Title",
+                "default": "Lorem Lorem"
+            },
+            {
+                "type": "range",
+                "id": "font_size_author",
+                "min": 12,
+                "max": 60,
+                "step": 1,
+                "unit": "px",
+                "label": "Font size For Author",
+                "default": 16
+            },
+            {
+                "type": "range",
+                "id": "font_size_title",
+                "min": 12,
+                "max": 60,
+                "step": 1,
+                "unit": "px",
+                "label": "Font size For Blog Title",
+                "default": 16
+            }, 
+            {
+                "type": "color",
+                "id": "blog-text-color",
+                "label": "Blog text Color",
+                "default": "#000000"
+            }, 
+            {
+                "type": "checkbox",
+                "id": "hide-blog-details",
+                "label": "Hide Blog Details",
+                "default": false
+            }
+        ]
+      }, 
+      {
+        "name": "Spacer Block",
+        "type": "spacer-block",
+        "settings": [
+          {
+            "type": "range",
+            "id": "spacer-height-desktop",
+            "min": 0,
+            "max": 200,
+            "step": 5,
+            "unit": "px",
+            "label": "Spacer Height Desktop",
+            "default": 10
+          }, {
+            "type": "range",
+            "id": "spacer-height-mobile",
+            "min": 0,
+            "max": 200,
+            "step": 5,
+            "unit": "px",
+            "label": "Spacer Height Mobile",
+            "default": 10
+          }
+
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Press Three img layout",
+        "blocks": [
+          {
+            "type": "three-image"
+          }, {
+            "type": "spacer-block"
+          }
+
+        ]
+      }
+    ]
+    
+  }
+{% endschema %}
+
+<style>
+  .section-wrapper-{{ section.id }} .blog-post-wrapper {
+    display: flex;
+    gap: 5px;
+  }
+
+  {% for block in section.blocks %}
+    {% case block.type %}
+        {% when 'three-image' %}
+          .section-wrapper-{{ section.id }} .blog-post-wrapper .layout-img-div, .section-wrapper-{{ section.id }} .blog-post-wrapper .blog{
+                flex: 1;
+            }
+  .section-wrapper-{{ section.id }} .blog-post-wrapper {
+    max-width: 928px;
+  }
+            .section-wrapper-{{ section.id }} .blog-post-wrapper .blog{
+                background: rgba(43, 39, 37, 0.1);
+                align-items: center;
+                display: flex;
+                padding: 50px 52px;
+                max-width: 462px;
+            }
+            .section-wrapper-{{ section.id }} .blog-post-wrapper .blog .blog-img{
+              width: 100%;
+              height: 100%;
+            }
+            .section-wrapper-{{ section.id }} .blog-post-wrapper .layout-img-div{
+                padding: 50px 52px;
+                display: flex;
+                flex-direction: column;
+                gap: 28px;
+                background: rgba(43, 39, 37, 0.1);
+            }
+          
+            .section-wrapper-{{ section.id }} .blog-img img{
+                width: 100%;
+                height: 100%;
+            }
+            {% if block.settings.first-image-link %}
+                 .section-wrapper-{{ section.id }} .blog-post-wrapper .blog .image-link-one{
+                  cursor: pointer;
+                  pointer-events: auto;
+                }
+                {% else %}
+                .section-wrapper-{{ section.id }} .blog-post-wrapper .blog .image-link-one{
+                  cursor: default;
+                  pointer-events: none;
+                }
+              {% endif %}
+
+            {% if block.settings.second-image-link %}
+                 .section-wrapper-{{ section.id }} .blog-post-wrapper .layout-img-div .image-link-two{
+                  cursor: pointer;
+                  pointer-events: auto;
+                }
+                {% else %}
+                .section-wrapper-{{ section.id }} .blog-post-wrapper .layout-img-div .image-link-two{
+                  cursor: default;
+                  pointer-events: none;
+                }
+              {% endif %}
+
+              {% if block.settings.third-image-link %}
+                 .section-wrapper-{{ section.id }} .blog-post-wrapper .layout-img-div .image-link-three{
+                  cursor: pointer;
+                  pointer-events: auto;
+                }
+                {% else %}
+                .section-wrapper-{{ section.id }} .blog-post-wrapper .layout-img-div .image-link-three{
+                  cursor: default;
+                  pointer-events: none;
+                }
+              {% endif %}
+            .section-wrapper-{{ section.id }} .blog-author {
+                font-family: 'Intervogue';
+                font-style: normal;
+                font-weight: 400;
+                font-size: {{ block.settings.font_size_author }}px;
+                line-height: 27px;
+                letter-spacing: 0.05em;
+                text-transform: uppercase;
+                color: {{ block.settings.blog-text-color }};
+            }
+            .section-wrapper-{{ section.id }} .blog-title {
+                font-family: 'Silvana';
+                font-style: normal;
+                font-weight: 400;
+                font-size: {{ block.settings.font_size_title }}px;
+                line-height: 27px;
+                text-align: justify;
+                letter-spacing: -0.16px;
+                color: {{ block.settings.blog-text-color }};
+            }
+            .section-wrapper-{{ section.id }} .blog-details-wrapper-{{ block.id }} {
+                margin-top: 15px;
+                display: flex;
+                gap: 30px;
+            }
+            {% if block.settings.hide-blog-details %}
+            .section-wrapper-{{ section.id }} .blog-details-wrapper-{{ block.id }} {
+                    display: none;
+                }
+            {% endif %}
+        {% when 'spacer-block' %}
+          .section-wrapper-{{ section.id }} .blog-section-inner .spacer-{{ block.id }}{
+              height: {{ block.settings.spacer-height-desktop }}px;
+          }
+    {% endcase %}
+  {% endfor %}
+
+
+  @media screen and (max-width: 768px) {
+    .np-page-width {
+      padding: 0 20px;
+    }
+    .section-wrapper-{{ section.id }} .blog-post-wrapper {
+      display: flex;
+      flex-direction: column;
+    }
+    {% for block in section.blocks %}
+      {% case block.type %}
+          {% when 'three-image' %}
+            .section-wrapper-{{ section.id }} .blog-post-wrapper .blog{
+              padding: 34px 30px;
+            }
+            .section-wrapper-{{ section.id }} .blog-post-wrapper .layout-img-div{
+                align-items: center;
+                justify-content: center;
+              padding: 34px 37px;
+            }
+            .section-wrapper-{{ section.id }} .blog-details-wrapper-{{ block.id }} {
+                margin-top: 15px;
+                display: flex;
+                flex-direction: column;
+                gap: 0;
+            }
+    .section-wrapper-{{ section.id }} .blog-author{
+      color: #2B2725;
+      font-family: Intervogue;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 20px;
+      letter-spacing: 0.28px;
+      text-transform: uppercase;
+    }
+    .section-wrapper-{{ section.id }} .blog-title{
+      color: #2B2725;
+      text-align: justify;
+      font-family: Silvana;
+      font-size: 16px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: 27px;
+      letter-spacing: -0.16px;
+      margin-top: 14px;
+    }
+  
+          {% when 'spacer-block' %}
+            .section-wrapper-{{ section.id }} .blog-section-inner .spacer-{{ block.id }}{
+                height: {{ block.settings.spacer-height-mobile }}px;
+            }
+      {% endcase %}
+    {% endfor %}    
+  }
+   @media screen and (min-width:500px) and (max-width:768px){
+    
+    {% for block in section.blocks %}
+      {% case block.type %}
+          {% when 'three-image' %}
+           .section-wrapper-{{ section.id }} .blog-post-wrapper .blog{
+             width:462px;
+             margin: 0 auto;
+           }
+           .section-wrapper-{{ section.id }} .blog-post-wrapper .layout-img-div{
+             width:462px;
+             margin: 0 auto;
+           }
+     .section-wrapper-{{ section.id }} .blog-details-wrapper-{{ block.id }} {
+       max-width:462px;
+             margin: 0 auto;
+     }
+      {% endcase %}
+    {% endfor %}
+  }
+</style>

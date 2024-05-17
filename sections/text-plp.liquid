@@ -1,0 +1,212 @@
+<section class="section-wrapper-{{section.id}} np-plp-page">
+  <div class="text-paragraph for-plp-page">
+      <h2>{{ collection.description }}</h2>
+  </div>
+  {% for block in section.blocks %}
+    {% case block.type %}
+      {% when 'spacer-block' %}
+        <div class="spacer-{{ block.id }}"></div>     
+    {% endcase %}
+  {% endfor %}
+</section>
+
+
+
+<style> 
+          .section-wrapper-{{section.id}}.np-plp-page{
+             max-width: 100%;
+          }
+         .section-wrapper-{{section.id}}.np-plp-page .text-paragraph.for-plp-page{
+            display: flex;
+            justify-content: center;         
+         }
+        .section-wrapper-{{section.id}}.np-plp-page .text-paragraph.for-plp-page h2{
+            max-width: {{ section.settings.section-width }}px;
+            margin: {{ section.settings.text-margin-top-bottom }}px {{ section.settings.text-margin-left-right }}px;
+            color: #2B2725;
+            text-align: center;
+            font-size: {{ section.settings.paragraph-font-size }}px;
+            font-family: Silvana;
+            line-height: 36px;
+            letter-spacing: -0.26px;
+        }
+      @media (min-width:768px){
+        {% if section.settings.hide-text-desktop == true %}
+          .section-wrapper-{{section.id}}.np-plp-page .text-paragraph.for-plp-page{
+            display: none;
+          }
+       {% endif %}
+      }
+
+        @media (max-width: 1024px){
+          .section-wrapper-{{section.id}}.np-plp-page .text-paragraph.for-plp-page h2{
+             margin-top: 55px;
+            font-size: 22px;
+            line-height: 30px;
+            letter-spacing: -0.22px;
+          }
+        }
+        @media (max-width: 768px){
+          {% if section.settings.hide-text-mobile == true %} 
+          .section-wrapper-{{section.id}}.np-plp-page .text-paragraph.for-plp-page{
+            display: none;
+          }
+            {% endif %}
+          .section-wrapper-{{section.id}}.np-plp-page .text-paragraph.for-plp-page h2{
+            margin: 45px 37px 53px 37px;
+            font-size: 20px;
+            line-height: 26px;
+            letter-spacing: -0.2px;
+          }
+
+          {% if section.settings.paragrapg-text-align == "left" %}
+               .text-with-button-{{ block.id }} .text-paragraph.for-plp-page h2{
+                 text-align: left;
+              }             
+            {% endif %}
+             {% if section.settings.paragrapg-text-align == "center" %}
+               .text-with-button-{{ block.id }} .text-paragraph.for-plp-page h2{
+                 text-align: center;
+              }             
+            {% endif %}
+            {% if section.settings.paragrapg-text-align == "right" %}
+               .text-with-button-{{ block.id }} .text-paragraph.for-plp-page h2{
+                 text-align: right;
+              }             
+            {% endif %}      
+          }
+
+        {% for block in section.blocks %}
+          {% case block.type %}
+          {% when 'spacer-block' %}
+          .section-wrapper-{{section.id}}.np-plp-page .spacer-{{ block.id }}{
+              height: {{ block.settings.spacer-height-desktop }}px;
+          }
+          @media (max-width: 768px){
+            .section-wrapper-{{section.id}}.np-plp-page .spacer-{{ block.id }}{
+                height: {{ block.settings.spacer-height-mobile }}px;
+            }
+          }
+
+      {% endcase %}
+    {% endfor %}
+</style>
+
+
+{% schema %}
+  {
+    "name": "Single Text",
+    "settings":[  
+        {
+          "type": "checkbox",
+          "id": "hide-text-desktop",
+           "label": "Hide paragraph for desktop",
+           "default": false
+        },
+        {
+          "type": "checkbox",
+          "id": "hide-text-mobile",
+           "label": "Hide paragraph for mobile",
+           "default": false
+        },
+        {
+           "type": "range",
+           "id":"section-width",
+           "label":"Section Width",
+           "min": 400,
+           "max": 900,
+           "step": 5,
+           "unit": "px",
+           "default": 400
+         },          
+        {
+          "type": "range",
+           "id":"paragraph-font-size",
+           "label":"Paragraph Font Size",
+           "min": 12,
+           "max": 100,
+           "step": 1,
+           "unit": "px",
+           "default": 26 
+         },          
+        {
+           "type": "range",
+           "id":"text-margin-top-bottom",
+           "label":"Paragraph Margin Top-Bottom",
+           "min": 10,
+           "max": 110,
+           "step": 1,
+           "unit": "px",
+           "default": 67
+         }, 
+        {
+           "type": "range",
+           "id":"text-margin-left-right",
+           "label":"Paragraph Margin Left-Right",
+           "min": 10,
+           "max": 110,
+           "step": 1,
+           "unit": "px",
+           "default": 67
+         }, 
+        {
+            "type": "select",
+            "id": "paragrapg-text-align",
+            "label": "Text Align (Mobile)",
+            "default": "center",
+            "options": [
+              {
+                "value": "left",
+                "label": "Left"
+              },
+              {
+                "value": "center",
+                "label": "Center"
+              },
+              {
+                "value": "right",
+                "label": "Right"
+              }
+            ]  
+      }
+    ],
+    "blocks": [
+      {
+        "name": "Spacer",
+        "type": "spacer-block",
+        "settings": [
+          {
+            "type": "range",
+            "id": "spacer-height-desktop",
+            "label": "Spacer Height Desktop",
+            "min": 0,
+            "max": 200,
+            "step": 5,
+            "unit": "px",
+            "default": 30
+          },
+          {
+            "type": "range",
+            "id": "spacer-height-mobile",
+            "label": "Spacer Height Mobile",
+            "min": 0,
+            "max": 200,
+            "step": 5,
+            "unit": "px",
+            "default": 30
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Single Text",
+        "blocks": [
+            {
+            "type": "spacer-block"
+            }
+        ]
+      }
+    ]
+  }
+{% endschema %}
